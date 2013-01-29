@@ -3,11 +3,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.citytechinc.cqlibrary.testing</groupId>
-    <artifactId>cq5-testing</artifactId>
+    <groupId>com.citytechinc.cqlibrary</groupId>
+    <artifactId>cq5-library-testing</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>CITYTECH, Inc. CQ5 Library - Testing</name>
+    <description>Testing utilities for Adobe CQ5.</description>
 
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -23,9 +24,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/cq5-testing.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/cq5-testing.git</developerConnection>
-        <url>https://github.com/Citytechinc/cq5-testing</url>
+        <connection>scm:git:git@github.com:Citytechinc/cq5-library-testing.git</connection>
+        <developerConnection>scm:git:git@github.com:Citytechinc/cq5-library-testing.git</developerConnection>
+        <url>https://github.com/Citytechinc/cq5-library-testing</url>
     </scm>
 
     <properties>
@@ -50,6 +51,7 @@
         <compiler.plugin.version>2.5.1</compiler.plugin.version>
         <surefire.plugin.version>2.12.4</surefire.plugin.version>
         <groovy.eclipse.compiler.version>2.7.0-01</groovy.eclipse.compiler.version>
+        <groovy.eclipse.batch.version>2.0.4-04</groovy.eclipse.batch.version>
     </properties>
 
     <build>
@@ -68,6 +70,11 @@
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-compiler</artifactId>
                         <version>${groovy.eclipse.compiler.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>${groovy.eclipse.batch.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -124,7 +131,6 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${groovy.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
