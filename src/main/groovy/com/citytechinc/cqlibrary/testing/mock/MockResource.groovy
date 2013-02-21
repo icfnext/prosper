@@ -1,13 +1,14 @@
 package com.citytechinc.cqlibrary.testing.mock
 
-import javax.jcr.Node
-
+import com.day.cq.wcm.api.Page
+import com.day.cq.wcm.core.impl.PageImpl
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceMetadata
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ValueMap
+import org.apache.sling.jcr.resource.JcrPropertyMap
 
-import com.day.cq.wcm.api.Page
-import com.day.cq.wcm.core.impl.PageImpl
+import javax.jcr.Node
 
 class MockResource implements Resource {
 
@@ -18,67 +19,74 @@ class MockResource implements Resource {
     }
 
     @Override
-    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+    <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
         def result
 
         if (type == Node) {
             result = node
+        } else if (type == ValueMap) {
+			result = new JcrPropertyMap(node)
         } else if (type == Page && 'cq:Page' == getResourceType()) {
             result = new PageImpl(this)
         } else {
             result = null
         }
 
-        return result
+        result
     }
 
     @Override
-    public String getPath() {
-        return node.path
+    String getPath() {
+        node.path
     }
 
     @Override
-    public String getName() {
-        return node.name
+    String getName() {
+        node.name
     }
 
     @Override
-    public Resource getParent() {
-        return new MockResource(node.parent)
+    Resource getParent() {
+	    node.depth == 0 ? null : new MockResource(node.parent)
     }
 
     @Override
-    public Iterator<Resource> listChildren() {
-        return node.nodes.collect { new MockResource(it) }.iterator()
+    Iterator<Resource> listChildren() {
+        node.nodes.collect { new MockResource(it) }.iterator()
+    }
+
+	@Override
+	Iterable<Resource> getChildren() {
+		node.nodes.collect { new MockResource(it) }.iterator()
+	}
+
+	@Override
+    Resource getChild(String relPath) {
+        node.hasNode(relPath) ? new MockResource(node.getNode(relPath)) : null
     }
 
     @Override
-    public Resource getChild(String relPath) {
-        return node.hasNode(relPath) ? new MockResource(node.getNode(relPath)) : null
+    String getResourceType() {
+        node.get('sling:resourceType') ?: node.primaryNodeType.name
     }
 
     @Override
-    public String getResourceType() {
-        return node.get('sling:resourceType') ?: node.primaryNodeType.name
+    String getResourceSuperType() {
+        node.get('sling:resourceSuperType')
     }
 
     @Override
-    public String getResourceSuperType() {
-        return node.get('sling:resourceSuperType')
+    boolean isResourceType(String resourceType) {
+        getResourceType() == resourceType
     }
 
     @Override
-    public boolean isResourceType(String resourceType) {
-        return getResourceType() == resourceType
-    }
-
-    @Override
-    public ResourceMetadata getResourceMetadata() {
+    ResourceMetadata getResourceMetadata() {
         throw new UnsupportedOperationException()
     }
 
     @Override
-    public ResourceResolver getResourceResolver() {
-        return new MockResourceResolver(node.session)
+    ResourceResolver getResourceResolver() {
+        new MockResourceResolver(node.session)
     }
 }

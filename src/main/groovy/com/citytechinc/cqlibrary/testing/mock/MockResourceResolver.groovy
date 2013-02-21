@@ -1,5 +1,6 @@
 package com.citytechinc.cqlibrary.testing.mock
 
+import javax.jcr.RepositoryException
 import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
@@ -11,65 +12,89 @@ import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 
 class MockResourceResolver implements ResourceResolver {
 
-    private final Session session
+    def session
 
     MockResourceResolver(session) {
         this.session = session
     }
 
-    public Resource getResource(String path) {
-        session.nodeExists(path) ? new MockResource(session.getNode(path)) : null
+	@Override
+    Resource getResource(String path) {
+		def resource = null
+
+		try {
+			if (session.nodeExists(path)) {
+				resource = new MockResource(session.getNode(path))
+			}
+		} catch (RepositoryException e) {
+			// ignore
+		}
+
+		resource
     }
 
-    public Resource getResource(Resource base, String path) {
-        return getResource("${base.path}/$path")
+	@Override
+    Resource getResource(Resource base, String path) {
+        getResource("${base.path}/$path")
     }
 
-    public ResourceResolver clone(Map<String, Object> authenticationInfo) {
+	@Override
+    ResourceResolver clone(Map<String, Object> authenticationInfo) {
         throw new UnsupportedOperationException()
     }
 
-    public Iterator<Resource> findResources(String query, String language) {
+	@Override
+    Iterator<Resource> findResources(String query, String language) {
         throw new UnsupportedOperationException()
     }
 
-    public String[] getSearchPath() {
+	@Override
+    String[] getSearchPath() {
         throw new UnsupportedOperationException()
     }
 
-    public Iterator<Resource> listChildren(Resource parent) {
+	@Override
+    Iterator<Resource> listChildren(Resource parent) {
         throw new UnsupportedOperationException()
     }
 
-    public Iterable<Resource> getChildren(Resource parent) {
+	@Override
+    Iterable<Resource> getChildren(Resource parent) {
         throw new UnsupportedOperationException()
     }
 
-    public String map(String resourcePath) {
+	@Override
+    String map(String resourcePath) {
         throw new UnsupportedOperationException()
     }
 
-    public String map(HttpServletRequest request, String resourcePath) {
+	@Override
+    String map(HttpServletRequest request, String resourcePath) {
         throw new UnsupportedOperationException()
     }
 
-    public Iterator<Map<String, Object>> queryResources(String query, String language) {
+	@Override
+    Iterator<Map<String, Object>> queryResources(String query, String language) {
         throw new UnsupportedOperationException()
     }
 
-    public Resource resolve(HttpServletRequest request, String absPath) {
+	@Override
+    Resource resolve(HttpServletRequest request, String absPath) {
         throw new UnsupportedOperationException()
     }
 
-    public Resource resolve(HttpServletRequest request) {
+	@Override
+    Resource resolve(HttpServletRequest request) {
         throw new UnsupportedOperationException()
     }
 
-    public Resource resolve(String absPath) {
-        return getResource(absPath)
+	@Override
+    Resource resolve(String absPath) {
+        getResource(absPath)
     }
 
-    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+	@Override
+    <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
         def result
 
         if (type == PageManager) {
@@ -85,43 +110,53 @@ class MockResourceResolver implements ResourceResolver {
         result
     }
 
-    public boolean isLive() {
+	@Override
+    boolean isLive() {
         throw new UnsupportedOperationException()
     }
 
-    public void close() {
+	@Override
+    void close() {
 
     }
 
-    public String getUserID() {
+	@Override
+    String getUserID() {
         throw new UnsupportedOperationException()
     }
 
-    public Object getAttribute(String name) {
+	@Override
+    Object getAttribute(String name) {
         throw new UnsupportedOperationException()
     }
 
-    public Iterator<String> getAttributeNames() {
+	@Override
+    Iterator<String> getAttributeNames() {
         throw new UnsupportedOperationException()
     }
 
-    public void delete(Resource resource) {
+	@Override
+    void delete(Resource resource) {
         throw new UnsupportedOperationException()
     }
 
-    public Resource create(Resource parent, String name, Map<String, Object> properties) {
+	@Override
+    Resource create(Resource parent, String name, Map<String, Object> properties) {
         throw new UnsupportedOperationException()
     }
 
-    public void revert() {
+	@Override
+    void revert() {
         throw new UnsupportedOperationException()
     }
 
-    public void commit() {
+	@Override
+    void commit() {
         throw new UnsupportedOperationException()
     }
 
-    public boolean hasChanges() {
+	@Override
+    boolean hasChanges() {
         throw new UnsupportedOperationException()
     }
 }
