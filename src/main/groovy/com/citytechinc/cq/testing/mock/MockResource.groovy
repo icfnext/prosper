@@ -1,4 +1,4 @@
-package com.citytechinc.cqlibrary.testing.mock
+package com.citytechinc.cq.testing.mock
 
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.core.impl.PageImpl

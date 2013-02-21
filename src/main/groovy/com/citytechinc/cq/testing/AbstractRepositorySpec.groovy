@@ -1,4 +1,4 @@
-package com.citytechinc.cqlibrary.testing
+package com.citytechinc.cq.testing
 
 import groovy.transform.Synchronized
 
@@ -7,7 +7,7 @@ import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import spock.lang.Shared
 import spock.lang.Specification
 
-import com.citytechinc.cqlibrary.testing.mock.MockResourceResolver
+import com.citytechinc.cq.testing.mock.MockResourceResolver
 
 /**
  * Abstract Spock specification for JCR-based testing.

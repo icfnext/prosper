@@ -1,4 +1,4 @@
-package com.citytechinc.cqlibrary.testing.mock
+package com.citytechinc.cq.testing.mock
 
 import javax.jcr.RepositoryException
 import javax.jcr.Session
