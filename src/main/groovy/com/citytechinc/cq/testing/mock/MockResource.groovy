@@ -12,9 +12,12 @@ import javax.jcr.Node
 
 class MockResource implements Resource {
 
+    def resourceResolver
+
     def node
 
-    MockResource(node) {
+    MockResource(resourceResolver, node) {
+        this.resourceResolver = resourceResolver
         this.node = node
     }
 
@@ -25,7 +28,7 @@ class MockResource implements Resource {
         if (type == Node) {
             result = node
         } else if (type == ValueMap) {
-			result = new JcrPropertyMap(node)
+            result = new JcrPropertyMap(node)
         } else if (type == Page && 'cq:Page' == getResourceType()) {
             result = new PageImpl(this)
         } else {
@@ -47,22 +50,22 @@ class MockResource implements Resource {
 
     @Override
     Resource getParent() {
-	    node.depth == 0 ? null : new MockResource(node.parent)
+        node.depth == 0 ? null : new MockResource(resourceResolver, node.parent)
     }
 
     @Override
     Iterator<Resource> listChildren() {
-        node.nodes.collect { new MockResource(it) }.iterator()
+        node.nodes.collect { new MockResource(resourceResolver, it) }.iterator()
     }
 
-	@Override
-	Iterable<Resource> getChildren() {
-		node.nodes.collect { new MockResource(it) }.iterator()
-	}
+    @Override
+    Iterable<Resource> getChildren() {
+        node.nodes.collect { new MockResource(resourceResolver, it) }.iterator()
+    }
 
-	@Override
+    @Override
     Resource getChild(String relPath) {
-        node.hasNode(relPath) ? new MockResource(node.getNode(relPath)) : null
+        node.hasNode(relPath) ? new MockResource(resourceResolver, node.getNode(relPath)) : null
     }
 
     @Override
@@ -87,6 +90,6 @@ class MockResource implements Resource {
 
     @Override
     ResourceResolver getResourceResolver() {
-        new MockResourceResolver(node.session)
+        resourceResolver
     }
 }
