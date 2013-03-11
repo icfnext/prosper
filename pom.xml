@@ -41,6 +41,18 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>citytech-public-releases</id>
+            <url>http://nexus.citytech.ctmsp.com/content/repositories/public-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>citytech-public-snapshots</id>
+            <url>http://nexus.citytech.ctmsp.com/content/repositories/public-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <maven.test.skip>true</maven.test.skip>
     </properties>
@@ -49,7 +61,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>3.0</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>

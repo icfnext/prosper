@@ -9,6 +9,7 @@ import javax.jcr.RepositoryException
 import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
+@SuppressWarnings("deprecation")
 class MockResourceResolver implements ResourceResolver {
 
     def session
