@@ -10,7 +10,7 @@ import spock.lang.Specification
  */
 abstract class AbstractRepositorySpec extends Specification {
 
-    static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
+    public static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
     static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt"]
 
