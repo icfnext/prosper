@@ -60,7 +60,7 @@ class MockResource implements Resource {
 
     @Override
     Iterable<Resource> getChildren() {
-        node.nodes.collect { new MockResource(resourceResolver, it) }.iterator()
+        node.nodes.collect { new MockResource(resourceResolver, it) }
     }
 
     @Override
