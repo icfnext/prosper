@@ -1,4 +1,4 @@
-package com.citytechinc.cq.testing.mock
+package com.citytechinc.cq.testing.resource
 
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
@@ -10,11 +10,11 @@ import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
 @SuppressWarnings("deprecation")
-class MockResourceResolver implements ResourceResolver {
+class TestingResourceResolver implements ResourceResolver {
 
     def session
 
-    MockResourceResolver(session) {
+    TestingResourceResolver(session) {
         this.session = session
     }
 
@@ -24,7 +24,7 @@ class MockResourceResolver implements ResourceResolver {
 
         try {
             if (session.nodeExists(path)) {
-                resource = new MockResource(this, session.getNode(path))
+                resource = new TestingResource(this, session.getNode(path))
             }
         } catch (RepositoryException e) {
             // ignore

@@ -1,14 +1,14 @@
-package com.citytechinc.cq.testing.mock
+package com.citytechinc.cq.testing.resource
 
 import com.citytechinc.cq.testing.AbstractRepositorySpec
 import spock.lang.Shared
 
-class MockResourceSpec extends AbstractRepositorySpec {
+class TestingResourceSpec extends AbstractRepositorySpec {
 
     @Shared resourceResolver
 
     def setupSpec() {
-        resourceResolver = new MockResourceResolver(session)
+        resourceResolver = new TestingResourceResolver(session)
     }
 
     def "get children"() {
