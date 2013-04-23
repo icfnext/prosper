@@ -29,7 +29,7 @@ class TestingResource implements Resource {
             result = node
         } else if (type == ValueMap) {
             result = new JcrPropertyMap(node)
-        } else if (type == Page && 'cq:Page' == getResourceType()) {
+        } else if (type == Page && "cq:Page" == getResourceType()) {
             result = new PageImpl(this)
         } else {
             result = null
@@ -70,12 +70,20 @@ class TestingResource implements Resource {
 
     @Override
     String getResourceType() {
-        node.get('sling:resourceType') ?: node.primaryNodeType.name
+        def resourceType
+
+        if (node.hasProperty("sling:resourceType")) {
+            resourceType = node.getProperty("sling:resourceType").string
+        } else {
+            resourceType = node.primaryNodeType.name
+        }
+
+        resourceType
     }
 
     @Override
     String getResourceSuperType() {
-        node.get('sling:resourceSuperType')
+        node.hasProperty("sling:resourceSuperType") ? node.getProperty("sling:resourceSuperType").string : null
     }
 
     @Override

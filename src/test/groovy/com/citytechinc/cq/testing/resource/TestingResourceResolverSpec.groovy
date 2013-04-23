@@ -9,11 +9,7 @@ class TestingResourceResolverSpec extends AbstractRepositorySpec {
     def setupSpec() {
         resourceResolver = new TestingResourceResolver(session)
 
-        def content = session.rootNode.addNode("content")
-
-        content.setProperty("jcr:title", "Content")
-        content.addNode("child")
-
+        session.rootNode.addNode("content").addNode("child")
         session.save()
     }
 
