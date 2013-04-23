@@ -35,7 +35,7 @@ class TestingResourceResolver implements ResourceResolver {
 
     @Override
     Resource getResource(Resource base, String path) {
-        getResource("${base.path}/$path")
+        base ? getResource("${base.path}/$path") : null
     }
 
     @Override
