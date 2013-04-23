@@ -23,6 +23,8 @@ abstract class AbstractRepositorySpec extends Specification {
     }
 
     def cleanupSpec() {
+        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.save()
         session.logout()
     }
 
