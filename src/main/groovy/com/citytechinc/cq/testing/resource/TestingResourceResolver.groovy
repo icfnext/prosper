@@ -5,6 +5,7 @@ import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 
+import javax.jcr.Node
 import javax.jcr.RepositoryException
 import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
@@ -55,12 +56,12 @@ class TestingResourceResolver implements ResourceResolver {
 
     @Override
     Iterator<Resource> listChildren(Resource parent) {
-        throw new UnsupportedOperationException()
+        getChildren(parent).iterator()
     }
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        throw new UnsupportedOperationException()
+        parent.adaptTo(Node).nodes.collect { new TestingResource(this, it) }
     }
 
     @Override

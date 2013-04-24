@@ -55,7 +55,7 @@ class TestingResource implements Resource {
 
     @Override
     Iterator<Resource> listChildren() {
-        node.nodes.collect { new TestingResource(resourceResolver, it) }.iterator()
+        getChildren().iterator()
     }
 
     @Override

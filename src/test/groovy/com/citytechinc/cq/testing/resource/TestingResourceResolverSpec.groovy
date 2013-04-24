@@ -1,4 +1,5 @@
 package com.citytechinc.cq.testing.resource
+
 import com.citytechinc.cq.testing.AbstractRepositorySpec
 import spock.lang.Shared
 
@@ -9,7 +10,11 @@ class TestingResourceResolverSpec extends AbstractRepositorySpec {
     def setupSpec() {
         resourceResolver = new TestingResourceResolver(session)
 
-        session.rootNode.addNode("content").addNode("child")
+        def content = session.rootNode.addNode("content")
+
+        content.addNode("one")
+        content.addNode("two")
+
         session.save()
     }
 
@@ -33,12 +38,12 @@ class TestingResourceResolverSpec extends AbstractRepositorySpec {
         def baseResource = resourceResolver.getResource("/content")
 
         expect:
-        resourceResolver.getResource(baseResource, "child").path == "/content/child"
+        resourceResolver.getResource(baseResource, "one").path == "/content/one"
     }
 
     def "get resource with null base resource returns null"() {
         expect:
-        !resourceResolver.getResource(null, "child")
+        !resourceResolver.getResource(null, "one")
     }
 
     def "get resource with base resource and malformed path returns null"() {
@@ -52,5 +57,21 @@ class TestingResourceResolverSpec extends AbstractRepositorySpec {
     def "resolve resource"() {
         expect:
         resourceResolver.resolve("/content").path == "/content"
+    }
+
+    def "list children"() {
+        setup:
+        def resource = resourceResolver.getResource("/content")
+
+        expect:
+        resourceResolver.listChildren(resource).size() == 2
+    }
+
+    def "get children"() {
+        setup:
+        def resource = resourceResolver.getResource("/content")
+
+        expect:
+        resourceResolver.getChildren(resource).size() == 2
     }
 }
