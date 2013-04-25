@@ -102,53 +102,70 @@
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-tagging</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-commons</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-msm-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq</groupId>
+            <artifactId>cq-search</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.granite</groupId>
             <artifactId>com.adobe.granite.replication.core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.resource</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
+            <scope>compile</scope>
         </dependency>
 
-        <!-- compile -->
+        <!-- additional dependencies not inherited from parent -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
