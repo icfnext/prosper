@@ -1,7 +1,11 @@
 package com.citytechinc.cq.testing.resource
 
 import com.citytechinc.cq.testing.AbstractRepositorySpec
+import com.day.cq.tagging.TagManager
+import com.day.cq.wcm.api.PageManager
 import spock.lang.Shared
+
+import javax.jcr.Session
 
 class TestingResourceResolverSpec extends AbstractRepositorySpec {
 
@@ -16,6 +20,26 @@ class TestingResourceResolverSpec extends AbstractRepositorySpec {
         content.addNode("two")
 
         session.save()
+    }
+
+    def "adapt to page manager"() {
+        expect:
+        resourceResolver.adaptTo(PageManager)
+    }
+
+    def "adapt to tag manager"() {
+        expect:
+        resourceResolver.adaptTo(TagManager)
+    }
+
+    def "adapt to session"() {
+        expect:
+        resourceResolver.adaptTo(Session)
+    }
+
+    def "adapt to invalid type returns null"() {
+        expect:
+        !resourceResolver.adaptTo(String)
     }
 
     def "get resource"() {

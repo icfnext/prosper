@@ -1,5 +1,7 @@
 package com.citytechinc.cq.testing.resource
 
+import com.day.cq.tagging.TagManager
+import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import org.apache.sling.api.resource.Resource
@@ -102,6 +104,8 @@ class TestingResourceResolver implements ResourceResolver {
             def factory = new PageManagerFactoryImpl()
 
             result = factory.getPageManager(this)
+        } else if (type == TagManager) {
+            result = new JcrTagManagerImpl(this, null, null, "/etc/tags")
         } else if (type == Session) {
             result = session
         } else {
