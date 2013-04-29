@@ -110,6 +110,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jsp-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
             <scope>compile</scope>
@@ -196,12 +201,12 @@
             <artifactId>slf4j-nop</artifactId>
             <version>1.6.4</version>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>org.springframework.test</artifactId>
             <version>3.2.2.RELEASE</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
