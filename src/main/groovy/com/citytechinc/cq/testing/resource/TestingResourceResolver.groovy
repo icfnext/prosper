@@ -68,7 +68,7 @@ class TestingResourceResolver implements ResourceResolver {
 
     @Override
     String map(String resourcePath) {
-        throw new UnsupportedOperationException()
+        resourcePath
     }
 
     @Override
