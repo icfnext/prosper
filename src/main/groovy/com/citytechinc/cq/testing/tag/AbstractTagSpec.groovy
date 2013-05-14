@@ -4,11 +4,35 @@ import com.citytechinc.cq.testing.AbstractRepositorySpec
 import org.springframework.mock.web.MockJspWriter
 
 import javax.servlet.jsp.PageContext
-import javax.servlet.jsp.tagext.TagSupport
 
+/**
+ *
+ */
 abstract class AbstractTagSpec extends AbstractRepositorySpec {
 
-    def mockPageContext(TagSupport tag, StringWriter writer) {
+    def tag
+
+    def writer
+
+    def setup() {
+        tag = createTag()
+        writer = new StringWriter()
+    }
+
+    /**
+     * Instantiate the concrete tag class under test.
+     *
+     * @return tag instance to be tested
+     */
+    abstract def createTag()
+
+    /**
+     * Create a mock page context that writes output to a StringWriter.  The resulting output can be retrieved by
+     * calling <code>getResult()</code>.
+     *
+     * @return mocked page context
+     */
+    def mockPageContext() {
         def pageContext = Mock(PageContext)
         def jspWriter = new MockJspWriter(writer)
 
@@ -17,5 +41,9 @@ abstract class AbstractTagSpec extends AbstractRepositorySpec {
         tag.pageContext = pageContext
 
         pageContext
+    }
+
+    def getResult() {
+        writer.toString()
     }
 }
