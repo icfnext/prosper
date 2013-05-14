@@ -10,7 +10,7 @@ import spock.lang.Specification
  */
 abstract class AbstractRepositorySpec extends Specification {
 
-    public static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
+    static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
     static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt"]
 
@@ -52,11 +52,20 @@ abstract class AbstractRepositorySpec extends Specification {
     }
 
     /**
+     * Remove all non-system nodes to cleanup any test data.  This method would typically be called from a test fixture
+     * method to cleanup content before the entire specification has been executed.
+     */
+    void removeAllNodes() {
+        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.save()
+    }
+
+    /**
      * Assert that a node exists for the given path.
      *
      * @param path node path
      */
-    void assertNodeExists(path) {
+    void assertNodeExists(String path) {
         assert session.nodeExists(path)
     }
 
@@ -64,29 +73,45 @@ abstract class AbstractRepositorySpec extends Specification {
      * Assert that a node exists for the given path and node type.
      *
      * @param path node path
-     * @param type primary node type name
+     * @param primaryNodeTypeName primary node type name
      */
-    void assertNodeExists(path, type) {
+    void assertNodeExists(String path, String primaryNodeTypeName) {
         assert session.nodeExists(path)
 
         def node = session.getNode(path)
 
-        assert node.primaryNodeType.name == type
+        assert node.primaryNodeType.name == primaryNodeTypeName
+    }
+
+    /**
+     * Assert that a node exists for the given path and property map.
+     *
+     * @param path node path
+     * @param properties map of property names and values to verify for the node
+     */
+    void assertNodeExists(String path, Map<String, Object> properties) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        properties.each { k, v ->
+            assert node.get(k) == v
+        }
     }
 
     /**
      * Assert that a node exists for the given path, node type, and property map.
      *
      * @param path node path
-     * @param type primary node type name
+     * @param primaryNodeTypeName primary node type name
      * @param properties map of property names and values to verify for the node
      */
-    void assertNodeExists(path, type, properties) {
+    void assertNodeExists(String path, String primaryNodeTypeName, Map<String, Object> properties) {
         assert session.nodeExists(path)
 
         def node = session.getNode(path)
 
-        assert node.primaryNodeType.name == type
+        assert node.primaryNodeType.name == primaryNodeTypeName
 
         properties.each { k, v ->
             assert node.get(k) == v
