@@ -1,20 +1,23 @@
-package com.citytechinc.cq.testing.mock
+package com.citytechinc.cq.testing.resource
 
+import com.day.cq.tagging.TagManager
+import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 
+import javax.jcr.Node
 import javax.jcr.RepositoryException
 import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
 @SuppressWarnings("deprecation")
-class MockResourceResolver implements ResourceResolver {
+class TestingResourceResolver implements ResourceResolver {
 
     def session
 
-    MockResourceResolver(session) {
+    TestingResourceResolver(session) {
         this.session = session
     }
 
@@ -24,7 +27,7 @@ class MockResourceResolver implements ResourceResolver {
 
         try {
             if (session.nodeExists(path)) {
-                resource = new MockResource(this, session.getNode(path))
+                resource = new TestingResource(this, session.getNode(path))
             }
         } catch (RepositoryException e) {
             // ignore
@@ -35,7 +38,7 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     Resource getResource(Resource base, String path) {
-        getResource("${base.path}/$path")
+        base ? getResource("${base.path}/$path") : null
     }
 
     @Override
@@ -55,17 +58,17 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     Iterator<Resource> listChildren(Resource parent) {
-        throw new UnsupportedOperationException()
+        getChildren(parent).iterator()
     }
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        throw new UnsupportedOperationException()
+        parent.adaptTo(Node).nodes.collect { new TestingResource(this, it) }
     }
 
     @Override
     String map(String resourcePath) {
-        throw new UnsupportedOperationException()
+        resourcePath
     }
 
     @Override
@@ -101,6 +104,8 @@ class MockResourceResolver implements ResourceResolver {
             def factory = new PageManagerFactoryImpl()
 
             result = factory.getPageManager(this)
+        } else if (type == TagManager) {
+            result = new JcrTagManagerImpl(this, null, null, "/etc/tags")
         } else if (type == Session) {
             result = session
         } else {

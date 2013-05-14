@@ -1,4 +1,4 @@
-package com.citytechinc.cq.testing.mock
+package com.citytechinc.cq.testing.resource
 
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.core.impl.PageImpl
@@ -10,13 +10,13 @@ import org.apache.sling.jcr.resource.JcrPropertyMap
 
 import javax.jcr.Node
 
-class MockResource implements Resource {
+class TestingResource implements Resource {
 
     def resourceResolver
 
     def node
 
-    MockResource(resourceResolver, node) {
+    TestingResource(resourceResolver, node) {
         this.resourceResolver = resourceResolver
         this.node = node
     }
@@ -29,7 +29,7 @@ class MockResource implements Resource {
             result = node
         } else if (type == ValueMap) {
             result = new JcrPropertyMap(node)
-        } else if (type == Page && 'cq:Page' == getResourceType()) {
+        } else if (type == Page && "cq:Page" == getResourceType()) {
             result = new PageImpl(this)
         } else {
             result = null
@@ -50,32 +50,40 @@ class MockResource implements Resource {
 
     @Override
     Resource getParent() {
-        node.depth == 0 ? null : new MockResource(resourceResolver, node.parent)
+        node.depth == 0 ? null : new TestingResource(resourceResolver, node.parent)
     }
 
     @Override
     Iterator<Resource> listChildren() {
-        node.nodes.collect { new MockResource(resourceResolver, it) }.iterator()
+        getChildren().iterator()
     }
 
     @Override
     Iterable<Resource> getChildren() {
-        node.nodes.collect { new MockResource(resourceResolver, it) }.iterator()
+        node.nodes.collect { new TestingResource(resourceResolver, it) }
     }
 
     @Override
     Resource getChild(String relPath) {
-        node.hasNode(relPath) ? new MockResource(resourceResolver, node.getNode(relPath)) : null
+        node.hasNode(relPath) ? new TestingResource(resourceResolver, node.getNode(relPath)) : null
     }
 
     @Override
     String getResourceType() {
-        node.get('sling:resourceType') ?: node.primaryNodeType.name
+        def resourceType
+
+        if (node.hasProperty("sling:resourceType")) {
+            resourceType = node.getProperty("sling:resourceType").string
+        } else {
+            resourceType = node.primaryNodeType.name
+        }
+
+        resourceType
     }
 
     @Override
     String getResourceSuperType() {
-        node.get('sling:resourceSuperType')
+        node.hasProperty("sling:resourceSuperType") ? node.getProperty("sling:resourceSuperType").string : null
     }
 
     @Override
