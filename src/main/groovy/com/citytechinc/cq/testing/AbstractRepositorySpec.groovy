@@ -45,6 +45,30 @@ abstract class AbstractRepositorySpec extends Specification {
         repository
     }
 
+    void assertNodeExists(path) {
+        assert session.nodeExists(path)
+    }
+
+    void assertNodeExists(path, type) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        assert node.primaryNodeType.name == type
+    }
+
+    void assertNodeExists(path, type, properties) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        assert node.primaryNodeType.name == type
+
+        properties.each { k, v ->
+            assert node.get(k) == v
+        }
+    }
+
     def registerNodeTypes() {
         session = getRepository().loginAdministrative(null)
 
