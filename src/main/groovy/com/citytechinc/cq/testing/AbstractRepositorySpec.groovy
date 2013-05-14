@@ -1,12 +1,14 @@
 package com.citytechinc.cq.testing
 
+import com.day.cq.commons.jcr.JcrConstants
+import com.day.cq.wcm.api.NameConstants
 import groovy.transform.Synchronized
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import spock.lang.Shared
 import spock.lang.Specification
 
 /**
- * Abstract Spock specification for JCR-based testing.
+ * Abstract Spock specification for JCR testing.
  */
 abstract class AbstractRepositorySpec extends Specification {
 
@@ -94,8 +96,8 @@ abstract class AbstractRepositorySpec extends Specification {
 
         def node = session.getNode(path)
 
-        properties.each { k, v ->
-            assert node.get(k) == v
+        properties.each { name, value ->
+            assert node.get(name) == value
         }
     }
 
@@ -113,8 +115,29 @@ abstract class AbstractRepositorySpec extends Specification {
 
         assert node.primaryNodeType.name == primaryNodeTypeName
 
-        properties.each { k, v ->
-            assert node.get(k) == v
+        properties.each { name, value ->
+            assert node.get(name) == value
+        }
+    }
+
+    /**
+     * Assert that a page exists for the given path and contains the given properties.
+     *
+     * @param path page path
+     * @param properties map of property names and values to verify for the page
+     */
+    void assertPageExists(String path, Map<String, Object> properties) {
+        assert session.nodeExists(path)
+
+        def pageNode = session.getNode(path)
+
+        assert pageNode.primaryNodeType.name == NameConstants.NT_PAGE
+        assert pageNode.hasNode(JcrConstants.JCR_CONTENT)
+
+        def contentNode = pageNode.getNode(JcrConstants.JCR_CONTENT)
+
+        properties.each { name, value ->
+            assert contentNode.get(name) == value
         }
     }
 
