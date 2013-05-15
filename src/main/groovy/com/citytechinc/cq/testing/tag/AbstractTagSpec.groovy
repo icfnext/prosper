@@ -43,6 +43,13 @@ abstract class AbstractTagSpec extends AbstractRepositorySpec {
         pageContext
     }
 
+    /**
+     * Get the result of the tag execution (i.e. the contents of the <code>StringWriter</code> containing the tag
+     * output).  This is typically called after executing <code>doEndTag()</code> or other tag methods that write to the
+     * page context output stream.
+     *
+     * @return string output
+     */
     def getResult() {
         writer.toString()
     }
