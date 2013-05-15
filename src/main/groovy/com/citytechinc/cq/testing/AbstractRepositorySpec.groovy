@@ -36,23 +36,6 @@ abstract class AbstractRepositorySpec extends Specification {
         session.logout()
     }
 
-    @Synchronized
-    def getRepository() {
-        if (!repository) {
-            RepositoryUtil.startRepository()
-
-            repository = RepositoryUtil.getRepository()
-
-            registerNodeTypes()
-
-            addShutdownHook {
-                RepositoryUtil.stopRepository()
-            }
-        }
-
-        repository
-    }
-
     /**
      * Remove all non-system nodes to cleanup any test data.  This method would typically be called from a test fixture
      * method to cleanup content before the entire specification has been executed.
@@ -141,7 +124,24 @@ abstract class AbstractRepositorySpec extends Specification {
         }
     }
 
-    def registerNodeTypes() {
+    @Synchronized
+    private def getRepository() {
+        if (!repository) {
+            RepositoryUtil.startRepository()
+
+            repository = RepositoryUtil.getRepository()
+
+            registerNodeTypes()
+
+            addShutdownHook {
+                RepositoryUtil.stopRepository()
+            }
+        }
+
+        repository
+    }
+
+    private def registerNodeTypes() {
         session = getRepository().loginAdministrative(null)
 
         NODE_TYPES.each { type ->
