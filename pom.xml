@@ -193,6 +193,40 @@
         </plugins>
     </build>
 
+    <profiles>
+        <!-- activate when deploying GitHub site -->
+        <profile>
+            <id>github-site</id>
+            <activation>
+                <property>
+                    <name>github-site</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>site-maven-plugin</artifactId>
+                        <version>0.8</version>
+                        <configuration>
+                            <message>site for ${project.version}</message>
+                            <server>github</server>
+                            <merge>true</merge>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>site</phase>
+                                <goals>
+                                    <goal>site</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <!-- inherited -->
         <dependency>
