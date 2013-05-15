@@ -8,7 +8,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 /**
- * Abstract Spock specification for JCR testing.
+ * Spock specification for JCR testing.
  */
 abstract class AbstractRepositorySpec extends Specification {
 

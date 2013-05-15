@@ -6,7 +6,7 @@ import org.springframework.mock.web.MockJspWriter
 import javax.servlet.jsp.PageContext
 
 /**
- *
+ * Spock specification for testing tag handlers.
  */
 abstract class AbstractTagSpec extends AbstractRepositorySpec {
 
