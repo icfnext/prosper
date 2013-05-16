@@ -170,13 +170,11 @@
                         <plugin>
                             <artifactId>maven-project-info-reports-plugin</artifactId>
                             <version>2.6</version>
-                            <configuration>
-                                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                            </configuration>
                             <reportSets>
                                 <reportSet>
                                     <reports>
                                         <report>index</report>
+                                        <report>license</report>
                                         <report>scm</report>
                                         <report>summary</report>
                                     </reports>
