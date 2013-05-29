@@ -1,6 +1,6 @@
 package com.citytechinc.cq.groovy.testing.tag
 
-import com.citytechinc.cq.groovy.testing.AbstractRepositorySpec
+import com.citytechinc.cq.groovy.testing.AbstractSlingRepositorySpec
 import org.springframework.mock.web.MockJspWriter
 
 import javax.servlet.jsp.PageContext
@@ -8,7 +8,7 @@ import javax.servlet.jsp.PageContext
 /**
  * Spock specification for testing tag handlers.
  */
-abstract class AbstractTagSpec extends AbstractRepositorySpec {
+abstract class AbstractTagSpec extends AbstractSlingRepositorySpec {
 
     def tag
 

@@ -1,4 +1,4 @@
-# CITYTECH, Inc. CQ5 Testing Tools
+# CITYTECH, Inc. CQ Groovy Testing Tools
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 

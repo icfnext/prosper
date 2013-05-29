@@ -11,6 +11,17 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     @Shared resourceResolver
 
     def setupSpec() {
-        resourceResolver = new TestingResourceResolver(session)
+        def adapters = addAdapters()
+
+        resourceResolver = new TestingResourceResolver(session) {
+            @Override
+            <AdapterType> AdapterType adaptTo(Class<AdapterType> clazz) {
+                def found = adapters.find { it.key == clazz }
+
+                found ? (AdapterType) found.value.call(this) : super.adaptTo(clazz)
+            }
+        }
     }
+
+    abstract Map<Class, Closure> addAdapters()
 }
