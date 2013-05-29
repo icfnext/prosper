@@ -1,6 +1,6 @@
-package com.citytechinc.cq.testing.resource
+package com.citytechinc.cq.groovy.testing.resource
 
-import com.citytechinc.cq.testing.AbstractRepositorySpec
+import com.citytechinc.cq.groovy.testing.AbstractRepositorySpec
 import spock.lang.Shared
 
 class TestingResourceSpec extends AbstractRepositorySpec {

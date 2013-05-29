@@ -6,14 +6,14 @@
     <parent>
         <groupId>com.citytechinc.cq</groupId>
         <artifactId>parent</artifactId>
-        <version>5.6.3-SNAPSHOT</version>
+        <version>5.6.4</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cq5-testing</artifactId>
+    <artifactId>cq-groovy-testing</artifactId>
     <packaging>jar</packaging>
     <version>0.2.3-SNAPSHOT</version>
-    <name>CITYTECH, Inc. CQ5 Testing Tools</name>
+    <name>CITYTECH, Inc. CQ Groovy Testing Tools</name>
     <description>Testing module for Adobe CQ5 projects containing a Spock specification using an in-memory
         repository for JCR session-based testing. Also includes basic Sling resource implementations for testing
         interactions between CQ objects.
@@ -24,7 +24,7 @@
         <url>http://www.citytechinc.com</url>
     </organization>
 
-    <url>http://citytechinc.github.io/cq5-testing</url>
+    <url>http://citytechinc.github.io/cq-groovy-testing</url>
 
     <licenses>
         <license>
@@ -35,9 +35,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/cq5-testing.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/cq5-testing.git</developerConnection>
-        <url>https://github.com/Citytechinc/cq5-testing</url>
+        <connection>scm:git:git@github.com:Citytechinc/cq-groovy-testing.git</connection>
+        <developerConnection>scm:git:git@github.com:Citytechinc/cq-groovy-testing.git</developerConnection>
+        <url>https://github.com/Citytechinc/cq-groovy-testing</url>
     </scm>
 
     <repositories>
@@ -230,72 +230,58 @@
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jsp-api</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-tagging</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-api</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-core</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-commons</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-msm-api</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-search</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.granite</groupId>
             <artifactId>com.adobe.granite.replication.core</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.resource</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <!-- additional dependencies not inherited from parent -->

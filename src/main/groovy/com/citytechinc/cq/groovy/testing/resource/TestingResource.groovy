@@ -1,4 +1,4 @@
-package com.citytechinc.cq.testing.resource
+package com.citytechinc.cq.groovy.testing.resource
 
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.core.impl.PageImpl

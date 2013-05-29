@@ -1,6 +1,6 @@
-package com.citytechinc.cq.testing.resource
+package com.citytechinc.cq.groovy.testing.resource
 
-import com.citytechinc.cq.testing.AbstractRepositorySpec
+import com.citytechinc.cq.groovy.testing.AbstractRepositorySpec
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.PageManager
 import spock.lang.Shared

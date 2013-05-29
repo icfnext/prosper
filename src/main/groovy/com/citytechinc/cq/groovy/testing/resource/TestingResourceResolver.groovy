@@ -1,4 +1,4 @@
-package com.citytechinc.cq.testing.resource
+package com.citytechinc.cq.groovy.testing.resource
 
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl

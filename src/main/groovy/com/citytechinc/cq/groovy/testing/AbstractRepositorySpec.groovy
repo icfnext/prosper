@@ -1,4 +1,4 @@
-package com.citytechinc.cq.testing
+package com.citytechinc.cq.groovy.testing
 
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants

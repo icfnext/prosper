@@ -1,6 +1,6 @@
-package com.citytechinc.cq.testing
+package com.citytechinc.cq.groovy.testing
 
-import com.citytechinc.cq.testing.resource.TestingResourceResolver
+import com.citytechinc.cq.groovy.testing.resource.TestingResourceResolver
 import spock.lang.Shared
 
 /**
