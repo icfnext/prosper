@@ -23,5 +23,12 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
         }
     }
 
-    abstract Map<Class, Closure> addAdapters()
+    /**
+     * Implementing specs can override this method to add adapters to the Sling <code>ResourceResolver</code> at runtime.
+     *
+     * @return map of classes to their adapter functions
+     */
+    Map<Class, Closure> addAdapters() {
+
+    }
 }
