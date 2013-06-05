@@ -27,6 +27,9 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
         }
     }
 
+    /**
+     * Implementing specs should override this method to add adapters to the Sling <code>ResourceResolver</code> at runtime.
+     */
     abstract void addAdapters()
 
     void addAdapter(Class type, Closure c) {
