@@ -1,18 +1,18 @@
-package com.citytechinc.cq.groovy.testing.resource
+package com.citytechinc.cq.groovy.testing.mocks.resource
 
-import com.citytechinc.cq.groovy.testing.AbstractRepositorySpec
+import com.citytechinc.cq.groovy.testing.specs.AbstractRepositorySpec
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.PageManager
 import spock.lang.Shared
 
 import javax.jcr.Session
 
-class TestingResourceResolverSpec extends AbstractRepositorySpec {
+class MockResourceResolverSpec extends AbstractRepositorySpec {
 
     @Shared resourceResolver
 
     def setupSpec() {
-        resourceResolver = new TestingResourceResolver(session)
+        resourceResolver = new MockResourceResolver(session)
 
         def content = session.rootNode.addNode("content")
 

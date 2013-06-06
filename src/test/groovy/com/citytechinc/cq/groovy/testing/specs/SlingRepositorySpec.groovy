@@ -1,4 +1,4 @@
-package com.citytechinc.cq.groovy.testing
+package com.citytechinc.cq.groovy.testing.specs
 
 class SlingRepositorySpec extends AbstractSlingRepositorySpec {
 

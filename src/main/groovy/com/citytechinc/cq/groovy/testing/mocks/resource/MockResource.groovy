@@ -1,4 +1,4 @@
-package com.citytechinc.cq.groovy.testing.resource
+package com.citytechinc.cq.groovy.testing.mocks.resource
 
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.core.impl.PageImpl
@@ -10,13 +10,13 @@ import org.apache.sling.jcr.resource.JcrPropertyMap
 
 import javax.jcr.Node
 
-class TestingResource implements Resource {
+class MockResource implements Resource {
 
     def resourceResolver
 
     def node
 
-    TestingResource(resourceResolver, node) {
+    MockResource(resourceResolver, node) {
         this.resourceResolver = resourceResolver
         this.node = node
     }
@@ -50,7 +50,7 @@ class TestingResource implements Resource {
 
     @Override
     Resource getParent() {
-        node.depth == 0 ? null : new TestingResource(resourceResolver, node.parent)
+        node.depth == 0 ? null : new MockResource(resourceResolver, node.parent)
     }
 
     @Override
@@ -60,12 +60,12 @@ class TestingResource implements Resource {
 
     @Override
     Iterable<Resource> getChildren() {
-        node.nodes.collect { new TestingResource(resourceResolver, it) }
+        node.nodes.collect { new MockResource(resourceResolver, it) }
     }
 
     @Override
     Resource getChild(String relPath) {
-        node.hasNode(relPath) ? new TestingResource(resourceResolver, node.getNode(relPath)) : null
+        node.hasNode(relPath) ? new MockResource(resourceResolver, node.getNode(relPath)) : null
     }
 
     @Override

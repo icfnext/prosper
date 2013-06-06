@@ -1,4 +1,4 @@
-package com.citytechinc.cq.groovy.testing.resource
+package com.citytechinc.cq.groovy.testing.mocks.resource
 
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
@@ -13,11 +13,11 @@ import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
 @SuppressWarnings("deprecation")
-class TestingResourceResolver implements ResourceResolver {
+class MockResourceResolver implements ResourceResolver {
 
     def session
 
-    TestingResourceResolver(session) {
+    MockResourceResolver(session) {
         this.session = session
     }
 
@@ -27,7 +27,7 @@ class TestingResourceResolver implements ResourceResolver {
 
         try {
             if (session.nodeExists(path)) {
-                resource = new TestingResource(this, session.getNode(path))
+                resource = new MockResource(this, session.getNode(path))
             }
         } catch (RepositoryException e) {
             // ignore
@@ -63,7 +63,7 @@ class TestingResourceResolver implements ResourceResolver {
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        parent.adaptTo(Node).nodes.collect { new TestingResource(this, it) }
+        parent.adaptTo(Node).nodes.collect { new MockResource(this, it) }
     }
 
     @Override

@@ -1,6 +1,6 @@
-package com.citytechinc.cq.groovy.testing.tag
+package com.citytechinc.cq.groovy.testing.specs.tag
 
-import com.citytechinc.cq.groovy.testing.AbstractSlingRepositorySpec
+import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
 import org.springframework.mock.web.MockJspWriter
 
 import javax.servlet.jsp.PageContext
