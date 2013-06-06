@@ -2,6 +2,7 @@ package com.citytechinc.cq.groovy.testing.builders
 
 import com.citytechinc.cq.groovy.testing.mocks.request.MockSlingHttpServletRequest
 import com.google.common.collect.LinkedHashMultimap
+import com.google.common.collect.SetMultimap
 
 class RequestBuilder {
 
@@ -25,7 +26,7 @@ class RequestBuilder {
     }
 
     def build() {
-        def selectorString = buildSelectorString()
+        def selectorString = buildSelectorString() ?: null
         def queryString = buildQueryString()
 
         def request = new MockSlingHttpServletRequest(resourceResolver, path, selectorString, extension, suffix,
@@ -74,8 +75,20 @@ class RequestBuilder {
         builder.toString()
     }
 
+    RequestBuilder addParameters(SetMultimap<String, String> parameters) {
+        this.parameters.putAll(parameters)
+
+        this
+    }
+
     RequestBuilder addParameter(String name, String value) {
         parameters.put(name, value)
+
+        this
+    }
+
+    RequestBuilder addSelectors(List<String> selectors) {
+        this.selectors.addAll(selectors)
 
         this
     }
