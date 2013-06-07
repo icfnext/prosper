@@ -17,8 +17,18 @@ class MockResourceResolver implements ResourceResolver {
 
     def session
 
+    def resourceResolverAdapters
+
+    def resourceAdapters
+
     MockResourceResolver(session) {
+        this(session, [:], [:])
+    }
+
+    MockResourceResolver(session, resourceResolverAdapters, resourceAdapters) {
         this.session = session
+        this.resourceResolverAdapters = resourceResolverAdapters
+        this.resourceAdapters = resourceAdapters
     }
 
     @Override
@@ -27,7 +37,7 @@ class MockResourceResolver implements ResourceResolver {
 
         try {
             if (session.nodeExists(path)) {
-                resource = new MockResource(this, session.getNode(path))
+                resource = new MockResource(this, session.getNode(path), resourceAdapters)
             }
         } catch (RepositoryException e) {
             // ignore
@@ -63,7 +73,7 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        parent.adaptTo(Node).nodes.collect { new MockResource(this, it) }
+        parent.adaptTo(Node).nodes.collect { new MockResource(this, it, resourceAdapters) }
     }
 
     @Override
@@ -109,7 +119,9 @@ class MockResourceResolver implements ResourceResolver {
         } else if (type == Session) {
             result = session
         } else {
-            result = null
+            def found = resourceResolverAdapters.find { it.key == type }
+
+            result = found ? (AdapterType) found.value.call(this) : null
         }
 
         result

@@ -1,4 +1,5 @@
 package com.citytechinc.cq.groovy.testing.builders
+
 import com.citytechinc.cq.groovy.testing.mocks.MockSlingHttpServletRequest
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
@@ -30,6 +31,46 @@ class RequestBuilder {
         this.path = path
     }
 
+    void path(String path) {
+        this.path = path
+    }
+
+    void method(String method) {
+        this.method = method
+    }
+
+    void suffix(String suffix) {
+        this.suffix = suffix
+    }
+
+    void extension(String extension) {
+        this.extension = extension
+    }
+
+    void selectors(List<String> selectors) {
+        this.selectors.addAll(selectors)
+    }
+
+    void parameters(Map<String, List<String>> parameters) {
+        parameters.each { name, values ->
+            values.each { value ->
+                this.parameters.put(name, value)
+            }
+        }
+    }
+
+    void parameters(SetMultimap<String, String> parameters) {
+        this.parameters.putAll(parameters)
+    }
+
+    void attributes(Map<String, Object> attributes) {
+        this.attributes.putAll(attributes)
+    }
+
+    def build() {
+        build(null)
+    }
+
     def build(Closure closure) {
         if (closure) {
             closure.delegate = this
@@ -37,35 +78,15 @@ class RequestBuilder {
             closure()
         }
 
-        buildInternal()
+        buildRequest()
     }
 
-    void parameters(Map<String, List<String>> map) {
-        map.each { name, values ->
-            values.each { value ->
-                parameters.put(name, value)
-            }
-        }
-    }
-
-    void parameters(SetMultimap<String, String> map) {
-        parameters.putAll(map)
-    }
-
-    void attributes(Map<String, Object> map) {
-        attributes.putAll(map)
-    }
-
-    private def buildInternal() {
+    private def buildRequest() {
         def selectorString = buildSelectorString() ?: null
         def queryString = buildQueryString()
 
         def request = new MockSlingHttpServletRequest(resourceResolver, path, method, selectorString, extension, suffix,
-            queryString, parameters)
-
-        attributes.each { name, value ->
-            request.setAttribute(name, value)
-        }
+            queryString, parameters, attributes)
 
         request
     }
@@ -104,11 +125,5 @@ class RequestBuilder {
         }
 
         builder.toString()
-    }
-
-    def methodMissing(String name, arguments) {
-        if (arguments.length == 1) {
-            this."$name" = arguments[0]
-        }
     }
 }

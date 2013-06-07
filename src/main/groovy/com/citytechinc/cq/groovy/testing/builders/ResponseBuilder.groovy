@@ -12,6 +12,18 @@ class ResponseBuilder {
 
     def mediaType = MediaType.HTML_UTF_8
 
+    void status(int status) {
+        this.status = status
+    }
+
+    void mediaType(MediaType mediaType) {
+        this.mediaType = mediaType
+    }
+
+    def build() {
+        build(null)
+    }
+
     def build(Closure closure) {
         if (closure) {
             closure.delegate = this
@@ -19,10 +31,10 @@ class ResponseBuilder {
             closure()
         }
 
-        buildInternal()
+        buildResponse()
     }
 
-    private def buildInternal() {
+    private def buildResponse() {
         def contentType = mediaType.withoutParameters().toString()
 
         def charset = mediaType.charset()
@@ -35,11 +47,5 @@ class ResponseBuilder {
         }
 
         new MockSlingHttpServletResponse(status, contentType, encoding)
-    }
-
-    def methodMissing(String name, arguments) {
-        if (arguments.length == 1) {
-            this."$name" = arguments[0]
-        }
     }
 }

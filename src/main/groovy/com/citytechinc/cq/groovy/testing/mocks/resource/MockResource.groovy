@@ -16,9 +16,12 @@ class MockResource implements Resource {
 
     def node
 
-    MockResource(resourceResolver, node) {
+    def adapters
+
+    MockResource(resourceResolver, node, adapters) {
         this.resourceResolver = resourceResolver
         this.node = node
+        this.adapters = adapters
     }
 
     @Override
@@ -32,7 +35,9 @@ class MockResource implements Resource {
         } else if (type == Page && "cq:Page" == getResourceType()) {
             result = new PageImpl(this)
         } else {
-            result = null
+            def found = adapters.find { it.key == type }
+
+            result = found ? (AdapterType) found.value.call(this) : null
         }
 
         result
@@ -50,7 +55,7 @@ class MockResource implements Resource {
 
     @Override
     Resource getParent() {
-        node.depth == 0 ? null : new MockResource(resourceResolver, node.parent)
+        node.depth == 0 ? null : new MockResource(resourceResolver, node.parent, adapters)
     }
 
     @Override
@@ -60,12 +65,12 @@ class MockResource implements Resource {
 
     @Override
     Iterable<Resource> getChildren() {
-        node.nodes.collect { new MockResource(resourceResolver, it) }
+        node.nodes.collect { new MockResource(resourceResolver, it, adapters) }
     }
 
     @Override
     Resource getChild(String relPath) {
-        node.hasNode(relPath) ? new MockResource(resourceResolver, node.getNode(relPath)) : null
+        node.hasNode(relPath) ? new MockResource(resourceResolver, node.getNode(relPath), adapters) : null
     }
 
     @Override

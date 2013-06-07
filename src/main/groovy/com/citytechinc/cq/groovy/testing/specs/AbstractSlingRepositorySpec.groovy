@@ -11,27 +11,30 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
 
     @Shared resourceResolver
 
-    @Shared adapters = [:]
+    @Shared resourceResolverAdapters = [:]
+
+    @Shared resourceAdapters = [:]
 
     def setupSpec() {
-        addAdapters()
+        addResourceResolverAdapters()
+        addResourceAdapters()
 
-        def sharedAdapters = adapters
-
-        resourceResolver = new MockResourceResolver(session) {
-            @Override
-            <AdapterType> AdapterType adaptTo(Class<AdapterType> clazz) {
-                def found = sharedAdapters.find { it.key == clazz }
-
-                found ? (AdapterType) found.value.call(this) : super.adaptTo(clazz)
-            }
-        }
+        resourceResolver = new MockResourceResolver(session, resourceResolverAdapters, resourceAdapters)
     }
 
     /**
-     * Implementing specs should override this method to add adapters to the Sling <code>ResourceResolver</code> at runtime.
+     * Implementing specs should override this method to add adapters to the Sling <code>ResourceResolver</code> at
+     * runtime.
      */
-    void addAdapters() {
+    void addResourceResolverAdapters() {
+
+    }
+
+    /**
+     * Implementing specs should override this method to add adapters to Sling <code>Resource</code> instances at
+     * runtime.
+     */
+    void addResourceAdapters() {
 
     }
 
@@ -39,17 +42,28 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
      * Add an adapter type with an instantiation function.
      *
      * @param type adapter type
-     * @param c closure to instantiate the provided adapter type; closure may contain a <code>ResourceResolver</code> argument
+     * @param c closure to instantiate the provided adapter type; closure may contain a <code>ResourceResolver</code>
+     * argument
      */
-    void addAdapter(Class type, Closure c) {
-        adapters[type] = c
+    void addResourceResolverAdapter(Class type, Closure c) {
+        resourceResolverAdapters[type] = c
     }
 
     /**
-     * Get a request builders for the given path.
      *
-     * @param path JCR path for request
-     * @return request builders instance for the given resource path
+     * @param type adapter type
+     * @param c closure to instantiate the provided adapter type; closure may contain a <code>Resource</code>
+     * argument
+     */
+    void addResourceAdapter(Class type, Closure c) {
+        resourceAdapters[type] = c
+    }
+
+    /**
+     * Get a request builder.
+     *
+     * @param path content path
+     * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder(String path) {
         new RequestBuilder(resourceResolver, path)

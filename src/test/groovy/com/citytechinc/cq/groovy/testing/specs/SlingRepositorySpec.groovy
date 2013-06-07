@@ -3,12 +3,22 @@ package com.citytechinc.cq.groovy.testing.specs
 class SlingRepositorySpec extends AbstractSlingRepositorySpec {
 
     @Override
-    void addAdapters() {
-        addAdapter(String, { "hello!" })
+    void addResourceAdapters() {
+        addResourceAdapter(String, { "hello" })
     }
 
-    def "added adapter"() {
+    @Override
+    void addResourceResolverAdapters() {
+        addResourceResolverAdapter(String, { "world" })
+    }
+
+    def "added resource adapter"() {
         expect:
-        resourceResolver.adaptTo(String) == "hello!"
+        resourceResolver.getResource("/").adaptTo(String) == "hello"
+    }
+
+    def "added resource resolver adapter"() {
+        expect:
+        resourceResolver.adaptTo(String) == "world"
     }
 }
