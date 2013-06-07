@@ -1,7 +1,6 @@
 package com.citytechinc.cq.groovy.testing.builders
 
 import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
-import com.google.common.collect.LinkedHashMultimap
 import spock.lang.Unroll
 
 class RequestBuilderSpec extends AbstractSlingRepositorySpec {
@@ -11,105 +10,84 @@ class RequestBuilderSpec extends AbstractSlingRepositorySpec {
         session.save()
     }
 
-    def "build basic request"() {
+    def "build request with no arguments"() {
         setup:
-        def builder = new RequestBuilder(resourceResolver, "/content")
+        def request = new RequestBuilder(resourceResolver).build()
 
-        def request = builder.build()
         def requestPathInfo = request.requestPathInfo
 
         expect:
-        request.resource.path == "/content"
+        request.resource.path == "/"
+        request.method == "GET"
         request.queryString == ""
         !request.requestParameterMap
         !requestPathInfo.selectorString
         requestPathInfo.extension == ""
         requestPathInfo.suffix == ""
-        requestPathInfo.resourcePath == "/content"
+    }
+
+    def "build request"() {
+        setup:
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content"
+        }
+
+        expect:
+        request.resource.path == "/content"
     }
 
     def "build complex request"() {
         setup:
-        def builder = new RequestBuilder(resourceResolver, "/content")
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content"
+            method testMethod
+            suffix testSuffix
+            extension testExtension
+        }
 
-        builder.setExtension(extension)
-        builder.setSuffix(suffix)
-
-        def requestPathInfo = builder.build().requestPathInfo
+        def requestPathInfo = request.requestPathInfo
 
         expect:
-        requestPathInfo.extension == extension
-        requestPathInfo.suffix == suffix
+        request.method == testMethod
+        requestPathInfo.extension == testExtension
+        requestPathInfo.suffix == testSuffix
 
         where:
-        extension | suffix
-        ""        | ""
-        "html"    | "/a/b"
-    }
-
-    @Unroll
-    def "build request with selector"() {
-        setup:
-        def builder = new RequestBuilder(resourceResolver, "/content")
-
-        when:
-        builder.addSelector(selector)
-
-        and:
-        def requestPathInfo = builder.build().requestPathInfo
-
-        then:
-        selectors.equals(requestPathInfo.selectors)
-        requestPathInfo.selectorString == selectorString
-
-        where:
-        selector | selectors | selectorString
-        ""       | []        | null
-        "a"      | ["a"]     | "a"
+        testMethod | testExtension | testSuffix
+        "GET"      | ""            | ""
+        "POST"     | "html"        | "/a/b"
     }
 
     @Unroll
     def "build request with selectors"() {
         setup:
-        def builder = new RequestBuilder(resourceResolver, "/content")
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content"
+            selectors selectorList
+        }
 
-        when:
-        builder.addSelectors(selectors)
+        def requestPathInfo = request.requestPathInfo
 
-        and:
-        def requestPathInfo = builder.build().requestPathInfo
-
-        then:
-        requestPathInfo.selectors as List == selectors
+        expect:
+        requestPathInfo.selectors as List == selectorList
         requestPathInfo.selectorString == selectorString
 
         where:
-        selectors  | selectorString
-        []         | null
-        ["a"]      | "a"
-        ["a", "b"] | "a.b"
+        selectorList | selectorString
+        []           | null
+        ["a"]        | "a"
+        ["a", "b"]   | "a.b"
     }
 
     @Unroll
     def "build request with parameters"() {
         setup:
-        def builder = new RequestBuilder(resourceResolver, "/content")
-
-        when:
-        def parameters = LinkedHashMultimap.create()
-
-        map.each { name, values ->
-            values.each { value ->
-                parameters.put(name, value)
-            }
+        def request = new RequestBuilder(resourceResolver).build {
+            path: "/content"
+            parameters map
         }
 
-        builder.addParameters(parameters)
-
-        and:
-        def request = builder.build()
-
-        then:
+        expect:
         request.queryString == queryString
 
         where:
@@ -122,16 +100,14 @@ class RequestBuilderSpec extends AbstractSlingRepositorySpec {
 
     def "build request with attributes"() {
         setup:
-        def builder = new RequestBuilder(resourceResolver, "/content")
+        def attributesMap = ["a": "1", "b": BigDecimal.ZERO]
 
-        when:
-        builder.addAttribute("a", "1")
-        builder.addAttribute("b", BigDecimal.ZERO)
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content"
+            attributes attributesMap
+        }
 
-        and:
-        def request = builder.build()
-
-        then:
+        expect:
         request.getAttribute("a") == "1"
         request.getAttribute("b") == BigDecimal.ZERO
     }

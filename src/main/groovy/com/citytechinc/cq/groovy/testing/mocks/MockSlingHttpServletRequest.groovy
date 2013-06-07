@@ -1,5 +1,6 @@
-package com.citytechinc.cq.groovy.testing.mocks.request
+package com.citytechinc.cq.groovy.testing.mocks
 
+import com.citytechinc.cq.groovy.testing.mocks.request.MockRequestParameterMap
 import com.google.common.collect.SetMultimap
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.request.RequestDispatcherOptions
@@ -31,8 +32,11 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     def attributes = [:]
 
-    MockSlingHttpServletRequest(ResourceResolver resourceResolver, String path, String selectorString,
+    def method
+
+    MockSlingHttpServletRequest(ResourceResolver resourceResolver, String path, String method, String selectorString,
         String extension, String suffix, String queryString, SetMultimap<String, String> parameters) {
+        this.method = method
         this.resourceResolver = resourceResolver
         this.queryString = queryString
 
@@ -159,7 +163,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     @Override
     String getMethod() {
-        throw new UnsupportedOperationException()
+        method
     }
 
     @Override

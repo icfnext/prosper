@@ -1,6 +1,5 @@
 package com.citytechinc.cq.groovy.testing.builders
-
-import com.citytechinc.cq.groovy.testing.mocks.request.MockSlingHttpServletRequest
+import com.citytechinc.cq.groovy.testing.mocks.MockSlingHttpServletRequest
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
 
@@ -14,22 +13,54 @@ class RequestBuilder {
 
     def resourceResolver
 
-    def path
+    def path = "/"
+
+    def method = "GET"
 
     def suffix = ""
 
     def extension = ""
+
+    RequestBuilder(resourceResolver) {
+        this.resourceResolver = resourceResolver
+    }
 
     RequestBuilder(resourceResolver, path) {
         this.resourceResolver = resourceResolver
         this.path = path
     }
 
-    def build() {
+    def build(Closure closure) {
+        if (closure) {
+            closure.delegate = this
+            closure.resolveStrategy = Closure.DELEGATE_ONLY
+            closure()
+        }
+
+        buildInternal()
+    }
+
+    void parameters(Map<String, List<String>> map) {
+        map.each { name, values ->
+            values.each { value ->
+                parameters.put(name, value)
+            }
+        }
+    }
+
+    void parameters(SetMultimap<String, String> map) {
+        parameters.putAll(map)
+    }
+
+    void attributes(Map<String, Object> map) {
+        attributes.putAll(map)
+    }
+
+    private def buildInternal() {
         def selectorString = buildSelectorString() ?: null
         def queryString = buildQueryString()
 
-        def request = new MockSlingHttpServletRequest(resourceResolver, path, selectorString, extension, suffix,
+        def request = new MockSlingHttpServletRequest(resourceResolver, path, method, selectorString, extension, suffix,
             queryString, parameters)
 
         attributes.each { name, value ->
@@ -75,45 +106,9 @@ class RequestBuilder {
         builder.toString()
     }
 
-    RequestBuilder addParameters(SetMultimap<String, String> parameters) {
-        this.parameters.putAll(parameters)
-
-        this
-    }
-
-    RequestBuilder addParameter(String name, String value) {
-        parameters.put(name, value)
-
-        this
-    }
-
-    RequestBuilder addSelectors(List<String> selectors) {
-        this.selectors.addAll(selectors)
-
-        this
-    }
-
-    RequestBuilder addSelector(String selector) {
-        selectors.add(selector)
-
-        this
-    }
-
-    RequestBuilder addAttribute(String name, Object value) {
-        attributes[name] = value
-
-        this
-    }
-
-    RequestBuilder setSuffix(suffix) {
-        this.suffix = suffix
-
-        this
-    }
-
-    RequestBuilder setExtension(extension) {
-        this.extension = extension
-
-        this
+    def methodMissing(String name, arguments) {
+        if (arguments.length == 1) {
+            this."$name" = arguments[0]
+        }
     }
 }
