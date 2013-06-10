@@ -1,5 +1,6 @@
-package com.citytechinc.cq.testing.resource
+package com.citytechinc.cq.groovy.testing.mocks.resource
 
+import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.core.impl.PageImpl
 import org.apache.sling.api.resource.Resource
@@ -7,18 +8,22 @@ import org.apache.sling.api.resource.ResourceMetadata
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
 import org.apache.sling.jcr.resource.JcrPropertyMap
+import org.apache.sling.jcr.resource.JcrResourceConstants
 
 import javax.jcr.Node
 
-class TestingResource implements Resource {
+class MockResource implements Resource {
 
     def resourceResolver
 
     def node
 
-    TestingResource(resourceResolver, node) {
+    def adapters
+
+    MockResource(resourceResolver, node, adapters) {
         this.resourceResolver = resourceResolver
         this.node = node
+        this.adapters = adapters
     }
 
     @Override
@@ -29,10 +34,12 @@ class TestingResource implements Resource {
             result = node
         } else if (type == ValueMap) {
             result = new JcrPropertyMap(node)
-        } else if (type == Page && "cq:Page" == getResourceType()) {
+        } else if (type == Page && NameConstants.NT_PAGE == getResourceType()) {
             result = new PageImpl(this)
         } else {
-            result = null
+            def found = adapters.find { it.key == type }
+
+            result = found ? (AdapterType) found.value.call(this) : null
         }
 
         result
@@ -50,7 +57,7 @@ class TestingResource implements Resource {
 
     @Override
     Resource getParent() {
-        node.depth == 0 ? null : new TestingResource(resourceResolver, node.parent)
+        node.depth == 0 ? null : new MockResource(resourceResolver, node.parent, adapters)
     }
 
     @Override
@@ -60,20 +67,20 @@ class TestingResource implements Resource {
 
     @Override
     Iterable<Resource> getChildren() {
-        node.nodes.collect { new TestingResource(resourceResolver, it) }
+        node.nodes.collect { new MockResource(resourceResolver, it, adapters) }
     }
 
     @Override
     Resource getChild(String relPath) {
-        node.hasNode(relPath) ? new TestingResource(resourceResolver, node.getNode(relPath)) : null
+        node.hasNode(relPath) ? new MockResource(resourceResolver, node.getNode(relPath), adapters) : null
     }
 
     @Override
     String getResourceType() {
         def resourceType
 
-        if (node.hasProperty("sling:resourceType")) {
-            resourceType = node.getProperty("sling:resourceType").string
+        if (node.hasProperty(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY)) {
+            resourceType = node.getProperty(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY).string
         } else {
             resourceType = node.primaryNodeType.name
         }
@@ -83,7 +90,7 @@ class TestingResource implements Resource {
 
     @Override
     String getResourceSuperType() {
-        node.hasProperty("sling:resourceSuperType") ? node.getProperty("sling:resourceSuperType").string : null
+        node.hasProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY) ? node.getProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY).string : null
     }
 
     @Override

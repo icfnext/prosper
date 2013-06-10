@@ -1,4 +1,4 @@
-package com.citytechinc.cq.testing
+package com.citytechinc.cq.groovy.testing.specs
 
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
@@ -31,8 +31,8 @@ abstract class AbstractRepositorySpec extends Specification {
      * Remove all non-system nodes to cleanup any test data and logout of the JCR session.
      */
     def cleanupSpec() {
-        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
-        session.save()
+        removeAllNodes()
+
         session.logout()
     }
 

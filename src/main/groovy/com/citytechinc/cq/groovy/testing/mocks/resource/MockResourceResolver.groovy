@@ -1,4 +1,4 @@
-package com.citytechinc.cq.testing.resource
+package com.citytechinc.cq.groovy.testing.mocks.resource
 
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
@@ -13,12 +13,22 @@ import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
 @SuppressWarnings("deprecation")
-class TestingResourceResolver implements ResourceResolver {
+class MockResourceResolver implements ResourceResolver {
 
     def session
 
-    TestingResourceResolver(session) {
+    def resourceResolverAdapters
+
+    def resourceAdapters
+
+    MockResourceResolver(session) {
+        this(session, [:], [:])
+    }
+
+    MockResourceResolver(session, resourceResolverAdapters, resourceAdapters) {
         this.session = session
+        this.resourceResolverAdapters = resourceResolverAdapters
+        this.resourceAdapters = resourceAdapters
     }
 
     @Override
@@ -27,7 +37,7 @@ class TestingResourceResolver implements ResourceResolver {
 
         try {
             if (session.nodeExists(path)) {
-                resource = new TestingResource(this, session.getNode(path))
+                resource = new MockResource(this, session.getNode(path), resourceAdapters)
             }
         } catch (RepositoryException e) {
             // ignore
@@ -63,7 +73,7 @@ class TestingResourceResolver implements ResourceResolver {
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        parent.adaptTo(Node).nodes.collect { new TestingResource(this, it) }
+        parent.adaptTo(Node).nodes.collect { new MockResource(this, it, resourceAdapters) }
     }
 
     @Override
@@ -109,7 +119,9 @@ class TestingResourceResolver implements ResourceResolver {
         } else if (type == Session) {
             result = session
         } else {
-            result = null
+            def found = resourceResolverAdapters.find { it.key == type }
+
+            result = found ? (AdapterType) found.value.call(this) : null
         }
 
         result
