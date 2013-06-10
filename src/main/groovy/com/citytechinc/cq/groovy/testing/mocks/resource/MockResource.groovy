@@ -1,5 +1,6 @@
 package com.citytechinc.cq.groovy.testing.mocks.resource
 
+import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.core.impl.PageImpl
 import org.apache.sling.api.resource.Resource
@@ -7,6 +8,7 @@ import org.apache.sling.api.resource.ResourceMetadata
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
 import org.apache.sling.jcr.resource.JcrPropertyMap
+import org.apache.sling.jcr.resource.JcrResourceConstants
 
 import javax.jcr.Node
 
@@ -32,7 +34,7 @@ class MockResource implements Resource {
             result = node
         } else if (type == ValueMap) {
             result = new JcrPropertyMap(node)
-        } else if (type == Page && "cq:Page" == getResourceType()) {
+        } else if (type == Page && NameConstants.NT_PAGE == getResourceType()) {
             result = new PageImpl(this)
         } else {
             def found = adapters.find { it.key == type }
@@ -77,8 +79,8 @@ class MockResource implements Resource {
     String getResourceType() {
         def resourceType
 
-        if (node.hasProperty("sling:resourceType")) {
-            resourceType = node.getProperty("sling:resourceType").string
+        if (node.hasProperty(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY)) {
+            resourceType = node.getProperty(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY).string
         } else {
             resourceType = node.primaryNodeType.name
         }
@@ -88,7 +90,7 @@ class MockResource implements Resource {
 
     @Override
     String getResourceSuperType() {
-        node.hasProperty("sling:resourceSuperType") ? node.getProperty("sling:resourceSuperType").string : null
+        node.hasProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY) ? node.getProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY).string : null
     }
 
     @Override
