@@ -60,6 +60,15 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     }
 
     /**
+     * Get a request builder.  If the path is not specified as an argument to the <code>build()</code> closure, the root resource will be bound to the request.
+     *
+     * @return request builder instance for this resource resolver
+     */
+    RequestBuilder getRequestBuilder() {
+        new RequestBuilder(resourceResolver)
+    }
+
+    /**
      * Get a request builder.
      *
      * @param path content path
