@@ -3,6 +3,7 @@ package com.citytechinc.cq.groovy.testing.mocks.resource
 import com.citytechinc.cq.groovy.testing.specs.AbstractRepositorySpec
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.PageManager
+import org.apache.sling.api.resource.NonExistingResource
 import spock.lang.Shared
 
 import javax.jcr.Session
@@ -81,6 +82,11 @@ class MockResourceResolverSpec extends AbstractRepositorySpec {
     def "resolve resource"() {
         expect:
         resourceResolver.resolve("/content").path == "/content"
+    }
+
+    def "resolve non-existing resource"() {
+        expect:
+        resourceResolver.resolve("/content/three") instanceof NonExistingResource
     }
 
     def "list children"() {

@@ -79,6 +79,17 @@ class RequestBuilderSpec extends AbstractSlingRepositorySpec {
         ["a", "b"]   | "a.b"
     }
 
+    def "build request with parameters argument"() {
+        setup:
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content"
+            parameters "a": ["1", "2"], "b": ["1"]
+        }
+
+        expect:
+        request.queryString == "a=1&a=2&b=1"
+    }
+
     @Unroll
     def "build request with parameters"() {
         setup:
