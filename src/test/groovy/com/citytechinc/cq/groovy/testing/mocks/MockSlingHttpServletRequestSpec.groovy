@@ -24,8 +24,8 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
         request.getRequestParameter(name).string == value
 
         where:
-        map        | name | value
-        ["a": "1"] | "a"  | "1"
+        map              | name | value
+        ["a": ["alpha"]] | "a"  | "alpha"
     }
 
     def "get request parameters"() {
@@ -38,8 +38,8 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
         request.getRequestParameters(name)*.string == values
 
         where:
-        map               | name | values
-        ["a": ["1", "2"]] | "a"  | ["1", "2"]
+        map                         | name | values
+        ["a": ["alpha1", "alpha2"]] | "a"  | ["alpha1", "alpha2"]
     }
 
     def "get parameter returns null"() {
@@ -61,8 +61,8 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
         request.getParameter(name) == value
 
         where:
-        map        | name | value
-        ["a": "1"] | "a"  | "1"
+        map              | name | value
+        ["a": ["alpha"]] | "a"  | "alpha"
     }
 
     def "get parameters"() {
@@ -75,7 +75,7 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
         request.getParameterValues(name) as List == values
 
         where:
-        map               | name | values
-        ["a": ["1", "2"]] | "a"  | ["1", "2"]
+        map                         | name | values
+        ["a": ["alpha1", "alpha2"]] | "a"  | ["alpha1", "alpha2"]
     }
 }
