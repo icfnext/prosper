@@ -1,6 +1,7 @@
 package com.citytechinc.cq.groovy.testing.specs
 
 import com.citytechinc.cq.groovy.testing.builders.RequestBuilder
+import com.citytechinc.cq.groovy.testing.builders.ResponseBuilder
 import com.citytechinc.cq.groovy.testing.mocks.resource.MockResourceResolver
 import spock.lang.Shared
 
@@ -76,5 +77,14 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
      */
     RequestBuilder getRequestBuilder(String path) {
         new RequestBuilder(resourceResolver, path)
+    }
+
+    /**
+     * Get a response builder.
+     *
+     * @return builder
+     */
+    ResponseBuilder getResponseBuilder() {
+        new ResponseBuilder()
     }
 }
