@@ -42,7 +42,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
         this.queryString = queryString
         this.attributes = attributes
 
-        resource = resourceResolver.getResource(path)
+        resource = resourceResolver.resolve(path)
 
         requestParameterMap = MockRequestParameterMap.create(parameters)
         requestPathInfo = new MockRequestPathInfo(selectorString, extension, suffix, path)

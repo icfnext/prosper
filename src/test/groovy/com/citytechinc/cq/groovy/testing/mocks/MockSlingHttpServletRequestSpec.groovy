@@ -2,8 +2,34 @@ package com.citytechinc.cq.groovy.testing.mocks
 
 import com.citytechinc.cq.groovy.testing.builders.RequestBuilder
 import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
+import org.apache.sling.api.resource.SyntheticResource
 
 class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
+
+    def "resolve resource for path"() {
+        setup:
+        session.rootNode.addNode("content")
+        session.save()
+
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content"
+        }
+
+        expect:
+        !(request.resource instanceof SyntheticResource)
+        request.resource.path == "/content"
+    }
+
+    def "resolve resource for non-existent path"() {
+        setup:
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content/foo"
+        }
+
+        expect:
+        request.resource instanceof SyntheticResource
+        request.resource.path == "/content/foo"
+    }
 
     def "get request parameter returns null"() {
         setup:
