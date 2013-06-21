@@ -2,8 +2,34 @@ package com.citytechinc.cq.groovy.testing.mocks
 
 import com.citytechinc.cq.groovy.testing.builders.RequestBuilder
 import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
+import org.apache.sling.api.resource.SyntheticResource
 
 class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
+
+    def "resolve resource for path"() {
+        setup:
+        session.rootNode.addNode("content")
+        session.save()
+
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content"
+        }
+
+        expect:
+        !(request.resource instanceof SyntheticResource)
+        request.resource.path == "/content"
+    }
+
+    def "resolve resource for non-existent path"() {
+        setup:
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content/foo"
+        }
+
+        expect:
+        request.resource instanceof SyntheticResource
+        request.resource.path == "/content/foo"
+    }
 
     def "get request parameter returns null"() {
         setup:
@@ -24,8 +50,8 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
         request.getRequestParameter(name).string == value
 
         where:
-        map        | name | value
-        ["a": "1"] | "a"  | "1"
+        map              | name | value
+        ["a": ["alpha"]] | "a"  | "alpha"
     }
 
     def "get request parameters"() {
@@ -38,8 +64,8 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
         request.getRequestParameters(name)*.string == values
 
         where:
-        map               | name | values
-        ["a": ["1", "2"]] | "a"  | ["1", "2"]
+        map                         | name | values
+        ["a": ["alpha1", "alpha2"]] | "a"  | ["alpha1", "alpha2"]
     }
 
     def "get parameter returns null"() {
@@ -61,8 +87,8 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
         request.getParameter(name) == value
 
         where:
-        map        | name | value
-        ["a": "1"] | "a"  | "1"
+        map              | name | value
+        ["a": ["alpha"]] | "a"  | "alpha"
     }
 
     def "get parameters"() {
@@ -75,7 +101,7 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
         request.getParameterValues(name) as List == values
 
         where:
-        map               | name | values
-        ["a": ["1", "2"]] | "a"  | ["1", "2"]
+        map                         | name | values
+        ["a": ["alpha1", "alpha2"]] | "a"  | ["alpha1", "alpha2"]
     }
 }

@@ -4,6 +4,7 @@ import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
+import org.apache.sling.api.resource.NonExistingResource
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 
@@ -93,7 +94,7 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     Resource resolve(HttpServletRequest request, String absPath) {
-        throw new UnsupportedOperationException()
+        resolve(absPath)
     }
 
     @Override
@@ -103,7 +104,7 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     Resource resolve(String absPath) {
-        getResource(absPath)
+        getResource(absPath) ?: new NonExistingResource(this, absPath)
     }
 
     @Override
