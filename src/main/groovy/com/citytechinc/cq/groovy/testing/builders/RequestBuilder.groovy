@@ -3,7 +3,6 @@ package com.citytechinc.cq.groovy.testing.builders
 import com.citytechinc.cq.groovy.testing.mocks.MockSlingHttpServletRequest
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
-import org.apache.sling.api.SlingHttpServletRequest
 
 class RequestBuilder {
 
@@ -68,11 +67,11 @@ class RequestBuilder {
         this.attributes.putAll(attributes)
     }
 
-    SlingHttpServletRequest build() {
+    MockSlingHttpServletRequest build() {
         build(null)
     }
 
-    SlingHttpServletRequest build(Closure closure) {
+    MockSlingHttpServletRequest build(Closure closure) {
         if (closure) {
             closure.delegate = this
             closure.resolveStrategy = Closure.DELEGATE_ONLY

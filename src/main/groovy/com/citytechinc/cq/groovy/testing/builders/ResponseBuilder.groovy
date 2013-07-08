@@ -3,7 +3,6 @@ package com.citytechinc.cq.groovy.testing.builders
 import com.citytechinc.cq.groovy.testing.mocks.MockSlingHttpServletResponse
 import com.google.common.base.Charsets
 import com.google.common.net.MediaType
-import org.apache.sling.api.SlingHttpServletResponse
 
 import static javax.servlet.http.HttpServletResponse.SC_OK
 
@@ -21,11 +20,11 @@ class ResponseBuilder {
         this.mediaType = mediaType
     }
 
-    SlingHttpServletResponse build() {
+    MockSlingHttpServletResponse build() {
         build(null)
     }
 
-    SlingHttpServletResponse build(Closure closure) {
+    MockSlingHttpServletResponse build(Closure closure) {
         if (closure) {
             closure.delegate = this
             closure.resolveStrategy = Closure.DELEGATE_ONLY
