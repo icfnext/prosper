@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-testing</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.5</version>
+    <version>0.3.6-SNAPSHOT</version>
     <name>CITYTECH, Inc. CQ Groovy Testing Tools</name>
     <description>Testing module for Adobe CQ5 projects containing a Spock specification using an in-memory
         repository for JCR session-based testing. Also includes basic Sling resource implementations for testing
