@@ -102,11 +102,13 @@ class RequestBuilderSpec extends AbstractSlingRepositorySpec {
         request.queryString == queryString
 
         where:
-        map                           | queryString
-        [:]                           | ""
-        ["a": ["1"]]                  | "a=1"
-        ["a": ["1", "2"]]             | "a=1&a=2"
-        ["a": ["1", "2"], "b": ["3"]] | "a=1&a=2&b=3"
+        map                                     | queryString
+        [:]                                     | ""
+        ["a": ["1"]]                            | "a=1"
+        ["a": "1"]                              | "a=1"
+        ["a": ["1", "2"]]                       | "a=1&a=2"
+        ["a": ["1", "2"], "b": ["3"]]           | "a=1&a=2&b=3"
+        ["a": ["1", "2"], "b": ["3"], "c": "4"] | "a=1&a=2&b=3&c=4"
     }
 
     def "build request with attributes"() {

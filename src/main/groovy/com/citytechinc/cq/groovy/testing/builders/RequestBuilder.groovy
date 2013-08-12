@@ -51,9 +51,13 @@ class RequestBuilder {
         this.selectors.addAll(selectors)
     }
 
-    void parameters(Map<String, List<String>> parameters) {
-        parameters.each { name, values ->
-            values.each { value ->
+    void parameters(Map<String, Object> parameters) {
+        parameters.each { name, value ->
+            if (value instanceof Collection) {
+                value.each {
+                    this.parameters.put(name, it)
+                }
+            } else {
                 this.parameters.put(name, value)
             }
         }
