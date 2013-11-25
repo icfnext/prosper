@@ -4,8 +4,11 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import groovy.transform.Synchronized
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
+import org.apache.sling.jcr.api.SlingRepository
 import spock.lang.Shared
 import spock.lang.Specification
+
+import javax.jcr.Session
 
 /**
  * Spock specification for JCR testing.
@@ -16,9 +19,9 @@ abstract class AbstractRepositorySpec extends Specification {
 
     static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt"]
 
-    static def repository
+    static SlingRepository repository
 
-    @Shared session
+    @Shared Session session
 
     /**
      * Create an administrative JCR session.

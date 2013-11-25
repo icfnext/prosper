@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-testing</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.6</version>
+    <version>0.4.0</version>
     <name>CQ Groovy Testing Tools</name>
     <description>
         Testing module for Adobe CQ5 projects containing a Spock specification using an in-memory
@@ -263,6 +263,10 @@
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
