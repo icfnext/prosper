@@ -3,6 +3,7 @@ package com.citytechinc.cq.groovy.testing.specs
 import com.citytechinc.cq.groovy.testing.builders.RequestBuilder
 import com.citytechinc.cq.groovy.testing.builders.ResponseBuilder
 import com.citytechinc.cq.groovy.testing.mocks.resource.MockResourceResolver
+import org.apache.sling.api.resource.ResourceResolver
 import spock.lang.Shared
 
 /**
@@ -10,7 +11,7 @@ import spock.lang.Shared
  */
 abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
 
-    @Shared resourceResolver
+    @Shared ResourceResolver resourceResolver
 
     @Shared resourceResolverAdapters = [:]
 
