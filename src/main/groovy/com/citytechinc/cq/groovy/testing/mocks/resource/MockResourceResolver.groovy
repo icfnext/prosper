@@ -7,6 +7,7 @@ import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import org.apache.sling.api.resource.NonExistingResource
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.jcr.resource.JcrResourceUtil
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
@@ -14,13 +15,17 @@ import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
 @SuppressWarnings("deprecation")
-class MockResourceResolver implements ResourceResolver {
+class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
-    def session
+    Session session
 
     def resourceResolverAdapters
 
     def resourceAdapters
+
+    def searchPath
+
+    def closed
 
     MockResourceResolver(session) {
         this(session, [:], [:])
@@ -30,6 +35,15 @@ class MockResourceResolver implements ResourceResolver {
         this.session = session
         this.resourceResolverAdapters = resourceResolverAdapters
         this.resourceAdapters = resourceAdapters
+    }
+
+    @Override
+    def invokeMethod(String name, args) {
+        if (["isLive", "close"].contains(name) || !closed) {
+            return this.&"$name"(args)
+        }
+
+        throw new IllegalStateException("The resource resolver is closed.")
     }
 
     @Override
@@ -49,7 +63,7 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     Resource getResource(Resource base, String path) {
-        base ? getResource("${base.path}/$path") : null
+        path?.startsWith("/") ? getResource(path) : base ? getResource("${base.path}/$path") : null
     }
 
     @Override
@@ -59,12 +73,16 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     Iterator<Resource> findResources(String query, String language) {
-        throw new UnsupportedOperationException()
+        def resourceResults = JcrResourceUtil.query(session, query, language).nodes.collect() {
+            getResource(it.path)
+        }
+
+        resourceResults.iterator()
     }
 
     @Override
     String[] getSearchPath() {
-        throw new UnsupportedOperationException()
+        searchPath
     }
 
     @Override
@@ -74,7 +92,7 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        parent.adaptTo(Node).nodes.collect { new MockResource(this, it, resourceAdapters) }
+        parent.adaptTo(Node).nodes.collect { new MockResource(this, it, resourceAdapters) } as Iterable<Resource>
     }
 
     @Override
@@ -130,12 +148,12 @@ class MockResourceResolver implements ResourceResolver {
 
     @Override
     boolean isLive() {
-        throw new UnsupportedOperationException()
+        !closed
     }
 
     @Override
     void close() {
-
+        closed = true
     }
 
     @Override
@@ -176,5 +194,9 @@ class MockResourceResolver implements ResourceResolver {
     @Override
     boolean hasChanges() {
         throw new UnsupportedOperationException()
+    }
+
+    void setSearchPath(String... searchPath) {
+        this.searchPath = searchPath
     }
 }

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-testing</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
     <name>CQ Groovy Testing Tools</name>
     <description>
         Testing module for Adobe CQ5 projects containing a Spock specification using an in-memory
