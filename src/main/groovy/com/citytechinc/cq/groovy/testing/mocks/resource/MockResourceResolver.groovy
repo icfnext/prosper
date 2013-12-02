@@ -1,4 +1,5 @@
 package com.citytechinc.cq.groovy.testing.mocks.resource
+
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.PageManager
@@ -16,7 +17,7 @@ import javax.servlet.http.HttpServletRequest
 @SuppressWarnings("deprecation")
 class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
-    def session
+    Session session
 
     def resourceResolverAdapters
 
@@ -38,13 +39,11 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     @Override
     def invokeMethod(String name, args) {
-        System.out.println "before calling method ${name}"
-
-        if (['isLive', 'close'].contains(name) || !this.closed) {
+        if (["isLive", "close"].contains(name) || !closed) {
             return this.&"$name"(args)
         }
 
-        throw new IllegalStateException('The resource resolver is closed.')
+        throw new IllegalStateException("The resource resolver is closed.")
     }
 
     @Override
@@ -74,13 +73,16 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     @Override
     Iterator<Resource> findResources(String query, String language) {
-        List<Resource> resourceResults = JcrResourceUtil.query(session, query, language).nodes.collect() { getResource(it.path) }
+        def resourceResults = JcrResourceUtil.query(session, query, language).nodes.collect() {
+            getResource(it.path)
+        }
+
         resourceResults.iterator()
     }
 
     @Override
     String[] getSearchPath() {
-        return searchPath
+        searchPath
     }
 
     @Override
@@ -90,7 +92,7 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        parent.adaptTo(Node).nodes.collect { new MockResource(this, it, resourceAdapters) }
+        parent.adaptTo(Node).nodes.collect { new MockResource(this, it, resourceAdapters) } as Iterable<Resource>
     }
 
     @Override
@@ -194,9 +196,7 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
         throw new UnsupportedOperationException()
     }
 
-
     void setSearchPath(String... searchPath) {
         this.searchPath = searchPath
     }
-
 }

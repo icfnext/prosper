@@ -123,7 +123,7 @@ class MockResourceResolverSpec extends AbstractRepositorySpec {
         resourceResolver.setSearchPath("/content/one")
 
         expect:
-        resourceResolver.getSearchPath() == ["/content/one"]
+        resourceResolver.searchPath == ["/content/one"]
     }
 
     def "find resources using XPath"() {
@@ -136,7 +136,7 @@ class MockResourceResolverSpec extends AbstractRepositorySpec {
         resourceResolver.close()
 
         expect:
-        resourceResolver.isLive() == false
+        !resourceResolver.live
     }
 
     def "call method after close"() {
