@@ -1,9 +1,5 @@
 package com.citytechinc.cq.groovy.testing.mocks.resource
 
-import com.day.cq.tagging.TagManager
-import com.day.cq.tagging.impl.JcrTagManagerImpl
-import com.day.cq.wcm.api.PageManager
-import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import org.apache.sling.api.resource.NonExistingResource
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -92,7 +88,8 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        parent.adaptTo(Node).nodes.collect { new MockResource(this, it, resourceAdapters) } as Iterable<Resource>
+        parent.adaptTo(Node).nodes.collect { new MockResource(this, it,
+            resourceAdapters) } as Iterable<Resource>
     }
 
     @Override
@@ -127,23 +124,9 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     @Override
     <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        def result
+        def result = resourceResolverAdapters.find { it.key == type }
 
-        if (type == PageManager) {
-            def factory = new PageManagerFactoryImpl()
-
-            result = factory.getPageManager(this)
-        } else if (type == TagManager) {
-            result = new JcrTagManagerImpl(this, null, null, "/etc/tags")
-        } else if (type == Session) {
-            result = session
-        } else {
-            def found = resourceResolverAdapters.find { it.key == type }
-
-            result = found ? (AdapterType) found.value.call(this) : null
-        }
-
-        result
+        result ? (AdapterType) result.value.call(this) : null
     }
 
     @Override

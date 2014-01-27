@@ -1,16 +1,11 @@
 package com.citytechinc.cq.groovy.testing.mocks.resource
-import com.citytechinc.cq.groovy.testing.specs.AbstractRepositorySpec
-import com.day.cq.tagging.TagManager
-import com.day.cq.wcm.api.PageManager
-import org.apache.sling.api.resource.NonExistingResource
-import spock.lang.Shared
 
-import javax.jcr.Session
+import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
+import org.apache.sling.api.resource.NonExistingResource
+
 import javax.jcr.query.Query
 
-class MockResourceResolverSpec extends AbstractRepositorySpec {
-
-    @Shared resourceResolver
+class MockResourceResolverSpec extends AbstractSlingRepositorySpec {
 
     def setupSpec() {
         resourceResolver = new MockResourceResolver(session)
@@ -21,26 +16,6 @@ class MockResourceResolverSpec extends AbstractRepositorySpec {
         content.addNode("two")
 
         session.save()
-    }
-
-    def "adapt to page manager"() {
-        expect:
-        resourceResolver.adaptTo(PageManager)
-    }
-
-    def "adapt to tag manager"() {
-        expect:
-        resourceResolver.adaptTo(TagManager)
-    }
-
-    def "adapt to session"() {
-        expect:
-        resourceResolver.adaptTo(Session)
-    }
-
-    def "adapt to invalid type returns null"() {
-        expect:
-        !resourceResolver.adaptTo(String)
     }
 
     def "get resource"() {
@@ -128,7 +103,8 @@ class MockResourceResolverSpec extends AbstractRepositorySpec {
 
     def "find resources using XPath"() {
         expect:
-        resourceResolver.findResources("/jcr:root/content//*[jcr:primaryType='nt:unstructured']", Query.XPATH).size() == 2
+        resourceResolver.findResources("/jcr:root/content//*[jcr:primaryType='nt:unstructured']",
+            Query.XPATH).size() == 2
     }
 
     def "is live after close"() {

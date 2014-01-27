@@ -1,11 +1,8 @@
 package com.citytechinc.cq.groovy.testing.mocks.resource
 
-import com.citytechinc.cq.groovy.testing.specs.AbstractRepositorySpec
-import spock.lang.Shared
+import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
 
-class MockResourceSpec extends AbstractRepositorySpec {
-
-    @Shared resourceResolver
+class MockResourceSpec extends AbstractSlingRepositorySpec {
 
     def setupSpec() {
         resourceResolver = new MockResourceResolver(session)
