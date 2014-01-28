@@ -4,16 +4,16 @@
     <parent>
         <groupId>com.citytechinc.cq</groupId>
         <artifactId>parent</artifactId>
-        <version>5.6.4</version>
+        <version>5.6.5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-testing</artifactId>
     <packaging>jar</packaging>
-    <version>0.5.1-SNAPSHOT</version>
+    <version>0.6.0-SNAPSHOT</version>
     <name>CQ Groovy Testing Tools</name>
     <description>
-        Testing module for Adobe CQ5 projects containing a Spock specification using an in-memory
+        Testing module for Adobe AEM (CQ5) projects containing a Spock specification using an in-memory
         repository for JCR session-based testing. Also includes basic Sling resource implementations for testing
         interactions between CQ objects.
     </description>
@@ -37,7 +37,6 @@
         <connection>scm:git:git@github.com:Citytechinc/cq-groovy-testing.git</connection>
         <developerConnection>scm:git:git@github.com:Citytechinc/cq-groovy-testing.git</developerConnection>
         <url>https://github.com/Citytechinc/cq-groovy-testing</url>
-        <tag>HEAD</tag>
     </scm>
 
     <repositories>
@@ -70,7 +69,7 @@
             <plugin>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-compiler</artifactId>
-                <version>2.7.0-01</version>
+                <version>2.8.0-01</version>
                 <extensions>true</extensions>
                 <dependencies>
                     <dependency>
@@ -93,7 +92,7 @@
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-compiler</artifactId>
-                        <version>2.7.0-01</version>
+                        <version>2.8.0-01</version>
                     </dependency>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
@@ -104,7 +103,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.15</version>
+                <version>2.16</version>
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
@@ -137,7 +136,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.2</version>
+                <version>3.3</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>
@@ -155,46 +154,35 @@
                         <version>1.7</version>
                     </dependency>
                 </dependencies>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.6</version>
-                            <reportSets>
-                                <reportSet>
-                                    <reports>
-                                        <report>index</report>
-                                        <report>license</report>
-                                        <report>scm</report>
-                                        <report>summary</report>
-                                    </reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <artifactId>maven-surefire-report-plugin</artifactId>
-                            <version>2.15</version>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-jgitflow-plugin</artifactId>
-                <version>1.0-alpha14</version>
-                <configuration>
-                    <enableFeatureVersions>false</enableFeatureVersions>
-                    <noFeatureBuild>true</noFeatureBuild>
-                    <noReleaseBuild>true</noReleaseBuild>
-                    <flowInitContext>
-                        <featureBranchPrefix>feature-</featureBranchPrefix>
-                        <releaseBranchPrefix>release-</releaseBranchPrefix>
-                        <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                    </flowInitContext>
-                </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.6</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>license</report>
+                            <report>scm</report>
+                            <report>summary</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <profiles>
         <!-- activate when deploying GitHub site -->
@@ -210,7 +198,7 @@
                     <plugin>
                         <groupId>com.github.github</groupId>
                         <artifactId>site-maven-plugin</artifactId>
-                        <version>0.8</version>
+                        <version>0.9</version>
                         <configuration>
                             <message>site for ${project.version}</message>
                             <server>github</server>
@@ -297,7 +285,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>14.0.1</version>
+            <version>15.0</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
