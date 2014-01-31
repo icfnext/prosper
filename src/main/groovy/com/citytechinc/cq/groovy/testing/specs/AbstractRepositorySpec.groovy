@@ -148,7 +148,7 @@ abstract class AbstractRepositorySpec extends Specification {
         session = getRepository().loginAdministrative(null)
 
         NODE_TYPES.each { type ->
-            this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
+            this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { InputStream stream ->
                 RepositoryUtil.registerNodeType(session, stream)
             }
         }
