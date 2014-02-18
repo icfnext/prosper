@@ -4,8 +4,30 @@
 
 ## Overview
 
-Testing module for Adobe CQ5 projects containing a Spock specification using an in-memory repository for JCR
+Testing module for Adobe AEM (CQ5) projects containing [Spock](link) specifications using an in-memory repository for JCR
 session-based testing. Also includes basic Sling resource implementations for testing interactions between CQ objects.
+
+## Features
+
+* Test AEM projects outside of the OSGi container in the standard Maven build lifecycle.
+* Write test specifications in [Groovy](http://groovy.codehaus.org) using [Spock](link), a JUnit-based testing framework with an elegant syntax for writing tests more quickly and efficiently.
+* Extends and augments the transient JCR implementation provided by Apache Sling Testing Tools (link) to eliminate the need to deploy tests in OSGi bundles.
+* While accepting the limitations of testing outside the container, provides minimal implementations of required classes (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
+* Utilizes Groovy's builder syntax to provide a simple [DSL](link) for creating test content.
+* Provides additional builders for Sling requests and responses to simplify setup of test cases.
+
+## Getting Started
+
+1. Add dependency to project POM.
+
+    <dependency>
+        <groupId>com.citytechinc.cq</groupId>
+        <artifactId>cq-groovy-testing</artifactId>
+        <version>0.6.0</version>
+        <scope>test</scope>
+    </dependency>
+
+2. ...
 
 ## Versioning
 
