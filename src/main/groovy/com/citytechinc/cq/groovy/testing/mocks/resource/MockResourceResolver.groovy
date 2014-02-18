@@ -108,6 +108,11 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
     }
 
     @Override
+    boolean hasChildren(Resource resource) {
+        resource.hasChildren()
+    }
+
+    @Override
     Resource resolve(HttpServletRequest request, String absPath) {
         resolve(absPath)
     }
@@ -176,6 +181,26 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     @Override
     boolean hasChanges() {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
+    String getParentResourceType(Resource resource) {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
+    String getParentResourceType(String resourceType) {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
+    boolean isResourceType(Resource resource, String resourceType) {
+        resource.resourceType == resourceType
+    }
+
+    @Override
+    void refresh() {
         throw new UnsupportedOperationException()
     }
 

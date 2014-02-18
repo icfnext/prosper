@@ -14,9 +14,9 @@ import javax.jcr.Node
 
 class MockResource implements Resource {
 
-    def resourceResolver
+    ResourceResolver resourceResolver
 
-    def node
+    Node node
 
     def adapters
 
@@ -91,6 +91,11 @@ class MockResource implements Resource {
     @Override
     String getResourceSuperType() {
         node.hasProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY) ? node.getProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY).string : null
+    }
+
+    @Override
+    boolean hasChildren() {
+        node.hasNodes()
     }
 
     @Override
