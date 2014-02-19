@@ -20,12 +20,12 @@ session-based testing. Also includes basic Sling resource implementations for te
 
 1. Add dependency to project POM.
 
-    <dependency>
-        <groupId>com.citytechinc.cq</groupId>
-        <artifactId>cq-groovy-testing</artifactId>
-        <version>0.6.0</version>
-        <scope>test</scope>
-    </dependency>
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.citytechinc.cq&lt;/groupId&gt;
+        &lt;artifactId&gt;cq-groovy-testing&lt;/artifactId&gt;
+        &lt;version&gt;0.5.0&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
 
 2. ...
 
