@@ -39,7 +39,8 @@
 
     <body>
         <links>
-            <item name="GitHub" href="https://github.com/Citytechinc/cq-groovy-testing" />
+            <item name="GitHub" href="https://github.com/Citytechinc/cq-groovy-testing"/>
+            <item name="GroovyDocs" href="groovydoc/index.html"/>
         </links>
         <menu ref="reports"/>
     </body>
