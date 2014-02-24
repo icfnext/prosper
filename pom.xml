@@ -8,22 +8,19 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cq-groovy-testing</artifactId>
+    <groupId>com.citytechinc.aem.spock</groupId>
+    <artifactId>spock-aem</artifactId>
     <packaging>jar</packaging>
     <version>0.7.0-SNAPSHOT</version>
-    <name>CQ Groovy Testing Tools</name>
-    <description>
-        Testing module for Adobe AEM (CQ5) projects containing a Spock specification using an in-memory
-        repository for JCR session-based testing. Also includes basic Sling resource implementations for testing
-        interactions between CQ objects.
-    </description>
+    <name>Spock AEM Extension</name>
+    <description>Testing library for Adobe AEM (CQ5) projects using the Spock Framework.</description>
 
     <organization>
         <name>CITYTECH, Inc.</name>
         <url>http://www.citytechinc.com</url>
     </organization>
 
-    <url>http://code.citytechinc.com/cq-groovy-testing</url>
+    <url>http://code.citytechinc.com/spock-aem</url>
 
     <licenses>
         <license>
@@ -34,9 +31,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/cq-groovy-testing.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/cq-groovy-testing.git</developerConnection>
-        <url>https://github.com/Citytechinc/cq-groovy-testing</url>
+        <connection>scm:git:git@github.com:Citytechinc/spock-aem.git</connection>
+        <developerConnection>scm:git:git@github.com:Citytechinc/spock-aem.git</developerConnection>
+        <url>https://github.com/Citytechinc/spock-aem</url>
     </scm>
 
     <repositories>
