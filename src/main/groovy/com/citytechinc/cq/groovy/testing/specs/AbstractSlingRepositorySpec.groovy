@@ -19,33 +19,18 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
 
     @Shared ResourceResolver resourceResolver
 
-    @Shared resourceResolverAdapters = [:]
+    @Shared
+    private def resourceResolverAdapters = [:]
 
-    @Shared resourceAdapters = [:]
+    @Shared
+    private def resourceAdapters = [:]
 
     def setupSpec() {
         addDefaultResourceResolverAdapters()
         addResourceResolverAdapters()
         addResourceAdapters()
 
-        resourceResolver = new MockResourceResolver(session, resourceResolverAdapters,
-            resourceAdapters)
-    }
-
-    void addDefaultResourceResolverAdapters() {
-        addResourceResolverAdapter(PageManager, { ResourceResolver resourceResolver ->
-            def factory = new PageManagerFactoryImpl()
-
-            factory.getPageManager(resourceResolver)
-        })
-
-        addResourceResolverAdapter(TagManager, { ResourceResolver resourceResolver ->
-            new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
-        })
-
-        addResourceResolverAdapter(Session, {
-            session
-        })
+        resourceResolver = new MockResourceResolver(session, resourceResolverAdapters, resourceAdapters)
     }
 
     /**
@@ -116,5 +101,21 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
      */
     ResponseBuilder getResponseBuilder() {
         new ResponseBuilder()
+    }
+
+    private void addDefaultResourceResolverAdapters() {
+        addResourceResolverAdapter(PageManager, { ResourceResolver resourceResolver ->
+            def factory = new PageManagerFactoryImpl()
+
+            factory.getPageManager(resourceResolver)
+        })
+
+        addResourceResolverAdapter(TagManager, { ResourceResolver resourceResolver ->
+            new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
+        })
+
+        addResourceResolverAdapter(Session, {
+            session
+        })
     }
 }

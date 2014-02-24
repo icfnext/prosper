@@ -14,11 +14,11 @@ import javax.jcr.Node
 
 class MockResource implements Resource {
 
-    ResourceResolver resourceResolver
+    private ResourceResolver resourceResolver
 
-    Node node
+    private Node node
 
-    def adapters
+    private def adapters
 
     MockResource(resourceResolver, node, adapters) {
         this.resourceResolver = resourceResolver

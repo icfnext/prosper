@@ -8,9 +8,9 @@ import static javax.servlet.http.HttpServletResponse.SC_OK
 
 class ResponseBuilder {
 
-    def status = SC_OK
+    private def status = SC_OK
 
-    def mediaType = MediaType.HTML_UTF_8
+    private def mediaType = MediaType.HTML_UTF_8
 
     void status(int status) {
         this.status = status

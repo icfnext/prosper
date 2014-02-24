@@ -13,9 +13,9 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
  */
 abstract class AbstractTagSpec extends AbstractSlingRepositorySpec {
 
-    TagSupport tag
+    private StringWriter writer
 
-    StringWriter writer
+    TagSupport tag
 
     /**
      * Create a mock page context that writes output to a StringWriter.  The resulting output can be retrieved by

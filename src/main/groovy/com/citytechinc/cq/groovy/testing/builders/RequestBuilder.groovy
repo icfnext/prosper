@@ -6,21 +6,21 @@ import com.google.common.collect.SetMultimap
 
 class RequestBuilder {
 
-    def parameters = LinkedHashMultimap.create()
+    private def parameters = LinkedHashMultimap.create()
 
-    def selectors = []
+    private def selectors = []
 
-    def attributes = [:]
+    private def attributes = [:]
 
-    def resourceResolver
+    private def resourceResolver
 
-    def path = "/"
+    private def path = "/"
 
-    def method = "GET"
+    private def method = "GET"
 
-    def suffix = ""
+    private def suffix = ""
 
-    def extension = ""
+    private def extension = ""
 
     RequestBuilder(resourceResolver) {
         this.resourceResolver = resourceResolver

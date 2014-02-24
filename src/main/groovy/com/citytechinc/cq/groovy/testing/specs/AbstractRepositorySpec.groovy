@@ -13,13 +13,14 @@ import javax.jcr.Session
 /**
  * Spock specification for JCR testing.
  */
+@SuppressWarnings("deprecation")
 abstract class AbstractRepositorySpec extends Specification {
 
-    static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
+    private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
-    static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt"]
+    private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt"]
 
-    static SlingRepository repository
+    private static SlingRepository repository
 
     @Shared Session session
 

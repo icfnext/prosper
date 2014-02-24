@@ -20,19 +20,19 @@ import java.security.Principal
 
 class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
-    def resourceResolver
+    private def resourceResolver
 
-    def resource
+    private def resource
 
-    def requestPathInfo
+    private def requestPathInfo
 
-    def queryString
+    private def queryString
 
-    def requestParameterMap
+    private def requestParameterMap
 
-    def attributes
+    private def attributes
 
-    def method
+    private def method
 
     MockSlingHttpServletRequest(ResourceResolver resourceResolver, String path, String method, String selectorString,
         String extension, String suffix, String queryString, SetMultimap<String, String> parameters,
