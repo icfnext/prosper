@@ -1,5 +1,8 @@
 package com.citytechinc.aem.spock.specs
 
+import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
+import com.citytechinc.aem.groovy.extension.builders.PageBuilder
+import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
 import com.citytechinc.aem.spock.builders.RequestBuilder
 import com.citytechinc.aem.spock.builders.ResponseBuilder
 import com.citytechinc.aem.spock.mocks.resource.MockResourceResolver
@@ -19,6 +22,10 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
 
     @Shared ResourceResolver resourceResolver
 
+    @Shared nodeBuilder
+
+    @Shared pageBuilder
+
     @Shared
     private def resourceResolverAdapters = [:]
 
@@ -26,17 +33,20 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     private def resourceAdapters = [:]
 
     def setupSpec() {
+        GroovyExtensionMetaClassRegistry.registerMetaClasses()
+
         addDefaultResourceResolverAdapters()
         addResourceResolverAdapters()
         addResourceAdapters()
 
         resourceResolver = new MockResourceResolver(session, resourceResolverAdapters, resourceAdapters)
+        nodeBuilder = new NodeBuilder(session)
+        pageBuilder = new PageBuilder(session)
     }
 
     /**
      * Implementing specs should override this method to add adapters to the Sling
-     * <code>ResourceResolver</code> at
-     * runtime.
+     * <code>ResourceResolver</code> at runtime.
      */
     void addResourceResolverAdapters() {
 
@@ -44,8 +54,7 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
 
     /**
      * Implementing specs should override this method to add adapters to Sling
-     * <code>Resource</code> instances at
-     * runtime.
+     * <code>Resource</code> instances at runtime.
      */
     void addResourceAdapters() {
 
