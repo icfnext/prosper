@@ -17,14 +17,14 @@ Testing library for Adobe AEM (CQ5) projects using [Spock](http://spockframework
 
 ## Getting Started
 
-1. Add dependency to project POM.
+1. Add Maven dependency to project POM.
 
-    &lt;dependency&gt;
-        &lt;groupId&gt;com.citytechinc.cq&lt;/groupId&gt;
-        &lt;artifactId&gt;cq-groovy-testing&lt;/artifactId&gt;
-        &lt;version&gt;0.5.0&lt;/version&gt;
-        &lt;scope&gt;test&lt;/scope&gt;
-    &lt;/dependency&gt;
+        <dependency>
+            <groupId>com.citytechinc.aem.spock</groupId>
+            <artifactId>spock-aem</artifactId>
+            <version>0.6.0</version>
+            <scope>test</scope>
+        </dependency>
 
 2. ...
 
