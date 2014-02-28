@@ -4,14 +4,14 @@
     <parent>
         <groupId>com.citytechinc.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.0.0-SNAPSHOT</version>
+        <version>6.0.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.citytechinc.aem.spock</groupId>
     <artifactId>spock-aem</artifactId>
     <packaging>jar</packaging>
-    <version>0.7.0-SNAPSHOT</version>
+    <version>0.7.0</version>
     <name>Spock AEM Testing Library</name>
     <description>Testing library for Adobe AEM (CQ5) projects using the Spock Framework.</description>
 
@@ -371,7 +371,7 @@
         <dependency>
             <groupId>com.citytechinc.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>0.6.0-SNAPSHOT</version>
+            <version>0.6.0</version>
         </dependency>
     </dependencies>
 </project>
