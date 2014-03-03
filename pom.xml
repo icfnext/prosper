@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
     <version>0.7.0</version>
     <name>Spock AEM Testing Library</name>
-    <description>Testing library for Adobe AEM (CQ5) projects using the Spock Framework.</description>
+    <description>Integration testing library for Adobe AEM (CQ5) projects using the Spock Framework.</description>
 
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -54,10 +54,6 @@
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <build>
         <sourceDirectory>src/main/groovy</sourceDirectory>

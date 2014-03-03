@@ -1,10 +1,10 @@
-# CITYTECH, Inc. Spock AEM Testing Library
+# Spock AEM Testing Library
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 
 ## Overview
 
-Testing library for Adobe AEM (CQ5) projects using [Spock](http://spockframework.org/), a Groovy-based testing framework notable for it's expressive specification language.  The library contains abstract Spock specifications using an in-memory repository for JCR session-based testing and also includes basic Sling resource implementations for testing interactions between CQ objects.
+Integration testing library for AEM (Adobe CQ) projects using [Spock](http://spockframework.org/), a Groovy-based testing framework notable for it's expressive specification language.  The library contains abstract Spock specifications using an in-memory repository for JCR session-based testing and also includes basic Sling resource implementations for testing interactions between CQ objects.
 
 ## Features
 
