@@ -14,11 +14,11 @@ import javax.jcr.Node
 
 class MockResource implements Resource {
 
-    private ResourceResolver resourceResolver
+    private final ResourceResolver resourceResolver
 
-    private Node node
+    private final Node node
 
-    private def adapters
+    private final def adapters
 
     MockResource(resourceResolver, node, adapters) {
         this.resourceResolver = resourceResolver
@@ -90,7 +90,13 @@ class MockResource implements Resource {
 
     @Override
     String getResourceSuperType() {
-        node.hasProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY) ? node.getProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY).string : null
+        def resourceSuperType = null
+
+        if (node.hasProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY)) {
+            resourceSuperType = node.getProperty(JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY).string
+        }
+
+        resourceSuperType
     }
 
     @Override

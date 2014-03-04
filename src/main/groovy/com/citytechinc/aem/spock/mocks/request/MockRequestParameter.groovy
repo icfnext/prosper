@@ -4,7 +4,7 @@ import org.apache.sling.api.request.RequestParameter
 
 class MockRequestParameter implements RequestParameter {
 
-    private def value
+    private final def value
 
     MockRequestParameter(String value) {
         this.value = value

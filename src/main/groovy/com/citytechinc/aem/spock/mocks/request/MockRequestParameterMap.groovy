@@ -19,7 +19,7 @@ class MockRequestParameterMap implements RequestParameterMap {
     }
 
     @Delegate
-    private Map<String, RequestParameter[]> map = [:]
+    private final Map<String, RequestParameter[]> map = [:]
 
     @Override
     RequestParameter[] getValues(String name) {

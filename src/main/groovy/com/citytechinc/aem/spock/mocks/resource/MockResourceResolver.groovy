@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletRequest
 @SuppressWarnings("deprecation")
 class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
-    private Session session
+    private final Session session
 
-    private def resourceResolverAdapters
+    private final def resourceResolverAdapters
 
-    private def resourceAdapters
+    private final def resourceAdapters
 
     private def searchPath
 

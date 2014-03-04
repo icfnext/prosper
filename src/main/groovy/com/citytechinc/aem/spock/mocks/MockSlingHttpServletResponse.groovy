@@ -7,7 +7,7 @@ import javax.servlet.http.Cookie
 
 class MockSlingHttpServletResponse implements SlingHttpServletResponse {
 
-    private def writer = new StringWriter()
+    private final def writer = new StringWriter()
 
     private def status
 
