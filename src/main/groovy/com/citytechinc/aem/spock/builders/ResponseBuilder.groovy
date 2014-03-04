@@ -36,15 +36,7 @@ class ResponseBuilder {
 
     private def buildResponse() {
         def contentType = mediaType.withoutParameters().toString()
-
-        def charset = mediaType.charset()
-        def encoding
-
-        if (charset.present) {
-            encoding = charset.get()
-        } else {
-            encoding = Charsets.UTF_8.name()
-        }
+        def encoding = mediaType.charset().or(Charsets.UTF_8).name()
 
         new MockSlingHttpServletResponse(status, contentType, encoding)
     }
