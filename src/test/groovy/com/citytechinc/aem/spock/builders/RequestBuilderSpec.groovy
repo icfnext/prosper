@@ -6,8 +6,7 @@ import spock.lang.Unroll
 class RequestBuilderSpec extends AbstractSlingRepositorySpec {
 
     def setupSpec() {
-        session.rootNode.addNode("content")
-        session.save()
+        nodeBuilder.content()
     }
 
     def "build request with no arguments"() {

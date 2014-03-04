@@ -7,14 +7,9 @@ class MockResourceSpec extends AbstractSlingRepositorySpec {
     def setupSpec() {
         resourceResolver = new MockResourceResolver(session)
 
-        def home = session.rootNode.addNode("home", "cq:Page")
-        def content = home.addNode("jcr:content")
-
-        content.setProperty("jcr:title", "Home")
-        content.setProperty("sling:resourceType", "type")
-        content.setProperty("sling:resourceSuperType", "supertype")
-
-        session.save()
+        pageBuilder.home {
+            "jcr:content"("Home", "sling:resourceType": "type", "sling:resourceSuperType": "supertype")
+        }
     }
 
     def "get path"() {

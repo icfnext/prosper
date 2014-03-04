@@ -10,12 +10,10 @@ class MockResourceResolverSpec extends AbstractSlingRepositorySpec {
     def setupSpec() {
         resourceResolver = new MockResourceResolver(session)
 
-        def content = session.rootNode.addNode("content")
-
-        content.addNode("one")
-        content.addNode("two")
-
-        session.save()
+        nodeBuilder.content {
+            one()
+            two()
+        }
     }
 
     def "get resource"() {

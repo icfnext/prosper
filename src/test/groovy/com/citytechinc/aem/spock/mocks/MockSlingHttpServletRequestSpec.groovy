@@ -8,8 +8,7 @@ class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
 
     def "resolve resource for path"() {
         setup:
-        session.rootNode.addNode("content")
-        session.save()
+        nodeBuilder.content()
 
         def request = new RequestBuilder(resourceResolver).build {
             path "/content"
