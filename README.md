@@ -10,7 +10,7 @@ Integration testing library for AEM (Adobe CQ) projects using [Spock](http://spo
 
 * Test AEM projects outside of an OSGi container in the standard Maven build lifecycle.
 * Write test specifications in [Groovy](http://groovy.codehaus.org) using [Spock](http://spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests more quickly and efficiently.
-* Extends and augments the transient JCR implementation provided by the Apache Sling Testing Tools (link) to eliminate the need to deploy tests in OSGi bundles.
+* Extends and augments the transient JCR implementation provided by the [Apache Sling Testing Tools](http://sling.apache.org/documentation/development/sling-testing-tools.html) to eliminate the need to deploy tests in OSGi bundles.
 * While accepting the limitations of testing outside the container, provides minimal implementations of required classes (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
 * Utilizes Groovy builders from the [AEM Groovy Extension](http://code.citytechinc.com/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for Sling requests and responses to simplify setup of test cases.
