@@ -46,14 +46,10 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        addDefaultResourceAdapters()
-        addDefaultResourceResolverAdapters()
+        addAdapters()
 
         nodeBuilder = new NodeBuilder(session)
         pageBuilder = new PageBuilder(session)
-    }
-
-    def setup() {
         resourceResolver = new MockResourceResolver(session, resourceResolverAdapters, resourceAdapters,
             adapterFactories)
     }
@@ -63,42 +59,36 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     }
 
     /**
-     * Register an <code>AdapterFactory</code> for adapting <code>Resource</code> or <code>ResourceResolver</code>
-     * instances to different types at test runtime.  This method should be called within a <code>setupSpec</code>
-     * fixture method.
+     * Add <code>AdapterFactory</code> instances for adapting <code>Resource</code> or <code>ResourceResolver</code>
+     * instances to different types at test runtime.  Specs should override this method to add testing adapter
+     * factories at runtime.
      *
-     * @param adapterFactory Sling adapter factory instance
+     * @return collection of Sling adapter factories
      */
-    void registerAdapterFactory(AdapterFactory adapterFactory) {
-        adapterFactories.add(adapterFactory)
+    Collection<AdapterFactory> addAdapterFactories() {
+        Collections.emptyList()
     }
 
     /**
-     * Add a <code>ResourceResolver</code> adapter type with an instantiation function.  Implementing specs should
-     * call this method as necessary in a <code>setupSpec()</code> fixture method to add adapters to Sling
-     * <code>ResourceResolver</code> instances at runtime.
+     * Add <code>Resource</code> adapters and their associated adapter functions.  The mapped closure will be called
+     * with a single <code>Resource</code> argument.  Specs should override this method to add resource adapters at
+     * runtime.
      *
-     * @param type adapter type
-     * @param c closure to instantiate the provided adapter type; closure may contain a
-     * <code>ResourceResolver</code>
-     * argument
+     * @return map of adapter types to adapter functions
      */
-    void addResourceResolverAdapter(Class type, Closure c) {
-        resourceResolverAdapters[type] = c
+    Map<Class, Closure> addResourceAdapters() {
+        Collections.emptyMap()
     }
 
     /**
-     * Add a <code>Resource</code> adapter with an instantiation function.  Implementing specs should override this
-     * method in a <code>setupSpec()</code> fixture method to add adapters to Sling
-     * <code>Resource</code> instances at runtime.
+     * Add <code>ResourceResolver</code> adapters and their associated adapter functions. The mapped closure will be
+     * called with a single <code>ResourceResolver</code> argument.  Specs should override this method to add
+     * resource resolver adapters at runtime.
      *
-     * @param type adapter type
-     * @param c closure to instantiate the provided adapter type; closure may contain a
-     * <code>Resource</code>
-     * argument
+     * @return map of adapter types to adapter functions
      */
-    void addResourceAdapter(Class type, Closure c) {
-        resourceAdapters[type] = c
+    Map<Class, Closure> addResourceResolverAdapters() {
+        Collections.emptyMap()
     }
 
     /**
@@ -130,35 +120,43 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
         new ResponseBuilder()
     }
 
-    private void addDefaultResourceAdapters() {
-        addResourceAdapter(Page, { Resource resource ->
-            NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
-        })
+    private void addAdapters() {
+        adapterFactories.addAll(addAdapterFactories())
 
-        addResourceAdapter(ValueMap, { Resource resource ->
+        addDefaultResourceAdapters()
+        addDefaultResourceResolverAdapters()
+
+        resourceAdapters.putAll(addResourceAdapters())
+        resourceResolverAdapters.putAll(addResourceResolverAdapters())
+    }
+
+    private void addDefaultResourceAdapters() {
+        resourceAdapters[Page.class] = { Resource resource ->
+            NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
+        }
+
+        resourceAdapters[ValueMap.class] = { Resource resource ->
             def node = session.getNode(resource.path)
 
             new JcrPropertyMap(node)
-        })
+        }
 
-        addResourceAdapter(Node, { Resource resource ->
+        resourceAdapters[Node.class] = { Resource resource ->
             session.getNode(resource.path)
-        })
+        }
     }
 
     private void addDefaultResourceResolverAdapters() {
-        addResourceResolverAdapter(PageManager, { ResourceResolver resourceResolver ->
+        resourceResolverAdapters[PageManager.class] = { ResourceResolver resourceResolver ->
             def factory = new PageManagerFactoryImpl()
 
             factory.getPageManager(resourceResolver)
-        })
+        }
 
-        addResourceResolverAdapter(TagManager, { ResourceResolver resourceResolver ->
+        resourceResolverAdapters[TagManager.class] = { ResourceResolver resourceResolver ->
             new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
-        })
+        }
 
-        addResourceResolverAdapter(Session, {
-            session
-        })
+        resourceResolverAdapters[Session.class] = { session }
     }
 }

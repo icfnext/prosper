@@ -5,8 +5,6 @@ import com.citytechinc.aem.spock.specs.AbstractSlingRepositorySpec
 class MockResourceSpec extends AbstractSlingRepositorySpec {
 
     def setupSpec() {
-        resourceResolver = new MockResourceResolver(session)
-
         pageBuilder.home {
             "jcr:content"("Home", "sling:resourceType": "type", "sling:resourceSuperType": "supertype")
         }

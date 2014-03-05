@@ -10,7 +10,8 @@ import javax.jcr.Session
 
 class SlingRepositorySpec extends AbstractSlingRepositorySpec {
 
-    def setupSpec() {
+    @Override
+    Collection<AdapterFactory> addAdapterFactories() {
         def adapterFactory = new AdapterFactory() {
             @Override
             def <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
@@ -28,9 +29,17 @@ class SlingRepositorySpec extends AbstractSlingRepositorySpec {
             }
         }
 
-        registerAdapterFactory(adapterFactory)
-        addResourceAdapter(String, { "hello" })
-        addResourceResolverAdapter(String, { "world" })
+        [adapterFactory]
+    }
+
+    @Override
+    Map<Class, Closure> addResourceAdapters() {
+        [(String.class): { "hello" }]
+    }
+
+    @Override
+    Map<Class, Closure> addResourceResolverAdapters() {
+        [(String.class): { "world" }]
     }
 
     def "registered adapter factory"() {

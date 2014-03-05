@@ -25,10 +25,6 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     private boolean closed
 
-    MockResourceResolver(session) {
-        this(session, [:], [:], [])
-    }
-
     MockResourceResolver(session, resourceResolverAdapters, resourceAdapters, adapterFactories) {
         this.session = session
         this.resourceResolverAdapters = resourceResolverAdapters

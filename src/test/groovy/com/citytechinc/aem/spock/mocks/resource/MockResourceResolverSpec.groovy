@@ -8,8 +8,6 @@ import javax.jcr.query.Query
 class MockResourceResolverSpec extends AbstractSlingRepositorySpec {
 
     def setupSpec() {
-        resourceResolver = new MockResourceResolver(session)
-
         nodeBuilder.content {
             one()
             two()
