@@ -8,15 +8,23 @@ import com.citytechinc.aem.spock.builders.ResponseBuilder
 import com.citytechinc.aem.spock.mocks.resource.MockResourceResolver
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
+import com.day.cq.wcm.api.NameConstants
+import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
+import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
+import org.apache.sling.api.adapter.AdapterFactory
+import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ValueMap
+import org.apache.sling.jcr.resource.JcrPropertyMap
 import spock.lang.Shared
 
+import javax.jcr.Node
 import javax.jcr.Session
 
 /**
- * Spock specification for JCR testing that includes a Sling resource resolver.
+ * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>.
  */
 abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
 
@@ -27,6 +35,9 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     @Shared pageBuilder
 
     @Shared
+    private def adapterFactories = []
+
+    @Shared
     private def resourceResolverAdapters = [:]
 
     @Shared
@@ -35,13 +46,16 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
+        addDefaultResourceAdapters()
         addDefaultResourceResolverAdapters()
-        addResourceResolverAdapters()
-        addResourceAdapters()
 
-        resourceResolver = new MockResourceResolver(session, resourceResolverAdapters, resourceAdapters)
         nodeBuilder = new NodeBuilder(session)
         pageBuilder = new PageBuilder(session)
+    }
+
+    def setup() {
+        resourceResolver = new MockResourceResolver(session, resourceResolverAdapters, resourceAdapters,
+            adapterFactories)
     }
 
     def cleanupSpec() {
@@ -49,23 +63,20 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     }
 
     /**
-     * Implementing specs should override this method to add adapters to the Sling
-     * <code>ResourceResolver</code> at runtime.
+     * Register an <code>AdapterFactory</code> for adapting <code>Resource</code> or <code>ResourceResolver</code>
+     * instances to different types at test runtime.  This method should be called within a <code>setupSpec</code>
+     * fixture method.
+     *
+     * @param adapterFactory Sling adapter factory instance
      */
-    void addResourceResolverAdapters() {
-
+    void registerAdapterFactory(AdapterFactory adapterFactory) {
+        adapterFactories.add(adapterFactory)
     }
 
     /**
-     * Implementing specs should override this method to add adapters to Sling
-     * <code>Resource</code> instances at runtime.
-     */
-    void addResourceAdapters() {
-
-    }
-
-    /**
-     * Add an adapter type with an instantiation function.
+     * Add a <code>ResourceResolver</code> adapter type with an instantiation function.  Implementing specs should
+     * call this method as necessary in a <code>setupSpec()</code> fixture method to add adapters to Sling
+     * <code>ResourceResolver</code> instances at runtime.
      *
      * @param type adapter type
      * @param c closure to instantiate the provided adapter type; closure may contain a
@@ -77,6 +88,9 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     }
 
     /**
+     * Add a <code>Resource</code> adapter with an instantiation function.  Implementing specs should override this
+     * method in a <code>setupSpec()</code> fixture method to add adapters to Sling
+     * <code>Resource</code> instances at runtime.
      *
      * @param type adapter type
      * @param c closure to instantiate the provided adapter type; closure may contain a
@@ -114,6 +128,22 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
      */
     ResponseBuilder getResponseBuilder() {
         new ResponseBuilder()
+    }
+
+    private void addDefaultResourceAdapters() {
+        addResourceAdapter(Page, { Resource resource ->
+            NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
+        })
+
+        addResourceAdapter(ValueMap, { Resource resource ->
+            def node = session.getNode(resource.path)
+
+            new JcrPropertyMap(node)
+        })
+
+        addResourceAdapter(Node, { Resource resource ->
+            session.getNode(resource.path)
+        })
     }
 
     private void addDefaultResourceResolverAdapters() {

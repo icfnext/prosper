@@ -19,18 +19,21 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     private final def resourceAdapters
 
+    private final def adapterFactories
+
     private def searchPath
 
     private boolean closed
 
     MockResourceResolver(session) {
-        this(session, [:], [:])
+        this(session, [:], [:], [])
     }
 
-    MockResourceResolver(session, resourceResolverAdapters, resourceAdapters) {
+    MockResourceResolver(session, resourceResolverAdapters, resourceAdapters, adapterFactories) {
         this.session = session
         this.resourceResolverAdapters = resourceResolverAdapters
         this.resourceAdapters = resourceAdapters
+        this.adapterFactories = adapterFactories
     }
 
     @Override
@@ -48,7 +51,7 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
         try {
             if (session.nodeExists(path)) {
-                resource = new MockResource(this, session.getNode(path), resourceAdapters)
+                resource = new MockResource(this, session.getNode(path), resourceAdapters, adapterFactories)
             }
         } catch (RepositoryException e) {
             // ignore
@@ -88,8 +91,9 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        parent.adaptTo(Node).nodes.collect { new MockResource(this, it,
-            resourceAdapters) } as Iterable<Resource>
+        parent.adaptTo(Node).nodes.collect {
+            new MockResource(this, it, resourceAdapters, adapterFactories)
+        } as Iterable<Resource>
     }
 
     @Override
@@ -129,9 +133,19 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
 
     @Override
     <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        def result = resourceResolverAdapters.find { it.key == type }
+        def result = (AdapterType) adapterFactories.findResult {
+            adapterFactory -> adapterFactory.getAdapter(this, type)
+        }
 
-        result ? (AdapterType) result.value.call(this) : null
+        if (!result) {
+            def adapter = resourceResolverAdapters.find { it.key == type }
+
+            if (adapter) {
+                result = (AdapterType) adapter.value.call(this)
+            }
+        }
+
+        result
     }
 
     @Override
