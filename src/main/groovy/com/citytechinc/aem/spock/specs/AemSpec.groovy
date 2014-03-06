@@ -6,6 +6,7 @@ import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRe
 import com.citytechinc.aem.spock.builders.RequestBuilder
 import com.citytechinc.aem.spock.builders.ResponseBuilder
 import com.citytechinc.aem.spock.mocks.resource.MockResourceResolver
+import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.NameConstants
@@ -13,20 +14,32 @@ import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
+import groovy.transform.Synchronized
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
+import org.apache.sling.commons.testing.jcr.RepositoryUtil
+import org.apache.sling.jcr.api.SlingRepository
 import org.apache.sling.jcr.resource.JcrPropertyMap
 import spock.lang.Shared
+import spock.lang.Specification
 
-import javax.jcr.Node
 import javax.jcr.Session
 
 /**
- * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>.
+ * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code> and content builders.
  */
-abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
+@SuppressWarnings("deprecation")
+abstract class AemSpec extends Specification {
+
+    private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
+
+    private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt"]
+
+    private static SlingRepository repository
+
+    @Shared Session session
 
     @Shared ResourceResolver resourceResolver
 
@@ -43,20 +56,37 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
     @Shared
     private def resourceAdapters = [:]
 
+    // global fixtures
+
+    /**
+     * Create an administrative JCR session with content builders, register Sling adapters,
+     * and instantiate a mock resource resolver.
+     */
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        addAdapters()
-
+        session = getRepository().loginAdministrative(null)
         nodeBuilder = new NodeBuilder(session)
         pageBuilder = new PageBuilder(session)
+
+        addAdapters()
+
         resourceResolver = new MockResourceResolver(session, resourceResolverAdapters, resourceAdapters,
             adapterFactories)
     }
 
+    /**
+     * Remove all non-system nodes to cleanup any test data and logout of the JCR session.
+     */
     def cleanupSpec() {
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
+
+        removeAllNodes()
+
+        session.logout()
     }
+
+    // default adapter methods return empty collections
 
     /**
      * Add <code>AdapterFactory</code> instances for adapting <code>Resource</code> or <code>ResourceResolver</code>
@@ -91,6 +121,8 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
         Collections.emptyMap()
     }
 
+    // builders
+
     /**
      * Get a request builder.  If the path is not specified as an argument to the <code>build()
      * </code> closure, the root resource will be bound to the request.
@@ -120,6 +152,127 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
         new ResponseBuilder()
     }
 
+    /**
+     * Remove all non-system nodes to cleanup any test data.  This method would typically be called from a test fixture
+     * method to cleanup content before the entire specification has been executed.
+     */
+    void removeAllNodes() {
+        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.save()
+    }
+
+    // assertion methods for use in Spock specification 'expect' blocks
+
+    /**
+     * Assert that a node exists for the given path.
+     *
+     * @param path node path
+     */
+    void assertNodeExists(String path) {
+        assert session.nodeExists(path)
+    }
+
+    /**
+     * Assert that a node exists for the given path and node type.
+     *
+     * @param path node path
+     * @param primaryNodeTypeName primary node type name
+     */
+    void assertNodeExists(String path, String primaryNodeTypeName) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        assert node.primaryNodeType.name == primaryNodeTypeName
+    }
+
+    /**
+     * Assert that a node exists for the given path and property map.
+     *
+     * @param path node path
+     * @param properties map of property names and values to verify for the node
+     */
+    void assertNodeExists(String path, Map<String, Object> properties) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        properties.each { name, value ->
+            assert node.get(name) == value
+        }
+    }
+
+    /**
+     * Assert that a node exists for the given path, node type, and property map.
+     *
+     * @param path node path
+     * @param primaryNodeTypeName primary node type name
+     * @param properties map of property names and values to verify for the node
+     */
+    void assertNodeExists(String path, String primaryNodeTypeName, Map<String, Object> properties) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        assert node.primaryNodeType.name == primaryNodeTypeName
+
+        properties.each { name, value ->
+            assert node.get(name) == value
+        }
+    }
+
+    /**
+     * Assert that a page exists for the given path and contains the given properties.
+     *
+     * @param path page path
+     * @param properties map of property names and values to verify for the page
+     */
+    void assertPageExists(String path, Map<String, Object> properties) {
+        assert session.nodeExists(path)
+
+        def pageNode = session.getNode(path)
+
+        assert pageNode.primaryNodeType.name == NameConstants.NT_PAGE
+        assert pageNode.hasNode(JcrConstants.JCR_CONTENT)
+
+        def contentNode = pageNode.getNode(JcrConstants.JCR_CONTENT)
+
+        properties.each { name, value ->
+            assert contentNode.get(name) == value
+        }
+    }
+
+    // internals
+
+    @Synchronized
+    private def getRepository() {
+        if (!repository) {
+            RepositoryUtil.startRepository()
+
+            repository = RepositoryUtil.getRepository()
+
+            registerNodeTypes()
+
+            addShutdownHook {
+                RepositoryUtil.stopRepository()
+            }
+        }
+
+        repository
+    }
+
+    private def registerNodeTypes() {
+        session = getRepository().loginAdministrative(null)
+
+        NODE_TYPES.each { type ->
+            this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { InputStream stream ->
+                RepositoryUtil.registerNodeType(session, stream)
+            }
+        }
+
+        session.logout()
+    }
+
     private void addAdapters() {
         adapterFactories.addAll(addAdapterFactories())
 
@@ -141,7 +294,7 @@ abstract class AbstractSlingRepositorySpec extends AbstractRepositorySpec {
             new JcrPropertyMap(node)
         }
 
-        resourceAdapters[Node.class] = { Resource resource ->
+        resourceAdapters[javax.jcr.Node.class] = { Resource resource ->
             session.getNode(resource.path)
         }
     }

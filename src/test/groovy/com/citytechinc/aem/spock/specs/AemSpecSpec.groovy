@@ -8,7 +8,7 @@ import org.apache.sling.api.resource.ResourceResolver
 
 import javax.jcr.Session
 
-class SlingRepositorySpec extends AbstractSlingRepositorySpec {
+class AemSpecSpec extends AemSpec {
 
     @Override
     Collection<AdapterFactory> addAdapterFactories() {

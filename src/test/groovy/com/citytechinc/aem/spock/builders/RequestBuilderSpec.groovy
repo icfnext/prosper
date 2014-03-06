@@ -1,9 +1,9 @@
 package com.citytechinc.aem.spock.builders
 
-import com.citytechinc.aem.spock.specs.AbstractSlingRepositorySpec
+import com.citytechinc.aem.spock.specs.AemSpec
 import spock.lang.Unroll
 
-class RequestBuilderSpec extends AbstractSlingRepositorySpec {
+class RequestBuilderSpec extends AemSpec {
 
     def setupSpec() {
         nodeBuilder.content()

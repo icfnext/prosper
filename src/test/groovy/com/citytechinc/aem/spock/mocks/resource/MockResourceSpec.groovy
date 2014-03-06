@@ -1,8 +1,8 @@
 package com.citytechinc.aem.spock.mocks.resource
 
-import com.citytechinc.aem.spock.specs.AbstractSlingRepositorySpec
+import com.citytechinc.aem.spock.specs.AemSpec
 
-class MockResourceSpec extends AbstractSlingRepositorySpec {
+class MockResourceSpec extends AemSpec {
 
     def setupSpec() {
         pageBuilder.home {

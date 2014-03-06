@@ -1,6 +1,6 @@
 package com.citytechinc.aem.spock.specs.tag
 
-import com.citytechinc.aem.spock.specs.AbstractSlingRepositorySpec
+import com.citytechinc.aem.spock.specs.AemSpec
 import org.springframework.mock.web.MockJspWriter
 
 import javax.servlet.jsp.PageContext
@@ -11,7 +11,7 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
 /**
  * Spock specification for testing tag handlers.
  */
-abstract class AbstractTagSpec extends AbstractSlingRepositorySpec {
+abstract class AbstractTagSpec extends AemSpec {
 
     private StringWriter writer
 

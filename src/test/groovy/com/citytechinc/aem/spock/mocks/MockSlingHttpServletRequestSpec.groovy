@@ -1,10 +1,10 @@
 package com.citytechinc.aem.spock.mocks
 
 import com.citytechinc.aem.spock.builders.RequestBuilder
-import com.citytechinc.aem.spock.specs.AbstractSlingRepositorySpec
+import com.citytechinc.aem.spock.specs.AemSpec
 import org.apache.sling.api.resource.SyntheticResource
 
-class MockSlingHttpServletRequestSpec extends AbstractSlingRepositorySpec {
+class MockSlingHttpServletRequestSpec extends AemSpec {
 
     def "resolve resource for path"() {
         setup:

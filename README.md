@@ -31,11 +31,11 @@ Integration testing library for AEM (Adobe CQ) projects using [Spock](http://spo
             <scope>test</scope>
         </dependency>
 
-2. Create a `src/test/groovy` directory in your project structure and add a Spock specification.
+2. Create a `src/test/groovy` directory in your project structure and add a Spock specification extending the base `AemSpec`.
 
-        import com.citytechinc.aem.spock.specs.AbstractSlingRepositorySpec
+        import com.citytechinc.aem.spock.specs.AemSpec
 
-        class ExampleSpec extends AbstractSlingRepositorySpec {
+        class ExampleSpec extends AemSpec {
 
             def setupSpec() {
                 // use PageBuilder from base spec to create test content

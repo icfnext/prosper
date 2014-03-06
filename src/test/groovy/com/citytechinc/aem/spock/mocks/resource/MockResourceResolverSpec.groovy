@@ -1,11 +1,11 @@
 package com.citytechinc.aem.spock.mocks.resource
 
-import com.citytechinc.aem.spock.specs.AbstractSlingRepositorySpec
+import com.citytechinc.aem.spock.specs.AemSpec
 import org.apache.sling.api.resource.NonExistingResource
 
 import javax.jcr.query.Query
 
-class MockResourceResolverSpec extends AbstractSlingRepositorySpec {
+class MockResourceResolverSpec extends AemSpec {
 
     def setupSpec() {
         nodeBuilder.content {
