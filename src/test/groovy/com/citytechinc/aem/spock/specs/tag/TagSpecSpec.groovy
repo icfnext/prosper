@@ -19,11 +19,21 @@ class TagSpecSpec extends TagSpec {
         tag
     }
 
-    def "verify output"() {
+    @Override
+    Map<String, Object> addPageContextAttributes() {
+        ["testName": "testValue"]
+    }
+
+    def "get result"() {
         when:
         tag.doEndTag()
 
         then:
         result == "hello"
+    }
+
+    def "add page context attributes"() {
+        expect:
+        tag.pageContext.getAttribute("testName") == "testValue"
     }
 }

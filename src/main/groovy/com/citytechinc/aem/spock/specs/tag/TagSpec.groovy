@@ -31,6 +31,12 @@ abstract class TagSpec extends AemSpec {
         pageContext.out >> jspWriter
         pageContext.getAttribute(DEFAULT_RESOURCE_RESOLVER_NAME) >> resourceResolver
 
+        def attributes = addPageContextAttributes()
+
+        attributes.each { name, value ->
+            pageContext.getAttribute(name) >> value
+        }
+
         tag.pageContext = pageContext
     }
 
@@ -40,6 +46,16 @@ abstract class TagSpec extends AemSpec {
      * @return tag instance to be tested
      */
     abstract TagSupport createTag()
+
+    /**
+     * Add additional attributes to the JSP page context for testing.  Implementing specs should override this method
+     * as necessary.
+     *
+     * @return map of attributes names and values
+     */
+    Map<String, Object> addPageContextAttributes() {
+        Collections.emptyMap()
+    }
 
     /**
      * Get the result of the tag execution (i.e. the contents of the <code>StringWriter</code> containing the tag
