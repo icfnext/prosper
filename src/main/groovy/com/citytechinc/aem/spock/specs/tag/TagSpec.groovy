@@ -11,7 +11,7 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
 /**
  * Spock specification for testing tag handlers.
  */
-abstract class AbstractTagSpec extends AemSpec {
+abstract class TagSpec extends AemSpec {
 
     private StringWriter writer
 
