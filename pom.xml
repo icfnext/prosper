@@ -11,7 +11,7 @@
     <groupId>com.citytechinc.aem.spock</groupId>
     <artifactId>spock-aem</artifactId>
     <packaging>jar</packaging>
-    <version>0.7.1-SNAPSHOT</version>
+    <version>0.8.0-SNAPSHOT</version>
     <name>Spock AEM Testing Library</name>
     <description>Integration testing library for Adobe AEM (CQ5) projects using the Spock Framework.</description>
 
