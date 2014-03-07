@@ -25,6 +25,7 @@ import org.apache.sling.jcr.resource.JcrPropertyMap
 import spock.lang.Shared
 import spock.lang.Specification
 
+import javax.jcr.Node
 import javax.jcr.Session
 
 /**
@@ -294,7 +295,7 @@ abstract class AemSpec extends Specification {
             new JcrPropertyMap(node)
         }
 
-        resourceAdapters[javax.jcr.Node.class] = { Resource resource ->
+        resourceAdapters[Node.class] = { Resource resource ->
             session.getNode(resource.path)
         }
     }
