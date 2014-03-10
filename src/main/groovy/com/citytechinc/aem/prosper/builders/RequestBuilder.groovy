@@ -6,13 +6,13 @@ import com.google.common.collect.SetMultimap
 
 class RequestBuilder {
 
+    private final def resourceResolver
+
     private def parameters = LinkedHashMultimap.create()
 
     private def selectors = []
 
     private def attributes = [:]
-
-    private def resourceResolver
 
     private def path = "/"
 
@@ -89,10 +89,8 @@ class RequestBuilder {
         def selectorString = buildSelectorString() ?: null
         def queryString = buildQueryString()
 
-        def request = new MockSlingHttpServletRequest(resourceResolver, path, method, selectorString, extension, suffix,
+        new MockSlingHttpServletRequest(resourceResolver, path, method, selectorString, extension, suffix,
             queryString, parameters, attributes)
-
-        request
     }
 
     private def buildSelectorString() {
@@ -115,9 +113,7 @@ class RequestBuilder {
 
         if (!parameters.empty) {
             parameters.keySet().each { name ->
-                def values = parameters.get(name)
-
-                values.each { value ->
+                parameters.get(name).each { value ->
                     builder.append(name)
                     builder.append('=')
                     builder.append(value)

@@ -35,7 +35,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     private final def method
 
     MockSlingHttpServletRequest(ResourceResolver resourceResolver, String path, String method, String selectorString,
-        String extension, String suffix, String queryString, SetMultimap<String, String> parameters,
+        String extension, String suffix, String queryString, SetMultimap<String, String> parameterMap,
         Map<String, Object> attributes) {
         this.method = method
         this.resourceResolver = resourceResolver
@@ -44,7 +44,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
         resource = resourceResolver.resolve(path)
 
-        requestParameterMap = MockRequestParameterMap.create(parameters)
+        requestParameterMap = MockRequestParameterMap.create(parameterMap)
         requestPathInfo = new MockRequestPathInfo(selectorString, extension, suffix, path)
     }
 
