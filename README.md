@@ -25,7 +25,7 @@ Integration testing library for AEM (Adobe CQ) projects using [Spock](http://spo
 1. Add Maven dependency to project `pom.xml`.
 
         <dependency>
-            <groupId>com.citytechinc.aem.spock</groupId>
+            <groupId>com.citytechinc.aem.prosper</groupId>
             <artifactId>spock-aem</artifactId>
             <version>0.6.0</version>
             <scope>test</scope>
@@ -33,7 +33,7 @@ Integration testing library for AEM (Adobe CQ) projects using [Spock](http://spo
 
 2. Create a `src/test/groovy` directory in your project structure and add a Spock specification extending the base `AemSpec`.
 
-        import com.citytechinc.aem.spock.specs.AemSpec
+        import com.citytechinc.aem.prosper.specs.AemSpec
 
         class ExampleSpec extends AemSpec {
 

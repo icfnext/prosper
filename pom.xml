@@ -8,19 +8,19 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.citytechinc.aem.spock</groupId>
-    <artifactId>spock-aem</artifactId>
+    <groupId>com.citytechinc.aem.prosper</groupId>
+    <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
     <version>0.8.0-SNAPSHOT</version>
-    <name>Spock AEM Testing Library</name>
-    <description>Integration testing library for Adobe AEM (CQ5) projects using the Spock Framework.</description>
+    <name>Prosper</name>
+    <description>A Spock-based integration testing library for prosperous Adobe AEM (CQ5) development.</description>
 
     <organization>
         <name>CITYTECH, Inc.</name>
         <url>http://www.citytechinc.com</url>
     </organization>
 
-    <url>http://code.citytechinc.com/spock-aem</url>
+    <url>http://code.citytechinc.com/prosper</url>
 
     <licenses>
         <license>
@@ -31,9 +31,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/spock-aem.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/spock-aem.git</developerConnection>
-        <url>https://github.com/Citytechinc/spock-aem</url>
+        <connection>scm:git:git@github.com:Citytechinc/prosper.git</connection>
+        <developerConnection>scm:git:git@github.com:Citytechinc/prosper.git</developerConnection>
+        <url>https://github.com/Citytechinc/prosper</url>
     </scm>
 
     <repositories>
