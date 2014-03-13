@@ -67,6 +67,10 @@ class RequestBuilder {
         this.parameters.putAll(parameters)
     }
 
+    void attribute(String name, Object value) {
+        attributes.put(name, value)
+    }
+
     void attributes(Map<String, Object> attributes) {
         this.attributes.putAll(attributes)
     }

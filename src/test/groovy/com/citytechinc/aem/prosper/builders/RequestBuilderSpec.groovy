@@ -3,6 +3,7 @@ package com.citytechinc.aem.prosper.builders
 import com.citytechinc.aem.prosper.specs.AemSpec
 import spock.lang.Unroll
 
+@Unroll
 class RequestBuilderSpec extends AemSpec {
 
     def setupSpec() {
@@ -57,7 +58,6 @@ class RequestBuilderSpec extends AemSpec {
         "POST"     | "html"        | "/a/b"
     }
 
-    @Unroll
     def "build request with selectors"() {
         setup:
         def request = new RequestBuilder(resourceResolver).build {
@@ -89,7 +89,6 @@ class RequestBuilderSpec extends AemSpec {
         request.queryString == "a=1&a=2&b=1"
     }
 
-    @Unroll
     def "build request with parameters"() {
         setup:
         def request = new RequestBuilder(resourceResolver).build {
@@ -122,5 +121,16 @@ class RequestBuilderSpec extends AemSpec {
         expect:
         request.getAttribute("a") == "1"
         request.getAttribute("b") == BigDecimal.ZERO
+    }
+
+    def "build request with attribute"() {
+        setup:
+        def request = new RequestBuilder(resourceResolver).build {
+            path "/content"
+            attribute "a", "1"
+        }
+
+        expect:
+        request.getAttribute("a") == "1"
     }
 }
