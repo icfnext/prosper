@@ -1,5 +1,6 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
+import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import org.apache.sling.api.resource.NonExistingResource
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -11,7 +12,7 @@ import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
 @SuppressWarnings("deprecation")
-class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
+class MockResourceResolver implements ResourceResolver, GroovyInterceptable, TestAdaptable {
 
     private final Session session
 
@@ -30,6 +31,20 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
         this.resourceResolverAdapters = resourceResolverAdapters
         this.resourceAdapters = resourceAdapters
         this.adapterFactories = adapterFactories
+    }
+
+    @Override
+    void addResourceAdapter(Class adapterType, Closure closure) {
+        resourceAdapters.put(adapterType, closure)
+    }
+
+    @Override
+    void addResourceResolverAdapter(Class adapterType, Closure closure) {
+        resourceResolverAdapters.put(adapterType, closure)
+    }
+
+    void setSearchPath(String... searchPath) {
+        this.searchPath = searchPath
     }
 
     @Override
@@ -212,9 +227,5 @@ class MockResourceResolver implements ResourceResolver, GroovyInterceptable {
     @Override
     void refresh() {
         throw new UnsupportedOperationException()
-    }
-
-    void setSearchPath(String... searchPath) {
-        this.searchPath = searchPath
     }
 }

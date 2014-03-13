@@ -77,4 +77,20 @@ class AemSpecSpec extends AemSpec {
         expect:
         resourceResolver.adaptTo(String) == "world"
     }
+
+    def "add resource adapter for test"() {
+        setup:
+        addResourceAdapter(Map, { [:] })
+
+        expect:
+        resourceResolver.getResource("/").adaptTo(Map) == [:]
+    }
+
+    def "add resource resolver adapter for test"() {
+        setup:
+        addResourceResolverAdapter(Map, { [:] })
+
+        expect:
+        resourceResolver.adaptTo(Map) == [:]
+    }
 }

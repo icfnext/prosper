@@ -5,6 +5,7 @@ import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
+import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.tagging.TagManager
@@ -32,7 +33,7 @@ import javax.jcr.Session
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code> and content builders.
  */
 @SuppressWarnings("deprecation")
-abstract class AemSpec extends Specification {
+abstract class AemSpec extends Specification implements TestAdaptable {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
@@ -40,9 +41,9 @@ abstract class AemSpec extends Specification {
 
     private static SlingRepository repository
 
-    @Shared Session session
+    @Shared session
 
-    @Shared ResourceResolver resourceResolver
+    @Shared resourceResolver
 
     @Shared nodeBuilder
 
@@ -120,6 +121,26 @@ abstract class AemSpec extends Specification {
      */
     Map<Class, Closure> addResourceResolverAdapters() {
         Collections.emptyMap()
+    }
+
+    /**
+     *
+     * @param adapterType
+     * @param closure
+     */
+    @Override
+    void addResourceAdapter(Class adapterType, Closure closure) {
+        resourceResolver.addResourceAdapter(adapterType, closure)
+    }
+
+    /**
+     *
+     * @param adapterType
+     * @param closure
+     */
+    @Override
+    void addResourceResolverAdapter(Class adapterType, Closure closure) {
+        resourceResolver.addResourceResolverAdapter(adapterType, closure)
     }
 
     // builders
