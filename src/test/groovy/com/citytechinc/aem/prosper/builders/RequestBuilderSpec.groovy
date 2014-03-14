@@ -1,6 +1,7 @@
 package com.citytechinc.aem.prosper.builders
 
 import com.citytechinc.aem.prosper.specs.ProsperSpec
+import com.google.common.collect.LinkedHashMultimap
 import spock.lang.Unroll
 
 @Unroll
@@ -107,6 +108,23 @@ class RequestBuilderSpec extends ProsperSpec {
         ["a": ["1", "2"]]                       | "a=1&a=2"
         ["a": ["1", "2"], "b": ["3"]]           | "a=1&a=2&b=3"
         ["a": ["1", "2"], "b": ["3"], "c": "4"] | "a=1&a=2&b=3&c=4"
+    }
+
+    def "build request with multimap parameters"() {
+        setup:
+        def map = LinkedHashMultimap.create()
+
+        map.put("a", "1")
+        map.put("a", "2")
+        map.put("b", "3")
+
+        def request = new RequestBuilder(resourceResolver).build {
+            path: "/content"
+            parameters map
+        }
+
+        expect:
+        request.queryString == "a=1&a=2&b=3"
     }
 
     def "build request with attributes"() {

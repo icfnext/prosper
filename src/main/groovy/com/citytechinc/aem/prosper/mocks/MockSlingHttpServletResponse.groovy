@@ -7,22 +7,19 @@ import javax.servlet.http.Cookie
 
 class MockSlingHttpServletResponse implements SlingHttpServletResponse {
 
-    private final def writer = new StringWriter()
+    private final Writer writer
 
-    private def status
+    private int status
 
-    private def contentType
+    private String contentType
 
-    private def encoding
+    private String encoding
 
-    MockSlingHttpServletResponse(status, contentType, encoding) {
+    MockSlingHttpServletResponse(Writer writer, int status, String contentType, String encoding) {
+        this.writer = writer
         this.status = status
         this.contentType = contentType
         this.encoding = encoding
-    }
-
-    String getOutput() {
-        writer.toString()
     }
 
     @Override

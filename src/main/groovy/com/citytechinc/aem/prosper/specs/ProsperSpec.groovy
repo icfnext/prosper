@@ -216,6 +216,16 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     /**
+     * Get a response builder with a writer instance.
+     *
+     * @param writer writer for capturing response output
+     * @return builder
+     */
+    ResponseBuilder getResponseBuilder(Writer writer) {
+        new ResponseBuilder(writer)
+    }
+
+    /**
      * Remove all non-system nodes to cleanup any test data.  This method would typically be called from a test fixture
      * method to cleanup content before the entire specification has been executed.
      */
