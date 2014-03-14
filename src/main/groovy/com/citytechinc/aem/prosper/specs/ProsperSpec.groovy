@@ -28,6 +28,7 @@ import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
+
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code> and content builders.
  */
