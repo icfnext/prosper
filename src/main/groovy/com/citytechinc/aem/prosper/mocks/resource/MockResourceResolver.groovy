@@ -1,6 +1,5 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import org.apache.sling.api.resource.NonExistingResource
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -12,7 +11,7 @@ import javax.jcr.Session
 import javax.servlet.http.HttpServletRequest
 
 @SuppressWarnings("deprecation")
-class MockResourceResolver implements ResourceResolver, GroovyInterceptable, TestAdaptable {
+class MockResourceResolver implements TestResourceResolver, GroovyInterceptable {
 
     private final Session session
 

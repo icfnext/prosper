@@ -1,10 +1,10 @@
 package com.citytechinc.aem.prosper.mocks
 
 import com.citytechinc.aem.prosper.builders.RequestBuilder
-import com.citytechinc.aem.prosper.specs.AemSpec
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.resource.SyntheticResource
 
-class MockSlingHttpServletRequestSpec extends AemSpec {
+class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "resolve resource for path"() {
         setup:

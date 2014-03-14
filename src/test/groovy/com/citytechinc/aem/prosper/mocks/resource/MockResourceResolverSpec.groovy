@@ -1,11 +1,11 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import com.citytechinc.aem.prosper.specs.AemSpec
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.resource.NonExistingResource
 
 import javax.jcr.query.Query
 
-class MockResourceResolverSpec extends AemSpec {
+class MockResourceResolverSpec extends ProsperSpec {
 
     def setupSpec() {
         nodeBuilder.content {

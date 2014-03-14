@@ -8,7 +8,7 @@ import org.apache.sling.api.resource.ResourceResolver
 
 import javax.jcr.Session
 
-class AemSpecSpec extends AemSpec {
+class ProsperSpecSpec extends ProsperSpec {
 
     @Override
     Collection<AdapterFactory> addAdapterFactories() {

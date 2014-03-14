@@ -1,8 +1,8 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import com.citytechinc.aem.prosper.specs.AemSpec
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 
-class MockResourceSpec extends AemSpec {
+class MockResourceSpec extends ProsperSpec {
 
     def setupSpec() {
         pageBuilder.home {

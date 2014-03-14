@@ -31,11 +31,11 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
             <scope>test</scope>
         </dependency>
 
-2. Create a `src/test/groovy` directory in your project structure and add a Spock specification extending the base `AemSpec`.
+2. Create a `src/test/groovy` directory in your project structure and add a Spock specification extending the base `ProsperSpec`.
 
-        import com.citytechinc.aem.prosper.specs.AemSpec
+        import com.citytechinc.aem.prosper.specs.ProsperSpec
 
-        class ExampleSpec extends AemSpec {
+        class ExampleSpec extends ProsperSpec {
 
             def setupSpec() {
                 // use PageBuilder from base spec to create test content

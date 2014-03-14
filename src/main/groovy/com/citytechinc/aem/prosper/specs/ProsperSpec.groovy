@@ -7,6 +7,7 @@ import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
+import com.citytechinc.aem.prosper.mocks.resource.TestResourceResolver
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
@@ -33,7 +34,7 @@ import javax.jcr.Session
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code> and content builders.
  */
 @SuppressWarnings("deprecation")
-abstract class AemSpec extends Specification implements TestAdaptable {
+abstract class ProsperSpec extends Specification implements TestAdaptable {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
@@ -41,13 +42,13 @@ abstract class AemSpec extends Specification implements TestAdaptable {
 
     private static SlingRepository repository
 
-    @Shared session
+    @Shared sessionInternal
 
-    @Shared resourceResolver
+    @Shared resourceResolverInternal
 
-    @Shared nodeBuilder
+    @Shared nodeBuilderInternal
 
-    @Shared pageBuilder
+    @Shared pageBuilderInternal
 
     @Shared
     private def adapterFactories = []
@@ -67,13 +68,13 @@ abstract class AemSpec extends Specification implements TestAdaptable {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        session = getRepository().loginAdministrative(null)
-        nodeBuilder = new NodeBuilder(session)
-        pageBuilder = new PageBuilder(session)
+        sessionInternal = getRepository().loginAdministrative(null)
+        nodeBuilderInternal = new NodeBuilder(sessionInternal)
+        pageBuilderInternal = new PageBuilder(sessionInternal)
 
         addAdapters()
 
-        resourceResolver = new MockResourceResolver(session, resourceResolverAdapters, resourceAdapters,
+        resourceResolverInternal = new MockResourceResolver(sessionInternal, resourceResolverAdapters, resourceAdapters,
             adapterFactories)
     }
 
@@ -85,7 +86,7 @@ abstract class AemSpec extends Specification implements TestAdaptable {
 
         removeAllNodes()
 
-        session.logout()
+        sessionInternal.logout()
     }
 
     // default adapter methods return empty collections
@@ -130,7 +131,7 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      */
     @Override
     void addResourceAdapter(Class adapterType, Closure closure) {
-        resourceResolver.addResourceAdapter(adapterType, closure)
+        resourceResolverInternal.addResourceAdapter(adapterType, closure)
     }
 
     /**
@@ -140,7 +141,37 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      */
     @Override
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
-        resourceResolver.addResourceResolverAdapter(adapterType, closure)
+        resourceResolverInternal.addResourceResolverAdapter(adapterType, closure)
+    }
+
+    // accessors for shared instances
+
+    /**
+     * @return JCR node builder
+     */
+    NodeBuilder getNodeBuilder() {
+        nodeBuilderInternal
+    }
+
+    /**
+     * @return CQ page builder
+     */
+    PageBuilder getPageBuilder() {
+        pageBuilderInternal
+    }
+
+    /**
+     * @return admin resource resolver
+     */
+    TestResourceResolver getResourceResolver() {
+        resourceResolverInternal
+    }
+
+    /**
+     * @return admin session
+     */
+    Session getSession() {
+        sessionInternal
     }
 
     // builders
@@ -152,7 +183,7 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder() {
-        new RequestBuilder(resourceResolver)
+        new RequestBuilder(resourceResolverInternal)
     }
 
     /**
@@ -162,7 +193,7 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder(String path) {
-        new RequestBuilder(resourceResolver, path)
+        new RequestBuilder(resourceResolverInternal, path)
     }
 
     /**
@@ -179,8 +210,8 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      * method to cleanup content before the entire specification has been executed.
      */
     void removeAllNodes() {
-        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
-        session.save()
+        sessionInternal.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        sessionInternal.save()
     }
 
     // assertion methods for use in Spock specification 'expect' blocks
@@ -191,7 +222,7 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      * @param path node path
      */
     void assertNodeExists(String path) {
-        assert session.nodeExists(path)
+        assert sessionInternal.nodeExists(path)
     }
 
     /**
@@ -201,9 +232,9 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      * @param primaryNodeTypeName primary node type name
      */
     void assertNodeExists(String path, String primaryNodeTypeName) {
-        assert session.nodeExists(path)
+        assert sessionInternal.nodeExists(path)
 
-        def node = session.getNode(path)
+        def node = sessionInternal.getNode(path)
 
         assert node.primaryNodeType.name == primaryNodeTypeName
     }
@@ -215,9 +246,9 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      * @param properties map of property names and values to verify for the node
      */
     void assertNodeExists(String path, Map<String, Object> properties) {
-        assert session.nodeExists(path)
+        assert sessionInternal.nodeExists(path)
 
-        def node = session.getNode(path)
+        def node = sessionInternal.getNode(path)
 
         properties.each { name, value ->
             assert node.get(name) == value
@@ -232,9 +263,9 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      * @param properties map of property names and values to verify for the node
      */
     void assertNodeExists(String path, String primaryNodeTypeName, Map<String, Object> properties) {
-        assert session.nodeExists(path)
+        assert sessionInternal.nodeExists(path)
 
-        def node = session.getNode(path)
+        def node = sessionInternal.getNode(path)
 
         assert node.primaryNodeType.name == primaryNodeTypeName
 
@@ -250,9 +281,9 @@ abstract class AemSpec extends Specification implements TestAdaptable {
      * @param properties map of property names and values to verify for the page
      */
     void assertPageExists(String path, Map<String, Object> properties) {
-        assert session.nodeExists(path)
+        assert sessionInternal.nodeExists(path)
 
-        def pageNode = session.getNode(path)
+        def pageNode = sessionInternal.getNode(path)
 
         assert pageNode.primaryNodeType.name == NameConstants.NT_PAGE
         assert pageNode.hasNode(JcrConstants.JCR_CONTENT)
@@ -284,15 +315,15 @@ abstract class AemSpec extends Specification implements TestAdaptable {
     }
 
     private def registerNodeTypes() {
-        session = getRepository().loginAdministrative(null)
+        sessionInternal = getRepository().loginAdministrative(null)
 
         NODE_TYPES.each { type ->
             this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { InputStream stream ->
-                RepositoryUtil.registerNodeType(session, stream)
+                RepositoryUtil.registerNodeType(sessionInternal, stream)
             }
         }
 
-        session.logout()
+        sessionInternal.logout()
     }
 
     private void addAdapters() {
@@ -311,13 +342,13 @@ abstract class AemSpec extends Specification implements TestAdaptable {
         }
 
         resourceAdapters[ValueMap.class] = { Resource resource ->
-            def node = session.getNode(resource.path)
+            def node = sessionInternal.getNode(resource.path)
 
             new JcrPropertyMap(node)
         }
 
         resourceAdapters[Node.class] = { Resource resource ->
-            session.getNode(resource.path)
+            sessionInternal.getNode(resource.path)
         }
     }
 
@@ -332,6 +363,6 @@ abstract class AemSpec extends Specification implements TestAdaptable {
             new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
         }
 
-        resourceResolverAdapters[Session.class] = { session }
+        resourceResolverAdapters[Session.class] = { sessionInternal }
     }
 }

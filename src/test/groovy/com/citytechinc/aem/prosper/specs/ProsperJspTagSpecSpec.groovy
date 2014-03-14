@@ -1,9 +1,9 @@
-package com.citytechinc.aem.prosper.specs.tag
+package com.citytechinc.aem.prosper.specs
 
 import javax.servlet.jsp.JspException
 import javax.servlet.jsp.tagext.TagSupport
 
-class TagSpecSpec extends TagSpec {
+class ProsperJspTagSpecSpec extends ProsperJspTagSpec {
 
     @Override
     TagSupport createTag() {

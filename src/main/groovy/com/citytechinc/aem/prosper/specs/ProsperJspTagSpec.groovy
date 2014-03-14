@@ -1,17 +1,15 @@
-package com.citytechinc.aem.prosper.specs.tag
+package com.citytechinc.aem.prosper.specs
 
-import com.citytechinc.aem.prosper.specs.AemSpec
 import org.springframework.mock.web.MockJspWriter
 
 import javax.servlet.jsp.PageContext
 import javax.servlet.jsp.tagext.TagSupport
 
 import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RESOURCE_RESOLVER_NAME
-
 /**
  * Spock specification for testing tag handlers.
  */
-abstract class TagSpec extends AemSpec {
+abstract class ProsperJspTagSpec extends ProsperSpec {
 
     private StringWriter writer
 

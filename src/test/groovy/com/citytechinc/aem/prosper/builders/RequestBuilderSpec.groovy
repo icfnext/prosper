@@ -1,10 +1,10 @@
 package com.citytechinc.aem.prosper.builders
 
-import com.citytechinc.aem.prosper.specs.AemSpec
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import spock.lang.Unroll
 
 @Unroll
-class RequestBuilderSpec extends AemSpec {
+class RequestBuilderSpec extends ProsperSpec {
 
     def setupSpec() {
         nodeBuilder.content()
