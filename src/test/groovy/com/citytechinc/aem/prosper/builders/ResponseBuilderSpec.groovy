@@ -1,21 +1,18 @@
 package com.citytechinc.aem.prosper.builders
-
 import com.google.common.net.MediaType
 import spock.lang.Specification
-
-import static javax.servlet.http.HttpServletResponse.SC_OK
 
 class ResponseBuilderSpec extends Specification {
 
     def "build response"() {
         setup:
-        def response = new ResponseBuilder().build()
+        def writer = new StringWriter()
+        def response = new ResponseBuilder(writer).build()
 
         expect:
-        response.status == SC_OK
         response.characterEncoding == "UTF-8"
         response.contentType == "text/html"
-        response.output == ""
+        writer.toString() == ""
     }
 
     def "build response with closure"() {
@@ -26,7 +23,6 @@ class ResponseBuilderSpec extends Specification {
         }
 
         expect:
-        response.status == 500
         response.characterEncoding == "UTF-8"
         response.contentType == "application/json"
     }
