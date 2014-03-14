@@ -6,21 +6,22 @@ import javax.servlet.jsp.PageContext
 import javax.servlet.jsp.tagext.TagSupport
 
 import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RESOURCE_RESOLVER_NAME
+
 /**
  * Spock specification for testing tag handlers.
  */
 abstract class ProsperJspTagSpec extends ProsperSpec {
 
-    private StringWriter writer
+    StringWriter writer
 
-    TagSupport tag
+    TagSupport tagInternal
 
     /**
      * Create a mock page context that writes output to a StringWriter.  The resulting output can be retrieved by
      * calling <code>getResult()</code>.
      */
     def setup() {
-        tag = createTag()
+        tagInternal = createTag()
         writer = new StringWriter()
 
         def pageContext = Mock(PageContext)
@@ -35,7 +36,7 @@ abstract class ProsperJspTagSpec extends ProsperSpec {
             pageContext.getAttribute(name) >> value
         }
 
-        tag.pageContext = pageContext
+        tagInternal.pageContext = pageContext
     }
 
     /**
@@ -64,5 +65,14 @@ abstract class ProsperJspTagSpec extends ProsperSpec {
      */
     String getResult() {
         writer.toString()
+    }
+
+    /**
+     * Get the JSP tag instance under test.
+     *
+     * @return <code>TagSupport</code> instance
+     */
+    TagSupport getTag() {
+        tagInternal
     }
 }

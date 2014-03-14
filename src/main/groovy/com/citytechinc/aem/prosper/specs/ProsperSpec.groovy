@@ -8,7 +8,6 @@ import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.TestResourceResolver
-import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.NameConstants
@@ -29,7 +28,6 @@ import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
-
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code> and content builders.
  */
@@ -46,18 +44,17 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
 
     @Shared resourceResolverInternal
 
+    @Shared pageManagerInternal
+
     @Shared nodeBuilderInternal
 
     @Shared pageBuilderInternal
 
-    @Shared
-    private def adapterFactories = []
+    @Shared adapterFactories = []
 
-    @Shared
-    private def resourceResolverAdapters = [:]
+    @Shared resourceResolverAdapters = [:]
 
-    @Shared
-    private def resourceAdapters = [:]
+    @Shared resourceAdapters = [:]
 
     // global fixtures
 
@@ -76,6 +73,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
 
         resourceResolverInternal = new MockResourceResolver(sessionInternal, resourceResolverAdapters, resourceAdapters,
             adapterFactories)
+        pageManagerInternal = resourceResolver.adaptTo(PageManager)
     }
 
     /**
@@ -125,9 +123,11 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     /**
+     * Add a <code>Resource</code> adapter for the current specification.  This method can be called as many times as
+     * necessary in a feature method to add adapters for the current test.
      *
-     * @param adapterType
-     * @param closure
+     * @param adapterType adapter class
+     * @param closure closure with a single <code>Resource</code> that returns an instance of the adapter class
      */
     @Override
     void addResourceAdapter(Class adapterType, Closure closure) {
@@ -135,9 +135,11 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     /**
+     * Add a <code>ResourceResolver</code> adapter for the current specification.  This method can be called as many
+     * times as necessary in a feature method to add adapters for the current test.
      *
-     * @param adapterType
-     * @param closure
+     * @param adapterType adapter class
+     * @param closure closure with a single <code>ResourceResolver</code> that returns an instance of the adapter class
      */
     @Override
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
@@ -174,6 +176,13 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         sessionInternal
     }
 
+    /**
+     * @return CQ page manager
+     */
+    PageManager getPageManager() {
+        pageManagerInternal
+    }
+
     // builders
 
     /**
@@ -187,7 +196,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     /**
-     * Get a request builder.
+     * Get a request builder for the given path.
      *
      * @param path content path
      * @return request builder instance for this resource resolver
@@ -275,20 +284,26 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     /**
+     * Assert that a page exists for the given path.
+     *
+     * @param path page path
+     */
+    void assertPageExists(String path) {
+        assert pageManagerInternal.getPage(path)
+    }
+
+    /**
      * Assert that a page exists for the given path and contains the given properties.
      *
      * @param path page path
      * @param properties map of property names and values to verify for the page
      */
     void assertPageExists(String path, Map<String, Object> properties) {
-        assert sessionInternal.nodeExists(path)
+        def page = pageManagerInternal.getPage(path)
 
-        def pageNode = sessionInternal.getNode(path)
+        assert page
 
-        assert pageNode.primaryNodeType.name == NameConstants.NT_PAGE
-        assert pageNode.hasNode(JcrConstants.JCR_CONTENT)
-
-        def contentNode = pageNode.getNode(JcrConstants.JCR_CONTENT)
+        def contentNode = page.node
 
         properties.each { name, value ->
             assert contentNode.get(name) == value
