@@ -72,7 +72,19 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     Resource getResource(Resource base, String path) {
-        path?.startsWith("/") ? getResource(path) : base ? getResource("${base.path}/$path") : null
+        def resource
+
+        if (path.startsWith("/")) {
+            resource = getResource(path)
+        } else {
+            if (base) {
+                resource = getResource("${base.path}/$path")
+            } else {
+                resource = null
+            }
+        }
+
+        resource
     }
 
     @Override
