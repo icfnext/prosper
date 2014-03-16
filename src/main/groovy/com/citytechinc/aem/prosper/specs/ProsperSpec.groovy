@@ -8,6 +8,7 @@ import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.TestResourceResolver
+import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.NameConstants
@@ -300,7 +301,12 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
      * @param path page path
      */
     void assertPageExists(String path) {
-        assert pageManagerInternal.getPage(path)
+        assert session.nodeExists(path)
+
+        def pageNode = session.getNode(path)
+
+        assert pageNode.primaryNodeType.name == NameConstants.NT_PAGE
+        assert pageNode.hasNode(JcrConstants.JCR_CONTENT)
     }
 
     /**
@@ -310,11 +316,9 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
      * @param properties map of property names and values to verify for the page
      */
     void assertPageExists(String path, Map<String, Object> properties) {
-        def page = pageManagerInternal.getPage(path)
+        assertPageExists(path)
 
-        assert page
-
-        def contentNode = page.node
+        def contentNode = session.getNode(path).getNode(JcrConstants.JCR_CONTENT)
 
         properties.each { name, value ->
             assert contentNode.get(name) == value
