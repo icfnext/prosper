@@ -110,33 +110,4 @@ class MockResourceResolverSpec extends ProsperSpec {
         expect:
         !resourceResolver.live
     }
-
-    def "call method after close"() {
-        setup:
-        resourceResolver.close()
-
-        when:
-        resourceResolver.findResources('', Query.XPATH)
-
-        then:
-        thrown(IllegalStateException)
-
-        when:
-        resourceResolver.getAttribute("foo")
-
-        then:
-        thrown(IllegalStateException)
-
-        when:
-        resourceResolver.getAttributeNames()
-
-        then:
-        thrown(IllegalStateException)
-
-        when:
-        resourceResolver.getResource("/content/one")
-
-        then:
-        thrown(IllegalStateException)
-    }
 }

@@ -89,6 +89,13 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         sessionInternal.logout()
     }
 
+    /**
+     * Get a new page manager to ensure all caches are cleared.
+     */
+    def setup() {
+        pageManagerInternal = resourceResolver.adaptTo(PageManager)
+    }
+
     // default adapter methods return empty collections
 
     /**

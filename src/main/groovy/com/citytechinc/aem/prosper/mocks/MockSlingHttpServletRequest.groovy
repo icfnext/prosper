@@ -1,7 +1,6 @@
 package com.citytechinc.aem.prosper.mocks
 
 import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
-import com.google.common.collect.SetMultimap
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.request.RequestDispatcherOptions
 import org.apache.sling.api.request.RequestParameter
@@ -10,15 +9,51 @@ import org.apache.sling.api.request.RequestPathInfo
 import org.apache.sling.api.request.RequestProgressTracker
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.commons.testing.sling.MockRequestPathInfo
+import org.springframework.mock.web.MockHttpServletRequest
 
 import javax.servlet.RequestDispatcher
-import javax.servlet.ServletInputStream
 import javax.servlet.http.Cookie
-import javax.servlet.http.HttpSession
-import java.security.Principal
 
 class MockSlingHttpServletRequest implements SlingHttpServletRequest {
+
+    class MockRequestPathInfo implements RequestPathInfo {
+
+        String path
+
+        String extension
+
+        String suffix
+
+        String selectors
+
+        @Override
+        String getResourcePath() {
+            path
+        }
+
+        @Override
+        String getExtension() {
+            extension
+        }
+
+        @Override
+        String getSelectorString() {
+            selectors
+        }
+
+        @Override
+        String[] getSelectors() {
+            selectors ? selectors.split("\\.") : new String[0]
+        }
+
+        @Override
+        String getSuffix() {
+            suffix
+        }
+    }
+
+    @Delegate
+    private MockHttpServletRequest mockRequest
 
     private final def resourceResolver
 
@@ -26,26 +61,18 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     private final def requestPathInfo
 
-    private final def queryString
-
     private final def requestParameterMap
 
-    private final def attributes
-
-    private final def method
-
-    MockSlingHttpServletRequest(ResourceResolver resourceResolver, String path, String method, String selectorString,
-        String extension, String suffix, String queryString, SetMultimap<String, String> parameterMap,
-        Map<String, Object> attributes) {
-        this.method = method
+    MockSlingHttpServletRequest(MockHttpServletRequest mockRequest, ResourceResolver resourceResolver, String path,
+        String selectorString, String extension, String suffix) {
+        this.mockRequest = mockRequest
         this.resourceResolver = resourceResolver
-        this.queryString = queryString
-        this.attributes = attributes
 
         resource = resourceResolver.resolve(path)
 
-        requestParameterMap = MockRequestParameterMap.create(parameterMap)
-        requestPathInfo = new MockRequestPathInfo(selectorString, extension, suffix, path)
+        requestParameterMap = MockRequestParameterMap.create(mockRequest)
+        requestPathInfo = new MockRequestPathInfo(path: path, extension: extension, suffix: suffix,
+            selectors: selectorString)
     }
 
     @Override
@@ -95,7 +122,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     @Override
     Cookie getCookie(String name) {
-        throw new UnsupportedOperationException()
+        getCookies().find { it.name == name }
     }
 
     @Override
@@ -129,278 +156,23 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     }
 
     @Override
-    String getAuthType() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    Cookie[] getCookies() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    long getDateHeader(String s) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getHeader(String s) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    Enumeration getHeaders(String s) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    Enumeration getHeaderNames() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    int getIntHeader(String s) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getMethod() {
-        method
-    }
-
-    @Override
-    String getPathInfo() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getPathTranslated() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getContextPath() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
     String getQueryString() {
-        queryString
-    }
+        def builder = new StringBuilder()
+        def map = getParameterMap()
 
-    @Override
-    String getRemoteUser() {
-        throw new UnsupportedOperationException()
-    }
+        if (map) {
+            map.each { name, values ->
+                values.each { value ->
+                    builder.append(name)
+                    builder.append('=')
+                    builder.append(value)
+                    builder.append('&')
+                }
+            }
 
-    @Override
-    boolean isUserInRole(String s) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    Principal getUserPrincipal() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getRequestedSessionId() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getRequestURI() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    StringBuffer getRequestURL() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getServletPath() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    HttpSession getSession(boolean b) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    HttpSession getSession() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    boolean isRequestedSessionIdValid() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    boolean isRequestedSessionIdFromCookie() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    boolean isRequestedSessionIdFromURL() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    boolean isRequestedSessionIdFromUrl() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    Object getAttribute(String s) {
-        attributes[s]
-    }
-
-    @Override
-    Enumeration getAttributeNames() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getCharacterEncoding() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    void setCharacterEncoding(String s) throws UnsupportedEncodingException {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    int getContentLength() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getContentType() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    ServletInputStream getInputStream() throws IOException {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getParameter(String s) {
-        def value = requestParameterMap.getValue(s)
-
-        value ? value.string : null
-    }
-
-    @Override
-    Enumeration getParameterNames() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String[] getParameterValues(String s) {
-        def values = requestParameterMap.getValues(s)
-
-        values ? values*.string.toArray(new String[0]) : null
-    }
-
-    @Override
-    Map getParameterMap() {
-        requestParameterMap.collectEntries([:]) { name, values ->
-            [name: values*.string.toArray(new String[0])]
+            builder.deleteCharAt(builder.length() - 1)
         }
-    }
 
-    @Override
-    String getProtocol() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getScheme() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getServerName() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    int getServerPort() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    BufferedReader getReader() throws IOException {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getRemoteAddr() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getRemoteHost() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    void setAttribute(String s, Object o) {
-        attributes[s] = o
-    }
-
-    @Override
-    void removeAttribute(String s) {
-        attributes.remove(s)
-    }
-
-    @Override
-    Locale getLocale() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    Enumeration getLocales() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    boolean isSecure() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    RequestDispatcher getRequestDispatcher(String s) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getRealPath(String s) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    int getRemotePort() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getLocalName() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getLocalAddr() {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
-    int getLocalPort() {
-        throw new UnsupportedOperationException()
+        builder.toString()
     }
 }
