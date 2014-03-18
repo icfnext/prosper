@@ -107,10 +107,13 @@ class RequestBuilder {
      * Build a Sling request using a closure to set request properties.
      *
      * <pre>
-     *  new RequestBuilder(resourceResolver).build {*      path "/content"
-     *      method "GET"
-     *      extension "html"
-     *}* </pre>
+     *  new RequestBuilder(resourceResolver).build {
+     *      path = "/content"
+     *      method = "GET"
+     *      parameters = ["a": ["1", "2"], "b": ["1"]]
+     *      extension = "html"
+     *  }
+     * </pre>
      *
      * @param closure closure that delegates to this builder
      * @return request
@@ -122,10 +125,6 @@ class RequestBuilder {
             closure()
         }
 
-        buildRequest()
-    }
-
-    private def buildRequest() {
         def selectorString = buildSelectorString() ?: null
 
         new MockSlingHttpServletRequest(mockRequest, resourceResolver, path, selectorString, extension, suffix)

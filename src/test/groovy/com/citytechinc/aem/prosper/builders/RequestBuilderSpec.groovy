@@ -1,4 +1,5 @@
 package com.citytechinc.aem.prosper.builders
+
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import spock.lang.Unroll
 
@@ -16,11 +17,11 @@ class RequestBuilderSpec extends ProsperSpec {
 
         expect:
         request.resource.path == "/"
-        request.queryString == ""
+        !request.queryString
         !request.requestParameterMap
         !requestPathInfo.selectorString
-        requestPathInfo.extension == ""
-        requestPathInfo.suffix == ""
+        !requestPathInfo.extension
+        !requestPathInfo.suffix
     }
 
     def "build request"() {

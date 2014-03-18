@@ -8,9 +8,7 @@ import org.springframework.mock.web.MockHttpServletResponse
  */
 class ResponseBuilder {
 
-    @Delegate(includes = ["addCookie", "addDateHeader", "addHeader", "addIncludedUrl", "addIntHeader", "setBufferSize",
-        "setCharacterEncoding", "setContentLength", "setContentType", "setDateHeader", "setForwardedUrl", "setHeader",
-        "setIncludedUrl", "setIntHeader", "setLocale", "setStatus"])
+    @Delegate
     private MockHttpServletResponse mockResponse = new MockHttpServletResponse()
 
     /**
@@ -26,9 +24,13 @@ class ResponseBuilder {
      * Build a Sling response using a closure to set response properties.
      *
      * <pre>
-     *  new ResponseBuilder().build {*      status 200
-     *      mediaType MediaType.JSON_UTF_8
-     *}* </pre>
+     *  new ResponseBuilder().build {
+     *      status = 200
+     *      characterEncoding = "UTF-8"
+     *      contentType = "application/json"
+     *      addHeader "Connection", "close"
+     *  }
+     * </pre>
      *
      * @param closure closure that delegates to this builder
      * @return response

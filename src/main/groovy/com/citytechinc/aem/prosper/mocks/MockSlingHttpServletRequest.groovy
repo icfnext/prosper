@@ -157,22 +157,29 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     @Override
     String getQueryString() {
-        def builder = new StringBuilder()
-        def map = getParameterMap()
+        // check for overridden query string
+        def queryString = mockRequest.queryString
 
-        if (map) {
-            map.each { name, values ->
-                values.each { value ->
-                    builder.append(name)
-                    builder.append('=')
-                    builder.append(value)
-                    builder.append('&')
+        if (!queryString) {
+            def builder = new StringBuilder()
+            def map = mockRequest.getParameterMap()
+
+            if (map) {
+                map.each { name, values ->
+                    values.each { value ->
+                        builder.append(name)
+                        builder.append('=')
+                        builder.append(value)
+                        builder.append('&')
+                    }
                 }
+
+                builder.deleteCharAt(builder.length() - 1)
             }
 
-            builder.deleteCharAt(builder.length() - 1)
+            queryString = builder.toString()
         }
 
-        builder.toString()
+        queryString
     }
 }

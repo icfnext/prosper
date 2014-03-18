@@ -19,9 +19,11 @@ class ResponseBuilderSpec extends Specification {
         setup:
         def response = new ResponseBuilder().build {
             status = 500
+            setHeader "foo", "bar"
         }
 
         expect:
         response.status == 500
+        response.getHeader("foo") == "bar"
     }
 }
