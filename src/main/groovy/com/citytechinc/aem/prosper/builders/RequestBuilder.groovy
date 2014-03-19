@@ -104,10 +104,13 @@ class RequestBuilder {
     }
 
     /**
-     * Build a Sling request using a closure to set request properties.
+     * Build a Sling request using a closure to set request properties.  The closure delegates to this builder and an
+     * instance of <a href="http://docs.spring.io/spring/docs/3.2.8.RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html">MockHttpServletRequest</a>,
+     * so methods for these instances may be called directly in the closure (see example below).  This pattern is similar to the Groovy <a href="http://groovy.codehaus.org/groovy-jdk/java/lang/Object.html#with(groovy.lang.Closure)"><code>with</code></a> method.
      *
      * <pre>
      *  new RequestBuilder(resourceResolver).build {
+     *      serverName = "localhost"
      *      path = "/content"
      *      method = "GET"
      *      parameters = ["a": ["1", "2"], "b": ["1"]]
@@ -115,7 +118,7 @@ class RequestBuilder {
      *  }
      * </pre>
      *
-     * @param closure closure that delegates to this builder
+     * @param closure closure that delegates to this builder and <a href="http://docs.spring.io/spring/docs/3.2.8.RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html">MockHttpServletRequest</a>
      * @return request
      */
     MockSlingHttpServletRequest build(Closure closure) {
@@ -125,23 +128,6 @@ class RequestBuilder {
             closure()
         }
 
-        def selectorString = buildSelectorString() ?: null
-
-        new MockSlingHttpServletRequest(mockRequest, resourceResolver, path, selectorString, extension, suffix)
-    }
-
-    private def buildSelectorString() {
-        def builder = new StringBuilder()
-
-        if (selectors) {
-            selectors.each { selector ->
-                builder.append(selector)
-                builder.append('.')
-            }
-
-            builder.deleteCharAt(builder.length() - 1)
-        }
-
-        builder.toString()
+        new MockSlingHttpServletRequest(mockRequest, resourceResolver, path, selectors, extension, suffix)
     }
 }

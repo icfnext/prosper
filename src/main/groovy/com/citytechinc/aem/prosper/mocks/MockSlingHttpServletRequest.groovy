@@ -24,7 +24,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
         String suffix
 
-        String selectors
+        List<String> selectors
 
         @Override
         String getResourcePath() {
@@ -38,12 +38,12 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
         @Override
         String getSelectorString() {
-            selectors
+            selectors ? selectors.join(".") : null
         }
 
         @Override
         String[] getSelectors() {
-            selectors ? selectors.split("\\.") : new String[0]
+            selectors as String[]
         }
 
         @Override
@@ -64,7 +64,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     private final def requestParameterMap
 
     MockSlingHttpServletRequest(MockHttpServletRequest mockRequest, ResourceResolver resourceResolver, String path,
-        String selectorString, String extension, String suffix) {
+        List<String> selectors, String extension, String suffix) {
         this.mockRequest = mockRequest
         this.resourceResolver = resourceResolver
 
@@ -72,7 +72,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
         requestParameterMap = MockRequestParameterMap.create(mockRequest)
         requestPathInfo = new MockRequestPathInfo(path: path, extension: extension, suffix: suffix,
-            selectors: selectorString)
+            selectors: selectors)
     }
 
     @Override
