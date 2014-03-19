@@ -235,32 +235,12 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     /**
-     * Get a request builder for the given path.
-     *
-     * @param path content path
-     * @return request builder instance for this resource resolver
-     */
-    RequestBuilder getRequestBuilder(String path) {
-        new RequestBuilder(resourceResolverInternal, path)
-    }
-
-    /**
      * Get a response builder.
      *
      * @return builder
      */
     ResponseBuilder getResponseBuilder() {
         new ResponseBuilder()
-    }
-
-    /**
-     * Get a response builder with a writer instance.
-     *
-     * @param writer writer for capturing response output
-     * @return builder
-     */
-    ResponseBuilder getResponseBuilder(Writer writer) {
-        new ResponseBuilder(writer)
     }
 
     /**

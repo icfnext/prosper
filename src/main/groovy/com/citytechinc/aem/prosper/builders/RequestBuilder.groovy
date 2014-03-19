@@ -32,17 +32,6 @@ class RequestBuilder {
     }
 
     /**
-     * Create a request builder for the given JCR path.
-     *
-     * @param resourceResolver Sling resource resolver
-     * @param path
-     */
-    RequestBuilder(ResourceResolver resourceResolver, String path) {
-        this.resourceResolver = resourceResolver
-        this.path = path
-    }
-
-    /**
      * Set the request path.
      *
      * @param path JCR path
