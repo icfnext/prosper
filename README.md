@@ -27,7 +27,7 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
         <dependency>
             <groupId>com.citytechinc.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>0.8.0</version>
+            <version>0.9.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -119,13 +119,59 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 
 ## User Guide
 
-### Creating Test Content
+### Content Builders
+
+A specification will often require content such as pages, components, or supporting node structures to facilitate the interactions of the class under test.  Creating a large and/or complex content hierarchy using the provided APIs can be tedious and time consuming.  The base `ProsperSpec` simplifies the content creation process by defining two Groovy [builder](http://groovy.codehaus.org/Builders) instances, `pageBuilder` and `nodeBuilder`, that greatly reduce the amount of code needed to produce a working content structure in the JCR.
+
+#### Page Builder
+
+`PageBuilder` creates nodes of type `cq:Page` by default.
+
+    pageBuilder.content {
+        beer { // page with no title
+            styles("Styles") { // create page with title "Styles"
+                "jcr:content"("jcr:lastModifiedBy": "mdaugherty", "jcr:lastModified": Calendar.instance) {
+                    data("sling:Folder")  // descendant of "jcr:content", argument sets node type instead of title
+                    navigation("sling:resourceType: "components/navigation", "rootPath": "/content/beer")
+                }
+                dubbel("Dubbel")
+                tripel("Tripel")
+                saison("Saison")
+            }
+            // create a page with title "Breweries" and set properties on it's "jcr:content" node
+            breweries("Breweries", "jcr:lastModifiedBy": "mdaugherty", "jcr:lastModified": Calendar.instance)
+        }
+    }
+
+Nodes named `jcr:content`, however, are treated as unstructured nodes to allow the creation of descendant component/data nodes that are not of type `cq:Page`.  Descendants of `jcr:content` nodes can specify a node type using a `String` value as the first argument in the tree syntax (see `/content/beer/styles/jcr:content/data` in the above example).  As with page nodes, additional properties can be passed with a map argument.
+
+#### Node Builder
+
+This builder should be used when creating non-page content hierarchies, such as descendants of `/etc` in the JCR.  The syntax is similar to `PageBuilder`, but the first argument is used to specify the node type rather than the `jcr:title` property.
+
+    nodeBuilder.etc { // unstructured node
+        designs("sling:Folder") { // node with type
+            site("sling:Folder", "jcr:title": "Site", "inceptionYear": 2014) // node with type and properties
+        }
+    }
+
+The above example will create an `nt:unstructured` (the default type) node at `/etc` and `sling:Folder` nodes at `/etc/designs` and `/etc/designs/site`.  An additional map argument will set properties on the target node in the same manner as `PageBuilder`.
+
+Both builders automatically save the underlying JCR session after executing the provided closure.
+
+In addition to the provided builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
 ### Mocking Requests and Responses
 
+Testing servlets and request-scoped POJOs require mocking the `SlingHttpServletRequest` and `SlingHttpServletResponse` objects.  The `RequestBuilder` and `ResponseBuilder` instances acquired through the `ProsperSpec` leverage Groovy closures to set the necessary properties and state on these mock objects in a lightweight manner.
+
 ### Adding Sling Adapters
 
+### Adding Services
+
 ### Assertions
+
+### GroovyDocs
 
 ### Testing Scenarios
 
