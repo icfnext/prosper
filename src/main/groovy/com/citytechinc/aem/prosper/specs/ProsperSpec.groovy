@@ -192,6 +192,36 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         pageManagerInternal
     }
 
+    /**
+     * Get the Node for a path.
+     *
+     * @param path valid JCR Node path
+     * @return node for given path
+     */
+    Node getNode(String path) {
+        sessionInternal.getNode(path)
+    }
+
+    /**
+     * Get the Resource for a path.
+     *
+     * @param path valid Resource path
+     * @return resource for given path or null
+     */
+    Resource getResource(String path) {
+        resourceResolverInternal.getResource(path)
+    }
+
+    /**
+     * Get the Page for a path.
+     *
+     * @param path valid Page path
+     * @return Page for given path or null
+     */
+    Page getPage(String path) {
+        pageManagerInternal.getPage(path)
+    }
+
     // builders
 
     /**
