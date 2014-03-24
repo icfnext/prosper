@@ -1,5 +1,6 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
+import com.google.common.base.Objects
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceMetadata
 import org.apache.sling.api.resource.ResourceResolver
@@ -68,7 +69,8 @@ class MockResource implements Resource {
 
     @Override
     Resource getChild(String relPath) {
-        node.hasNode(relPath) ? new MockResource(resourceResolver, node.getNode(relPath), adapters, adapterFactories) : null
+        node.hasNode(relPath) ? new MockResource(resourceResolver, node.getNode(relPath), adapters,
+            adapterFactories) : null
     }
 
     @Override
@@ -113,5 +115,11 @@ class MockResource implements Resource {
     @Override
     ResourceResolver getResourceResolver() {
         resourceResolver
+    }
+
+    @Override
+    String toString() {
+        Objects.toStringHelper(this).add("path", path).add("resourceType", resourceType).add("resourceSuperType",
+            resourceSuperType).toString()
     }
 }
