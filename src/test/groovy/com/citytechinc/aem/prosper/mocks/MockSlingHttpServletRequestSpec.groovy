@@ -11,7 +11,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
         nodeBuilder.content()
 
         def request = new RequestBuilder(resourceResolver).build {
-            path "/content"
+            path = "/content"
         }
 
         expect:
@@ -22,7 +22,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
     def "resolve resource for non-existent path"() {
         setup:
         def request = new RequestBuilder(resourceResolver).build {
-            path "/content/foo"
+            path = "/content/foo"
         }
 
         expect:
@@ -42,29 +42,21 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
     def "get request parameter"() {
         setup:
         def request = new RequestBuilder(resourceResolver).build {
-            parameters map
+            parameters = ["a": ["alpha"]]
         }
 
         expect:
-        request.getRequestParameter(name).string == value
-
-        where:
-        map              | name | value
-        ["a": ["alpha"]] | "a"  | "alpha"
+        request.getRequestParameter("a").string == "alpha"
     }
 
     def "get request parameters"() {
         setup:
         def request = new RequestBuilder(resourceResolver).build {
-            parameters map
+            parameters = ["a": ["alpha1", "alpha2"]]
         }
 
         expect:
-        request.getRequestParameters(name)*.string == values
-
-        where:
-        map                         | name | values
-        ["a": ["alpha1", "alpha2"]] | "a"  | ["alpha1", "alpha2"]
+        request.getRequestParameters("a")*.string == ["alpha1", "alpha2"]
     }
 
     def "get parameter returns null"() {
@@ -79,28 +71,20 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
     def "get parameter"() {
         setup:
         def request = new RequestBuilder(resourceResolver).build {
-            parameters map
+            parameters = ["a": ["alpha"]]
         }
 
         expect:
-        request.getParameter(name) == value
-
-        where:
-        map              | name | value
-        ["a": ["alpha"]] | "a"  | "alpha"
+        request.getParameter("a") == "alpha"
     }
 
     def "get parameters"() {
         setup:
         def request = new RequestBuilder(resourceResolver).build {
-            parameters map
+            parameters = ["a": ["alpha1", "alpha2"]]
         }
 
         expect:
-        request.getParameterValues(name) as List == values
-
-        where:
-        map                         | name | values
-        ["a": ["alpha1", "alpha2"]] | "a"  | ["alpha1", "alpha2"]
+        request.getParameterValues("a") as List == ["alpha1", "alpha2"]
     }
 }

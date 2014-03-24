@@ -1,18 +1,18 @@
 package com.citytechinc.aem.prosper.mocks.request
 
-import com.google.common.collect.LinkedHashMultimap
+import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
 
 class MockRequestParameterMapSpec extends Specification {
 
     def "get values"() {
         setup:
-        def parameters = LinkedHashMultimap.create()
+        def request = new MockHttpServletRequest()
 
-        parameters.put("a", "1")
-        parameters.put("a", "2")
+        request.addParameter "a", "1"
+        request.addParameter "a", "2"
 
-        def requestParameterMap = MockRequestParameterMap.create(parameters)
+        def requestParameterMap = MockRequestParameterMap.create(request)
 
         def values = requestParameterMap.getValues("a")
 
@@ -23,11 +23,11 @@ class MockRequestParameterMapSpec extends Specification {
 
     def "get value"() {
         setup:
-        def parameters = LinkedHashMultimap.create()
+        def request = new MockHttpServletRequest()
 
-        parameters.put("a", "1")
+        request.setParameter "a", "1"
 
-        def requestParameterMap = MockRequestParameterMap.create(parameters)
+        def requestParameterMap = MockRequestParameterMap.create(request)
 
         expect:
         requestParameterMap.getValue("a").string == "1"
@@ -35,12 +35,12 @@ class MockRequestParameterMapSpec extends Specification {
 
     def "get value when multiple values are present"() {
         setup:
-        def parameters = LinkedHashMultimap.create()
+        def request = new MockHttpServletRequest()
 
-        parameters.put("a", "1")
-        parameters.put("a", "2")
+        request.addParameter "a", "1"
+        request.addParameter "a", "2"
 
-        def requestParameterMap = MockRequestParameterMap.create(parameters)
+        def requestParameterMap = MockRequestParameterMap.create(request)
 
         expect:
         requestParameterMap.getValue("a").string == "1"

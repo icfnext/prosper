@@ -42,6 +42,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
         resourceResolverAdapters.put(adapterType, closure)
     }
 
+    @Override
     void setSearchPath(String... searchPath) {
         this.searchPath = searchPath
     }

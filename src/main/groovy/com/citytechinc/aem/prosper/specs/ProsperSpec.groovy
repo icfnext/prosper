@@ -89,6 +89,13 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         sessionInternal.logout()
     }
 
+    /**
+     * Get a new page manager to ensure all caches are cleared.
+     */
+    def setup() {
+        pageManagerInternal = resourceResolver.adaptTo(PageManager)
+    }
+
     // default adapter methods return empty collections
 
     /**
@@ -185,6 +192,36 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         pageManagerInternal
     }
 
+    /**
+     * Get the Node for a path.
+     *
+     * @param path valid JCR Node path
+     * @return node for given path
+     */
+    Node getNode(String path) {
+        sessionInternal.getNode(path)
+    }
+
+    /**
+     * Get the Resource for a path.
+     *
+     * @param path valid Resource path
+     * @return resource for given path or null
+     */
+    Resource getResource(String path) {
+        resourceResolverInternal.getResource(path)
+    }
+
+    /**
+     * Get the Page for a path.
+     *
+     * @param path valid Page path
+     * @return Page for given path or null
+     */
+    Page getPage(String path) {
+        pageManagerInternal.getPage(path)
+    }
+
     // builders
 
     /**
@@ -198,32 +235,12 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     /**
-     * Get a request builder for the given path.
-     *
-     * @param path content path
-     * @return request builder instance for this resource resolver
-     */
-    RequestBuilder getRequestBuilder(String path) {
-        new RequestBuilder(resourceResolverInternal, path)
-    }
-
-    /**
      * Get a response builder.
      *
      * @return builder
      */
     ResponseBuilder getResponseBuilder() {
         new ResponseBuilder()
-    }
-
-    /**
-     * Get a response builder with a writer instance.
-     *
-     * @param writer writer for capturing response output
-     * @return builder
-     */
-    ResponseBuilder getResponseBuilder(Writer writer) {
-        new ResponseBuilder(writer)
     }
 
     /**

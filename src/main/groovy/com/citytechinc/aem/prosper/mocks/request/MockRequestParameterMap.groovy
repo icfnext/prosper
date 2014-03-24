@@ -1,17 +1,15 @@
 package com.citytechinc.aem.prosper.mocks.request
 
-import com.google.common.collect.SetMultimap
 import org.apache.sling.api.request.RequestParameter
 import org.apache.sling.api.request.RequestParameterMap
+import org.springframework.mock.web.MockHttpServletRequest
 
 class MockRequestParameterMap implements RequestParameterMap {
 
-    static RequestParameterMap create(SetMultimap<String, String> parameters) {
+    static RequestParameterMap create(MockHttpServletRequest mockRequest) {
         def map = [:]
 
-        parameters.keySet().each { name ->
-            def values = parameters.get(name)
-
+        mockRequest.parameterMap.each { name, values ->
             map[name] = values.collect { new MockRequestParameter(it) }.toArray(new RequestParameter[values.size()])
         }
 
