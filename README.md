@@ -10,8 +10,8 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 
 * Test AEM projects outside of an OSGi container in the standard Maven build lifecycle.
 * Write test specifications in [Groovy](http://groovy.codehaus.org) using [Spock](http://spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests more quickly and efficiently.
-* Extends and augments the transient JCR implementation provided by the [Apache Sling Testing Tools](http://sling.apache.org/documentation/development/sling-testing-tools.html) to eliminate the need to deploy tests in OSGi bundles.
-* While accepting the limitations of testing outside the container, provides minimal implementations of Sling interfaces (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
+* Extends and augments the transient JCR implementation provided by the [Apache Sling Testing Tools](http://sling.apache.org/documentation/development/sling-testing-tools.html) to eliminate the need to deploy tests in OSGi bundles for most testing scenarios.
+* While accepting the limitations of testing outside the container, provides minimal/mock implementations of Sling interfaces (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
 * Utilizes Groovy builders from our [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for Sling requests and responses to simplify setup of test cases.
 
@@ -62,7 +62,7 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
             }
         }
 
-3. Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.
+3. Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details can be found [here](http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven).
 
         <build>
             <sourceDirectory>src/main/groovy</sourceDirectory>
@@ -119,27 +119,72 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 
 ## User Guide
 
+### Specification Anatomy
+
+The [Spock documentation](https://code.google.com/p/spock/wiki/SpockBasics) outlines the features and methods that define a Spock specification (and their JUnit analogues, for those more familiar with Java-based testing), but the `setupSpec()` fixture method is of critical importance when testing AEM classes.  This method, executed prior to the first feature method of the specification, is the conventional location for creating test content in the JCR.  Likewise, the `cleanup` and `cleanupSpec()` fixture methods are the appropriate place to remove test content following the execution of a test (or set of tests).  However, the `cleanupSpec()` method will be implemented less frequently, as the base `ProsperSpec` removes all test content from the JCR after every specification is executed to prevent cross-contamination of content between specifications.
+
+    class ExampleSpec extends ProsperSpec {
+
+        def setupSpec() {
+            // create test content
+        }
+
+        def setup() {
+            // less commonly used
+        }
+
+        def "a feature method"() {
+            setup:
+            // create test-specific content, instances and/or mocks
+
+            expect:
+            // stimulus/response
+        }
+
+        def "another feature method"() {
+            setup:
+            //
+
+            when:
+            // stimulus
+
+            then:
+            // response
+        }
+
+        def cleanup() {
+            // optionally call method from base spec to remove all test content after each feature method
+            removeAllNodes()
+        }
+
+        def cleanupSpec() {
+            // less commonly used
+        }
+    }
+
 ### Content Builders
 
-A specification will often require content such as pages, components, or supporting node structures to facilitate the interactions of the class under test.  Creating a large and/or complex content hierarchy using the provided APIs can be tedious and time consuming.  The base `ProsperSpec` simplifies the content creation process by defining two Groovy [builder](http://groovy.codehaus.org/Builders) instances, `pageBuilder` and `nodeBuilder`, that greatly reduce the amount of code needed to produce a working content structure in the JCR.
+A test specification will often require content such as pages, components, or supporting node structures to facilitate the interactions of the class under test.  Creating a large and/or complex content hierarchy using the JCR and Sling APIs can be tedious and time consuming.  The base `ProsperSpec` simplifies the content creation process by defining two Groovy [builder](http://groovy.codehaus.org/Builders) instances, `pageBuilder` and `nodeBuilder`, that greatly reduce the amount of code needed to produce a working content structure in the JCR.
 
 #### Page Builder
 
 `PageBuilder` creates nodes of type `cq:Page` by default.
 
-    pageBuilder.content {
-        beer { // page with no title
-            styles("Styles") { // create page with title "Styles"
-                "jcr:content"("jcr:lastModifiedBy": "mdaugherty", "jcr:lastModified": Calendar.instance) {
-                    data("sling:Folder")  // descendant of "jcr:content", argument sets node type instead of title
-                    navigation("sling:resourceType: "components/navigation", "rootPath": "/content/beer")
+    def setupSpec() {
+        pageBuilder.content {
+            beer { // page with no title
+                styles("Styles") { // create page with title "Styles"
+                    "jcr:content"("jcr:lastModifiedBy": "mdaugherty", "jcr:lastModified": Calendar.instance) {
+                        data("sling:Folder")  // descendant of "jcr:content", argument sets node type instead of title
+                        navigation("sling:resourceType: "components/navigation", "rootPath": "/content/beer")
+                    }
+                    dubbel("Dubbel")
+                    tripel("Tripel")
+                    saison("Saison")
                 }
-                dubbel("Dubbel")
-                tripel("Tripel")
-                saison("Saison")
+                // create a page with title "Breweries" and set properties on it's "jcr:content" node
+                breweries("Breweries", "jcr:lastModifiedBy": "mdaugherty", "jcr:lastModified": Calendar.instance)
             }
-            // create a page with title "Breweries" and set properties on it's "jcr:content" node
-            breweries("Breweries", "jcr:lastModifiedBy": "mdaugherty", "jcr:lastModified": Calendar.instance)
         }
     }
 
@@ -149,9 +194,11 @@ Nodes named `jcr:content`, however, are treated as unstructured nodes to allow t
 
 This builder should be used when creating non-page content hierarchies, such as descendants of `/etc` in the JCR.  The syntax is similar to `PageBuilder`, but the first argument is used to specify the node type rather than the `jcr:title` property.
 
-    nodeBuilder.etc { // unstructured node
-        designs("sling:Folder") { // node with type
-            site("sling:Folder", "jcr:title": "Site", "inceptionYear": 2014) // node with type and properties
+    def setupSpec() {
+        nodeBuilder.etc { // unstructured node
+            designs("sling:Folder") { // node with type
+                site("sling:Folder", "jcr:title": "Site", "inceptionYear": 2014) // node with type and properties
+            }
         }
     }
 
