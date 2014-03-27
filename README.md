@@ -282,7 +282,63 @@ Specs can add adapters by adding `AdapterFactory` instances or by providing mapp
 
 ### Mocking Services
 
+OSGi services can be mocked (fully or partially) using Spock's mocking API.  Classes that inject services using Felix SCR annotations (as in the example servlet below) should use `protected` visibility to allow setting of service fields to mocked instances during testing.
 
+    import com.day.cq.replication.ReplicationActionType
+    import com.day.cq.replication.ReplicationException
+    import com.day.cq.replication.Replicator
+    import groovy.util.logging.Slf4j
+    import org.apache.felix.scr.annotations.Reference
+    import org.apache.felix.scr.annotations.sling.SlingServlet
+    import org.apache.sling.api.SlingHttpServletRequest
+    import org.apache.sling.api.SlingHttpServletResponse
+
+    import javax.jcr.Session
+    import javax.servlet.ServletException
+
+    @SlingServlet(paths = "/bin/replicate/custom")
+    @Slf4j("LOG")
+    class CustomReplicationServlet extends SlingAllMethodsServlet {
+
+        @Reference
+        protected Replicator replicator
+
+        @Override
+        protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
+            ServletException, IOException {
+            def path = request.getParameter("path")
+    		def session = request.resourceResolver.adaptTo(Session)
+
+    		try {
+                replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
+            } catch (ReplicationException e) {
+                LOG.error "replication error", e
+            }
+        }
+    }
+
+The Prosper specification for this servlet can then set a mocked `Replicator` and verify the expected [interactions](http://docs.spockframework.org/en/latest/interaction_based_testing.html) using the Spock  syntax.
+
+    def "servlet with mock service"() {
+        setup:
+        def servlet = new CustomReplicationServlet()
+        def replicator = Mock(Replicator)
+
+        servlet.replicator = replicator
+
+        def request = requestBuilder.build {
+            parameters = [path: "/content"]
+        }
+        def response = responseBuilder.build()
+
+        when:
+        servlet.doPost(request, response)
+
+        then:
+        1 * replicator.replicate(_, _, "/content")
+    }
+
+Services can also be partially mocked...
 
 ### Assertions
 
