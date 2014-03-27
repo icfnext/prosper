@@ -167,7 +167,75 @@ Testing servlets and request-scoped POJOs require mocking the `SlingHttpServletR
 
 ### Adding Sling Adapters
 
-### Adding Services
+Specs can add adapters by adding `AdapterFactory` instances or by providing mappings from adapter instances to closures that instantiate these instances from either a `Resource` or a `ResourceResolver`.  The methods for adding adapters are illustrated in the examples below.
+
+    class ExampleAdapterFactory implements AdapterFactory {
+
+        @Override
+        public <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
+            AdapterType result = null
+
+            if (type == String) {
+                if (adaptable instanceof ResourceResolver) {
+                    result = "Hello."
+                } else if (adaptable instanceof Resource) {
+                    result = "Goodbye."
+                }
+            }
+
+            result
+        }
+    }
+
+    class ExampleSpec extends ProsperSpec {
+
+        @Override
+        Collection<AdapterFactory> addAdapterFactories() {
+            [new ExampleAdapterFactory(), new OtherAdapterFactory()]
+        }
+
+        @Override
+        Map<Class, Closure> addResourceAdapters() {
+            def adapters = [:]
+
+            // key is adapter type, value is closure that returns adapter instance from resource argument
+            adapters[Integer] = { Resource resource -> resource.name.length() }
+            adapters[Map] = { Resource resource -> resource.resourceMetadata }
+
+            adapters
+        }
+
+        @Override
+        Map<Class, Closure> addResourceResolverAdapters() {
+            def adapters = [:]
+
+            // key is adapter type, value is closure that returns adapter instance from resource resolver argument
+            adapters[Integer] = { ResourceResolver resourceResolver -> resourceResolver.searchPath.length }
+            adapters[Node] = { ResourceResolver resourceResolver -> resourceResolver.getResource("/").adaptTo(Node) }
+
+            adapters
+        }
+
+        def "resource is adaptable to multiple types"() {
+            setup:
+            def resource = resourceResolver.getResource("/")
+
+            expect:
+            resource.adaptTo(Integer) == 0
+            resource.adaptTo(Map).size() == 0
+        }
+
+        def "resource resolver is adaptable to multiple types"() {
+            expect:
+            resourceResolver.adaptTo(String) == "Hello."
+            resourceResolver.adaptTo(Integer) == 0
+            resourceResolver.adaptTo(Node).path == "/"
+        }
+    }
+
+### Mocking Services
+
+
 
 ### Assertions
 
