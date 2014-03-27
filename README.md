@@ -143,7 +143,7 @@ The [Spock documentation](https://code.google.com/p/spock/wiki/SpockBasics) outl
 
         def "another feature method"() {
             setup:
-            //
+            // create test content, etc.
 
             when:
             // stimulus
@@ -153,7 +153,7 @@ The [Spock documentation](https://code.google.com/p/spock/wiki/SpockBasics) outl
         }
 
         def cleanup() {
-            // optionally call method from base spec to remove all test content after each feature method
+            // optionally call the method below to remove all test content after each feature method
             removeAllNodes()
         }
 
@@ -337,8 +337,6 @@ The Prosper specification for this servlet can then set a mocked `Replicator` an
         then:
         1 * replicator.replicate(_, _, "/content")
     }
-
-Services can also be partially mocked...
 
 ### Assertions
 
