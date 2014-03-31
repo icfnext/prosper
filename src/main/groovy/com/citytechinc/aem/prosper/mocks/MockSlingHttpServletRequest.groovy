@@ -1,6 +1,7 @@
 package com.citytechinc.aem.prosper.mocks
 
 import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
+import com.citytechinc.aem.prosper.mocks.request.MockRequestPathInfo
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.request.RequestDispatcherOptions
 import org.apache.sling.api.request.RequestParameter
@@ -15,42 +16,6 @@ import javax.servlet.RequestDispatcher
 import javax.servlet.http.Cookie
 
 class MockSlingHttpServletRequest implements SlingHttpServletRequest {
-
-    class MockRequestPathInfo implements RequestPathInfo {
-
-        String path
-
-        String extension
-
-        String suffix
-
-        List<String> selectors
-
-        @Override
-        String getResourcePath() {
-            path
-        }
-
-        @Override
-        String getExtension() {
-            extension
-        }
-
-        @Override
-        String getSelectorString() {
-            selectors ? selectors.join(".") : null
-        }
-
-        @Override
-        String[] getSelectors() {
-            selectors as String[]
-        }
-
-        @Override
-        String getSuffix() {
-            suffix
-        }
-    }
 
     @Delegate
     private MockHttpServletRequest mockRequest
