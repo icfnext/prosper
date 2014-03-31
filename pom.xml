@@ -231,6 +231,10 @@
             <artifactId>jsp-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
         </dependency>
@@ -263,6 +267,10 @@
             <artifactId>com.adobe.granite.replication.core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.adobe.granite</groupId>
+            <artifactId>com.adobe.granite.xssprotection</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
         </dependency>
@@ -279,8 +287,12 @@
             <artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
+            <groupId>com.adobe.cq.sightly</groupId>
+            <artifactId>cq-wcm-sightly-extension</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.granite</groupId>
+            <artifactId>com.adobe.granite.sightly.engine</artifactId>
         </dependency>
 
         <!-- additional dependencies not inherited from parent -->
