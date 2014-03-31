@@ -2,16 +2,27 @@ package com.citytechinc.aem.prosper.mocks.request
 
 import org.apache.sling.api.request.RequestPathInfo
 import org.apache.sling.api.resource.Resource
+import org.apache.sling.api.resource.ResourceResolver
 
 class MockRequestPathInfo implements RequestPathInfo {
 
-    String path
+    private final ResourceResolver resourceResolver
 
-    String extension
+    private final String path
 
-    String suffix
+    private final List<String> selectors
 
-    List<String> selectors
+    private final String extension
+
+    private final String suffix
+
+    MockRequestPathInfo(resourceResolver, path, selectors, extension, suffix) {
+        this.resourceResolver = resourceResolver
+        this.path = path
+        this.selectors = selectors
+        this.extension = extension
+        this.suffix = suffix
+    }
 
     @Override
     String getResourcePath() {
@@ -40,6 +51,12 @@ class MockRequestPathInfo implements RequestPathInfo {
 
     @Override
     Resource getSuffixResource() {
-        throw new UnsupportedOperationException()
+        def suffixResource = null
+
+        if (suffix) {
+            suffixResource = resourceResolver.getResource(suffix)
+        }
+
+        suffixResource
     }
 }

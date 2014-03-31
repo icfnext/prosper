@@ -1,7 +1,7 @@
 package com.citytechinc.aem.prosper.mocks.resource
-
 import org.apache.sling.api.resource.NonExistingResource
 import org.apache.sling.api.resource.Resource
+import org.apache.sling.api.resource.ResourceProvider
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.resource.JcrResourceUtil
 
@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest
 
 @SuppressWarnings("deprecation")
 class MockResourceResolver implements TestResourceResolver, GroovyInterceptable {
+
+    private final ResourceProvider resourceProvider
 
     private final Session session
 
@@ -25,7 +27,8 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     private boolean closed
 
-    MockResourceResolver(session, resourceResolverAdapters, resourceAdapters, adapterFactories) {
+    MockResourceResolver(resourceProvider, session, resourceResolverAdapters, resourceAdapters, adapterFactories) {
+        this.resourceProvider = resourceProvider
         this.session = session
         this.resourceResolverAdapters = resourceResolverAdapters
         this.resourceAdapters = resourceAdapters
@@ -61,8 +64,8 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
         def resource = null
 
         try {
-            if (session.nodeExists(path)) {
-                resource = new MockResource(this, session.getNode(path), resourceAdapters, adapterFactories)
+            if (session.itemExists(path)) {
+                resource = getResourceInternal(path)
             }
         } catch (RepositoryException e) {
             // ignore
@@ -95,8 +98,8 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     Iterator<Resource> findResources(String query, String language) {
-        def resourceResults = JcrResourceUtil.query(session, query, language).nodes.collect() {
-            getResource(it.path)
+        def resourceResults = JcrResourceUtil.query(session, query, language).nodes.collect() { Node node ->
+            getResource(node.path)
         }
 
         resourceResults.iterator()
@@ -104,7 +107,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     String[] getSearchPath() {
-        searchPath
+        searchPath ?: [] as String[]
     }
 
     @Override
@@ -114,8 +117,8 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     Iterable<Resource> getChildren(Resource parent) {
-        parent.adaptTo(Node).nodes.collect {
-            new MockResource(this, it, resourceAdapters, adapterFactories)
+        parent.adaptTo(Node).nodes.collect { Node node ->
+            getResourceInternal(node.path)
         } as Iterable<Resource>
     }
 
@@ -208,17 +211,17 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     void revert() {
-        throw new UnsupportedOperationException()
+
     }
 
     @Override
     void commit() {
-        throw new UnsupportedOperationException()
+
     }
 
     @Override
     boolean hasChanges() {
-        throw new UnsupportedOperationException()
+        session.hasPendingChanges()
     }
 
     @Override
@@ -233,11 +236,17 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     boolean isResourceType(Resource resource, String resourceType) {
-        resource.resourceType == resourceType
+        throw new UnsupportedOperationException()
     }
 
     @Override
     void refresh() {
-        throw new UnsupportedOperationException()
+
+    }
+
+    private Resource getResourceInternal(String path) {
+        def jcrResource = resourceProvider.getResource(this, path)
+
+        new MockResource(jcrResource, resourceAdapters, adapterFactories)
     }
 }

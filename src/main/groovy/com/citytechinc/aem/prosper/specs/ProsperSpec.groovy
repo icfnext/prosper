@@ -20,10 +20,9 @@ import groovy.transform.Synchronized
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.api.resource.ValueMap
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
-import org.apache.sling.jcr.resource.JcrPropertyMap
+import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -73,8 +72,10 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
 
         addAdapters()
 
-        resourceResolverInternal = new MockResourceResolver(sessionInternal, resourceResolverAdapters, resourceAdapters,
-            adapterFactories)
+        def resourceProvider = new JcrResourceProvider(session, null, null)
+
+        resourceResolverInternal = new MockResourceResolver(resourceProvider, sessionInternal, resourceResolverAdapters,
+            resourceAdapters, adapterFactories)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
     }
 
@@ -388,6 +389,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
             NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
         }
 
+        /*
         resourceAdapters[ValueMap.class] = { Resource resource ->
             def node = sessionInternal.getNode(resource.path)
 
@@ -397,6 +399,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         resourceAdapters[Node.class] = { Resource resource ->
             sessionInternal.getNode(resource.path)
         }
+        */
     }
 
     private void addDefaultResourceResolverAdapters() {
