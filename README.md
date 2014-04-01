@@ -10,9 +10,9 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 
 * Test AEM projects outside of an OSGi container in the standard Maven build lifecycle.
 * Write test specifications in [Groovy](http://groovy.codehaus.org) using [Spock](http://spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests more quickly and efficiently.
-* Extends and augments the transient JCR implementation provided by the [Apache Sling Testing Tools](http://sling.apache.org/documentation/development/sling-testing-tools.html) to eliminate the need to deploy tests in OSGi bundles.
-* While accepting the limitations of testing outside the container, provides minimal implementations of Sling interfaces (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
-* Utilizes Groovy builders from our [AEM Groovy Extension](http://code.citytechinc.com/aem-groovy-extension) to provide a simple DSL for creating test content.
+* Extends and augments the transient JCR implementation provided by the [Apache Sling Testing Tools](http://sling.apache.org/documentation/development/sling-testing-tools.html) to eliminate the need to deploy tests in OSGi bundles for most testing scenarios.
+* While accepting the limitations of testing outside the container, provides minimal/mock implementations of Sling interfaces (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
+* Utilizes Groovy builders from our [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for Sling requests and responses to simplify setup of test cases.
 
 ## Requirements
@@ -27,7 +27,7 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
         <dependency>
             <groupId>com.citytechinc.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>0.8.0</version>
+            <version>0.9.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -62,7 +62,7 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
             }
         }
 
-3. Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.
+3. Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details can be found [here](http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven).
 
         <build>
             <sourceDirectory>src/main/groovy</sourceDirectory>
@@ -116,6 +116,278 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
         </build>
 
 4. Run `mvn test` from the command line to verify that specifications are found and execute successfully.
+
+## User Guide
+
+### Specification Anatomy
+
+The [Spock documentation](https://code.google.com/p/spock/wiki/SpockBasics) outlines the features and methods that define a Spock specification (and their JUnit analogues, for those more familiar with Java-based testing), but the `setupSpec()` fixture method is of critical importance when testing AEM classes.  This method, executed prior to the first feature method of the specification, is the conventional location for creating test content in the JCR.  Likewise, the `cleanup` and `cleanupSpec()` fixture methods are the appropriate place to remove test content following the execution of a test (or set of tests).  However, the `cleanupSpec()` method will be implemented less frequently, as the base `ProsperSpec` removes all test content from the JCR after every specification is executed to prevent cross-contamination of content between specifications.
+
+    class ExampleSpec extends ProsperSpec {
+
+        def setupSpec() {
+            // create test content
+        }
+
+        def setup() {
+            // less commonly used
+        }
+
+        def "a feature method"() {
+            setup:
+            // create test-specific content, instances and/or mocks
+
+            expect:
+            // stimulus/response
+        }
+
+        def "another feature method"() {
+            setup:
+            // create test content, etc.
+
+            when:
+            // stimulus
+
+            then:
+            // response
+        }
+
+        def cleanup() {
+            // optionally call the method below to remove all test content after each feature method
+            removeAllNodes()
+        }
+
+        def cleanupSpec() {
+            // less commonly used
+        }
+    }
+
+### Content Builders
+
+A test specification will often require content such as pages, components, or supporting node structures to facilitate the interactions of the class under test.  Creating a large and/or complex content hierarchy using the JCR and Sling APIs can be tedious and time consuming.  The base `ProsperSpec` simplifies the content creation process by defining two Groovy [builder](http://groovy.codehaus.org/Builders) instances, `pageBuilder` and `nodeBuilder`, that greatly reduce the amount of code needed to produce a working content structure in the JCR.
+
+#### Page Builder
+
+`PageBuilder` creates nodes of type `cq:Page` by default.
+
+    def setupSpec() {
+        pageBuilder.content {
+            beer { // page with no title
+                styles("Styles") { // create page with title "Styles"
+                    "jcr:content"("jcr:lastModifiedBy": "mdaugherty", "jcr:lastModified": Calendar.instance) {
+                        data("sling:Folder")  // descendant of "jcr:content", argument sets node type instead of title
+                        navigation("sling:resourceType: "components/navigation", "rootPath": "/content/beer")
+                    }
+                    dubbel("Dubbel")
+                    tripel("Tripel")
+                    saison("Saison")
+                }
+                // create a page with title "Breweries" and set properties on it's "jcr:content" node
+                breweries("Breweries", "jcr:lastModifiedBy": "mdaugherty", "jcr:lastModified": Calendar.instance)
+            }
+        }
+    }
+
+Nodes named `jcr:content`, however, are treated as unstructured nodes to allow the creation of descendant component/data nodes that are not of type `cq:Page`.  Descendants of `jcr:content` nodes can specify a node type using a `String` value as the first argument in the tree syntax (see `/content/beer/styles/jcr:content/data` in the above example).  As with page nodes, additional properties can be passed with a map argument.
+
+#### Node Builder
+
+This builder should be used when creating non-page content hierarchies, such as descendants of `/etc` in the JCR.  The syntax is similar to `PageBuilder`, but the first argument is used to specify the node type rather than the `jcr:title` property.
+
+    def setupSpec() {
+        nodeBuilder.etc { // unstructured node
+            designs("sling:Folder") { // node with type
+                site("sling:Folder", "jcr:title": "Site", "inceptionYear": 2014) // node with type and properties
+            }
+        }
+    }
+
+The above example will create an `nt:unstructured` (the default type) node at `/etc` and `sling:Folder` nodes at `/etc/designs` and `/etc/designs/site`.  An additional map argument will set properties on the target node in the same manner as `PageBuilder`.
+
+Both builders automatically save the underlying JCR session after executing the provided closure.
+
+In addition to the provided builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
+
+### Mocking Requests and Responses
+
+Testing servlets and request-scoped POJOs require mocking the `SlingHttpServletRequest` and `SlingHttpServletResponse` objects.  The `RequestBuilder` and `ResponseBuilder` instances acquired through the `ProsperSpec` leverage Groovy closures to set the necessary properties and state on these mock objects in a lightweight manner.
+
+### Adding Sling Adapters
+
+Specs can add adapters by adding `AdapterFactory` instances or by providing mappings from adapter instances to closures that instantiate these instances from either a `Resource` or a `ResourceResolver`.  The methods for adding adapters are illustrated in the examples below.
+
+    class ExampleAdapterFactory implements AdapterFactory {
+
+        @Override
+        public <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
+            AdapterType result = null
+
+            if (type == String) {
+                if (adaptable instanceof ResourceResolver) {
+                    result = "Hello."
+                } else if (adaptable instanceof Resource) {
+                    result = "Goodbye."
+                }
+            }
+
+            result
+        }
+    }
+
+    class ExampleSpec extends ProsperSpec {
+
+        @Override
+        Collection<AdapterFactory> addAdapterFactories() {
+            [new ExampleAdapterFactory(), new OtherAdapterFactory()]
+        }
+
+        @Override
+        Map<Class, Closure> addResourceAdapters() {
+            def adapters = [:]
+
+            // key is adapter type, value is closure that returns adapter instance from resource argument
+            adapters[Integer] = { Resource resource -> resource.name.length() }
+            adapters[Map] = { Resource resource -> resource.resourceMetadata }
+
+            adapters
+        }
+
+        @Override
+        Map<Class, Closure> addResourceResolverAdapters() {
+            def adapters = [:]
+
+            // key is adapter type, value is closure that returns adapter instance from resource resolver argument
+            adapters[Integer] = { ResourceResolver resourceResolver -> resourceResolver.searchPath.length }
+            adapters[Node] = { ResourceResolver resourceResolver -> resourceResolver.getResource("/").adaptTo(Node) }
+
+            adapters
+        }
+
+        def "resource is adaptable to multiple types"() {
+            setup:
+            def resource = resourceResolver.getResource("/")
+
+            expect:
+            resource.adaptTo(Integer) == 0
+            resource.adaptTo(Map).size() == 0
+        }
+
+        def "resource resolver is adaptable to multiple types"() {
+            expect:
+            resourceResolver.adaptTo(String) == "Hello."
+            resourceResolver.adaptTo(Integer) == 0
+            resourceResolver.adaptTo(Node).path == "/"
+        }
+    }
+
+### Mocking Services
+
+OSGi services can be mocked (fully or partially) using Spock's [mocking API](http://docs.spockframework.org/en/latest/interaction_based_testing.html#creating-mock-objects).  Classes that inject services using Felix SCR annotations (as in the example servlet below) should use `protected` visibility to allow setting of service fields to mocked instances during testing.
+
+    import com.day.cq.replication.ReplicationActionType
+    import com.day.cq.replication.ReplicationException
+    import com.day.cq.replication.Replicator
+    import groovy.util.logging.Slf4j
+    import org.apache.felix.scr.annotations.Reference
+    import org.apache.felix.scr.annotations.sling.SlingServlet
+    import org.apache.sling.api.SlingHttpServletRequest
+    import org.apache.sling.api.SlingHttpServletResponse
+
+    import javax.jcr.Session
+    import javax.servlet.ServletException
+
+    @SlingServlet(paths = "/bin/replicate/custom")
+    @Slf4j("LOG")
+    class CustomReplicationServlet extends SlingAllMethodsServlet {
+
+        @Reference
+        protected Replicator replicator
+
+        @Override
+        protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
+            ServletException, IOException {
+            def path = request.getParameter("path")
+    		def session = request.resourceResolver.adaptTo(Session)
+
+    		try {
+                replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
+            } catch (ReplicationException e) {
+                LOG.error "replication error", e
+            }
+        }
+    }
+
+The Prosper specification for this servlet can then set a mocked `Replicator` instance and verify the expected [interactions](http://docs.spockframework.org/en/latest/interaction_based_testing.html) using the Spock  syntax.
+
+    def "servlet with mock service"() {
+        setup:
+        def servlet = new CustomReplicationServlet()
+        def replicator = Mock(Replicator)
+
+        servlet.replicator = replicator
+
+        def request = requestBuilder.build {
+            parameters = [path: "/content"]
+        }
+        def response = responseBuilder.build()
+
+        when:
+        servlet.doPost(request, response)
+
+        then:
+        1 * replicator.replicate(_, _, "/content")
+    }
+
+### Assertions
+
+Prosper's built-in assertion methods are used within Spock's `then` and `expect` blocks to verify the state of content in the transient repository following execution of a test.  For example, a test that creates a node with property values (either directly or as a side effect of other operations) will want to confirm that the node was created and that the desired property name and values exist in the JCR.
+
+Since expressions in these blocks are implicitly treated as boolean conditions by Spock, Prosper's assertion methods eliminate the need to logically combine expressions for the complex conditions required to assert JCR state.  This is best illustrated with an example.
+
+    import com.day.cq.commons.jcr.JcrConstants
+    import com.day.cq.wcm.api.NameConstants
+
+    def "create content"() {
+        setup: "create a page with some properties"
+        def pageProperties = ["sling:resourceType": "foundation/components/page",
+            "jcr:description": "Prosper is an integration testing library for AEM."]
+
+        pageBuilder.content {
+            prosper("Prosper") {
+                "jcr:content"(pageProperties)
+            }
+        }
+
+        expect: "page is created and properties match expected values"
+        session.nodeExists("/content/prosper")
+        && session.getNode("/content/prosper").primaryNodeType.name == NameConstants.NT_PAGE
+        && session.getNode("/content/prosper").hasNode(JcrConstants.JCR_CONTENT)
+        && pageProperties.every { name, value ->
+            session.getNode("/content/prosper").getNode(JcrConstants.JCR_CONTENT).get(name) == value
+        }
+    }
+
+Thankfully, the `expect` block can be simplified using an assertion method from the base `ProsperSpec`.
+
+    expect: "page is created and properties match expected values"
+    assertPageExists("/content/prosper", pageProperties)
+
+All `assert...` methods are detailed in the `ProsperSpec` [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
+
+### Testing Scenarios
+
+#### Servlets
+
+#### OSGi Services
+
+#### Tag Libraries
+
+### References
+
+* [Prosper GroovyDocs](http://code.citytechinc.com/prosper/groovydoc/index.html)
+* [Spock Documentation](http://docs.spockframework.org/en/latest/index.html)
+* [Spock Wiki](https://code.google.com/p/spock/w/list)
+* [Groovy Documentation](http://groovy.codehaus.org/Documentation)
 
 ## Versioning
 
