@@ -206,7 +206,7 @@ The above example will create an `nt:unstructured` (the default type) node at `/
 
 Both builders automatically save the underlying JCR session after executing the provided closure.
 
-In addition to the provided builders, the `[session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html)` and `[pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html)` instances provided by the base specification can be used directly to create test content in the JCR.
+In addition to the provided builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
 ### Mocking Requests and Responses
 
