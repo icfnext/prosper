@@ -282,7 +282,7 @@ Specs can add adapters by adding `AdapterFactory` instances or by providing mapp
 
 ### Mocking Services
 
-OSGi services can be mocked (fully or partially) using Spock's mocking API.  Classes that inject services using Felix SCR annotations (as in the example servlet below) should use `protected` visibility to allow setting of service fields to mocked instances during testing.
+OSGi services can be mocked (fully or partially) using Spock's [mocking API](http://docs.spockframework.org/en/latest/interaction_based_testing.html#creating-mock-objects).  Classes that inject services using Felix SCR annotations (as in the example servlet below) should use `protected` visibility to allow setting of service fields to mocked instances during testing.
 
     import com.day.cq.replication.ReplicationActionType
     import com.day.cq.replication.ReplicationException
@@ -317,7 +317,7 @@ OSGi services can be mocked (fully or partially) using Spock's mocking API.  Cla
         }
     }
 
-The Prosper specification for this servlet can then set a mocked `Replicator` and verify the expected [interactions](http://docs.spockframework.org/en/latest/interaction_based_testing.html) using the Spock  syntax.
+The Prosper specification for this servlet can then set a mocked `Replicator` instance and verify the expected [interactions](http://docs.spockframework.org/en/latest/interaction_based_testing.html) using the Spock  syntax.
 
     def "servlet with mock service"() {
         setup:
@@ -340,7 +340,39 @@ The Prosper specification for this servlet can then set a mocked `Replicator` an
 
 ### Assertions
 
-### GroovyDocs
+Prosper's built-in assertion methods are used within Spock's `then` and `expect` blocks to verify the state of content in the transient repository following execution of a test.  For example, a test that creates a node with property values (either directly or as a side effect of other operations) will want to confirm that the node was created and that the desired property name and values exist in the JCR.
+
+Since expressions in these blocks are implicitly treated as boolean conditions by Spock, Prosper's assertion methods eliminate the need to logically combine expressions for the complex conditions required to assert JCR state.  This is best illustrated with an example.
+
+    import com.day.cq.commons.jcr.JcrConstants
+    import com.day.cq.wcm.api.NameConstants
+
+    def "create content"() {
+        setup: "create a page with some properties"
+        def pageProperties = ["sling:resourceType": "foundation/components/page",
+            "jcr:description": "Prosper is an integration testing library for AEM."]
+
+        pageBuilder.content {
+            prosper("Prosper") {
+                "jcr:content"(pageProperties)
+            }
+        }
+
+        expect: "page is created and properties match expected values"
+        session.nodeExists("/content/prosper")
+        && session.getNode("/content/prosper").primaryNodeType.name == NameConstants.NT_PAGE
+        && session.getNode("/content/prosper").hasNode(JcrConstants.JCR_CONTENT)
+        && pageProperties.every { name, value ->
+            session.getNode("/content/prosper").getNode(JcrConstants.JCR_CONTENT).get(name) == value
+        }
+    }
+
+Thankfully, the `expect` block can be simplified using an assertion method from the base `ProsperSpec`.
+
+    expect: "page is created and properties match expected values"
+    assertPageExists("/content/prosper", pageProperties)
+
+All `assert...` methods are detailed in the `ProsperSpec` [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
 
 ### Testing Scenarios
 
@@ -349,6 +381,13 @@ The Prosper specification for this servlet can then set a mocked `Replicator` an
 #### OSGi Services
 
 #### Tag Libraries
+
+### References
+
+* [Prosper GroovyDocs](http://code.citytechinc.com/prosper/groovydoc/index.html)
+* [Spock Documentation](http://docs.spockframework.org/en/latest/index.html)
+* [Spock Wiki](https://code.google.com/p/spock/w/list)
+* [Groovy Documentation](http://groovy.codehaus.org/Documentation)
 
 ## Versioning
 
