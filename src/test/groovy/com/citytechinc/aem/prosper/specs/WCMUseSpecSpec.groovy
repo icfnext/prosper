@@ -1,4 +1,5 @@
 package com.citytechinc.aem.prosper.specs
+
 import com.adobe.cq.sightly.WCMUse
 import com.day.cq.wcm.api.WCMMode
 import com.day.cq.wcm.api.designer.Style

@@ -125,35 +125,32 @@ class BindingsBuilder {
             wcmMode.toRequest(slingRequest)
         }
 
-        def map = [:]
-
         def resource = slingRequest.resource
         def pageManager = resourceResolver.adaptTo(PageManager)
         def currentPage = pageManager.getContainingPage(resource)
 
-        // explicitly set
-        map.put(SlingBindings.SLING, sling)
-        map.put(WCMBindings.COMPONENT, component)
-        map.put(WCMBindings.COMPONENT_CONTEXT, componentContext)
-        map.put(WCMBindings.CURRENT_DESIGN, currentDesign)
-        map.put(WCMBindings.CURRENT_STYLE, currentStyle)
-        map.put(WCMBindings.DESIGNER, designer)
-        map.put(WCMBindings.EDIT_CONTEXT, editContext)
-        map.put(WCMBindings.RESOURCE_DESIGN, resourceDesign)
-        map.put(WCMBindings.XSSAPI, xssApi)
+        def bindings = [
+            (SlingBindings.SLING): sling,
+            (WCMBindings.COMPONENT): component,
+            (WCMBindings.COMPONENT_CONTEXT): componentContext,
+            (WCMBindings.CURRENT_DESIGN): currentDesign,
+            (WCMBindings.CURRENT_STYLE): currentStyle,
+            (WCMBindings.DESIGNER): designer,
+            (WCMBindings.EDIT_CONTEXT): editContext,
+            (WCMBindings.RESOURCE_DESIGN): resourceDesign,
+            (WCMBindings.XSSAPI): xssApi,
+            (SlingBindings.REQUEST): slingRequest,
+            (SlingBindings.RESPONSE): slingResponse,
+            (SlingBindings.RESOURCE): resource,
+            (WCMBindings.CURRENT_PAGE): pageManager.getContainingPage(resource),
+            (WCMBindings.INHERITED_PAGE_PROPERTIES): new WCMInheritanceValueMap(currentPage.contentResource),
+            (WCMBindings.PAGE_MANAGER): pageManager,
+            (WCMBindings.PAGE_PROPERTIES): new HierarchyNodeInheritanceValueMap(currentPage.contentResource),
+            (WCMBindings.PROPERTIES): ResourceUtil.getValueMap(resource),
+            (WCMBindings.RESOURCE_PAGE): pageManager.getContainingPage(resource),
+            (WCMBindings.WCM_MODE): new SightlyWCMMode(slingRequest)
+        ]
 
-        // derived from request
-        map.put(SlingBindings.REQUEST, slingRequest)
-        map.put(SlingBindings.RESPONSE, slingResponse)
-        map.put(SlingBindings.RESOURCE, resource)
-        map.put(WCMBindings.CURRENT_PAGE, pageManager.getContainingPage(resource))
-        map.put(WCMBindings.INHERITED_PAGE_PROPERTIES, new WCMInheritanceValueMap(currentPage.contentResource))
-        map.put(WCMBindings.PAGE_MANAGER, pageManager)
-        map.put(WCMBindings.PAGE_PROPERTIES, new HierarchyNodeInheritanceValueMap(currentPage.contentResource))
-        map.put(WCMBindings.PROPERTIES, ResourceUtil.getValueMap(resource))
-        map.put(WCMBindings.RESOURCE_PAGE, pageManager.getContainingPage(resource))
-        map.put(WCMBindings.WCM_MODE, new SightlyWCMMode(slingRequest))
-
-        new SimpleBindings(map)
+        new SimpleBindings(bindings)
     }
 }
