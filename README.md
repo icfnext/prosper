@@ -208,9 +208,123 @@ Both builders automatically save the underlying JCR session after executing the 
 
 In addition to the provided builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
+### Assertions
+
+Prosper's built-in assertion methods are used within Spock's `then` and `expect` blocks to verify the state of content in the transient repository following execution of a test.  For example, a test that creates a node with property values (either directly or as a side effect of other operations) will want to confirm that the node was created and that the desired property name and values exist in the JCR.
+
+Since expressions in these blocks are implicitly treated as boolean conditions by Spock, Prosper's assertion methods eliminate the need to logically combine expressions for the complex conditions required to assert JCR state.  This is best illustrated with an example.
+
+    import com.day.cq.commons.jcr.JcrConstants
+    import com.day.cq.wcm.api.NameConstants
+
+    def "create content"() {
+        setup: "create a page with some properties"
+        def pageProperties = ["sling:resourceType": "foundation/components/page",
+            "jcr:description": "Prosper is an integration testing library for AEM."]
+
+        pageBuilder.content {
+            prosper("Prosper") {
+                "jcr:content"(pageProperties)
+            }
+        }
+
+        expect: "page is created and properties match expected values"
+        session.nodeExists("/content/prosper")
+        && session.getNode("/content/prosper").primaryNodeType.name == NameConstants.NT_PAGE
+        && session.getNode("/content/prosper").hasNode(JcrConstants.JCR_CONTENT)
+        && pageProperties.every { name, value ->
+            session.getNode("/content/prosper").getNode(JcrConstants.JCR_CONTENT).get(name) == value
+        }
+    }
+
+Thankfully, the `expect` block can be simplified using an assertion method from the base `ProsperSpec`.
+
+    expect: "page is created and properties match expected values"
+    assertPageExists("/content/prosper", pageProperties)
+
+All `assert...` methods are detailed in the `ProsperSpec` [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
+
 ### Mocking Requests and Responses
 
 Testing servlets and request-scoped POJOs require mocking the `SlingHttpServletRequest` and `SlingHttpServletResponse` objects.  The `RequestBuilder` and `ResponseBuilder` instances acquired through the `ProsperSpec` leverage Groovy closures to set the necessary properties and state on these mock objects in a lightweight manner.
+
+Given a Sling servlet:
+
+    import groovy.json.JsonBuilder
+    import org.apache.sling.api.SlingHttpServletRequest
+    import org.apache.sling.api.SlingHttpServletResponse
+    import org.apache.sling.api.servlets.SlingAllMethodsServlet
+
+    import javax.jcr.Session
+    import javax.servlet.ServletException
+
+    import static com.google.common.base.Preconditions.checkNotNull
+
+    class TestServlet extends SlingAllMethodsServlet {
+
+        @Override
+        protected void doPost(SlingHttpServletRequest request,
+            SlingHttpServletResponse response) throws ServletException, IOException {
+            def path = checkNotNull(request.getParameter("path"))
+            def selector = request.requestPathInfo.selectors[1]
+
+            def session = request.resourceResolver.adaptTo(Session)
+
+            def node = session.getNode(path)
+
+            node.setProperty "testProperty", selector
+
+            session.save()
+
+            new JsonBuilder([path: path, value: selector]).writeTo(response.writer)
+        }
+    }
+
+A Prosper specification for this servlet will use the request and response builders to create the necessary method arguments to simulate a POST request to the servlet and verify both the JCR updates and the JSON output that result.
+
+    class ServletSpec extends ProsperSpec {
+
+        def setupSpec() {
+            nodeBuilder.content {
+                prosper()
+            }
+        }
+
+        def "missing request parameter throws exception"() {
+            setup:
+            def servlet = new TestServlet()
+
+            def request = requestBuilder.build()
+            def response = responseBuilder.build()
+
+            when:
+            servlet.doPost(request, response)
+
+            then:
+            thrown(NullPointerException)
+        }
+
+        def "valid request parameter sets node property and returns JSON response"() {
+            setup:
+            def servlet = new TestServlet()
+
+            def request = requestBuilder.build {
+                parameters = [path: "/content/prosper"]
+                selectors = ["one", "two"]
+            }
+
+            def response = responseBuilder.build()
+
+            when:
+            servlet.doPost(request, response)
+
+            then:
+            assertNodeExists("/content/prosper", [testProperty: "two"])
+
+            and:
+            response.contentAsString == '{"path":"/content/prosper","value":"two"}'
+        }
+    }
 
 ### Adding Sling Adapters
 
@@ -337,42 +451,6 @@ The Prosper specification for this servlet can then set a mocked `Replicator` in
         then:
         1 * replicator.replicate(_, _, "/content")
     }
-
-### Assertions
-
-Prosper's built-in assertion methods are used within Spock's `then` and `expect` blocks to verify the state of content in the transient repository following execution of a test.  For example, a test that creates a node with property values (either directly or as a side effect of other operations) will want to confirm that the node was created and that the desired property name and values exist in the JCR.
-
-Since expressions in these blocks are implicitly treated as boolean conditions by Spock, Prosper's assertion methods eliminate the need to logically combine expressions for the complex conditions required to assert JCR state.  This is best illustrated with an example.
-
-    import com.day.cq.commons.jcr.JcrConstants
-    import com.day.cq.wcm.api.NameConstants
-
-    def "create content"() {
-        setup: "create a page with some properties"
-        def pageProperties = ["sling:resourceType": "foundation/components/page",
-            "jcr:description": "Prosper is an integration testing library for AEM."]
-
-        pageBuilder.content {
-            prosper("Prosper") {
-                "jcr:content"(pageProperties)
-            }
-        }
-
-        expect: "page is created and properties match expected values"
-        session.nodeExists("/content/prosper")
-        && session.getNode("/content/prosper").primaryNodeType.name == NameConstants.NT_PAGE
-        && session.getNode("/content/prosper").hasNode(JcrConstants.JCR_CONTENT)
-        && pageProperties.every { name, value ->
-            session.getNode("/content/prosper").getNode(JcrConstants.JCR_CONTENT).get(name) == value
-        }
-    }
-
-Thankfully, the `expect` block can be simplified using an assertion method from the base `ProsperSpec`.
-
-    expect: "page is created and properties match expected values"
-    assertPageExists("/content/prosper", pageProperties)
-
-All `assert...` methods are detailed in the `ProsperSpec` [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
 
 ### Testing Scenarios
 
