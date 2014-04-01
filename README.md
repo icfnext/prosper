@@ -121,16 +121,16 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 
 ### Specification Anatomy
 
-The [Spock documentation](https://code.google.com/p/spock/wiki/SpockBasics) outlines the features and methods that define a Spock specification (and their JUnit analogues, for those more familiar with Java-based testing), but the `setupSpec()` fixture method is of critical importance when testing AEM classes.  This method, executed prior to the first feature method of the specification, is the conventional location for creating test content in the JCR.  Likewise, the `cleanup` and `cleanupSpec()` fixture methods are the appropriate place to remove test content following the execution of a test (or set of tests).  However, the `cleanupSpec()` method will be implemented less frequently, as the base `ProsperSpec` removes all test content from the JCR after every specification is executed to prevent cross-contamination of content between specifications.
+The [Spock documentation](https://code.google.com/p/spock/wiki/SpockBasics) outlines the features and methods that define a Spock specification (and their JUnit analogues, for those more familiar with Java-based testing), but the `setupSpec` fixture method is of critical importance when testing AEM classes.  This method, executed prior to the first feature method of the specification, is the conventional location for creating test content in the JCR.  Likewise, the `cleanup` and `cleanupSpec` fixture methods are the appropriate place to remove test content following the execution of a test (or set of tests).  However, the `cleanupSpec` method will be implemented less frequently, as the base `ProsperSpec` removes all test content from the JCR after every specification is executed to prevent cross-contamination of content between specifications.
 
     class ExampleSpec extends ProsperSpec {
 
         def setupSpec() {
-            // create test content
+            // runs before first feature method, create test content here
         }
 
         def setup() {
-            // less commonly used
+            // runs before each feature method, less commonly used
         }
 
         def "a feature method"() {
@@ -158,7 +158,7 @@ The [Spock documentation](https://code.google.com/p/spock/wiki/SpockBasics) outl
         }
 
         def cleanupSpec() {
-            // less commonly used
+            // runs after all feature methods, implemented in base spec but less commonly used
         }
     }
 
@@ -206,7 +206,7 @@ The above example will create an `nt:unstructured` (the default type) node at `/
 
 Both builders automatically save the underlying JCR session after executing the provided closure.
 
-In addition to the provided builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
+In addition to the provided builders, the `[session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html)` and `[pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html)` instances provided by the base specification can be used directly to create test content in the JCR.
 
 ### Mocking Requests and Responses
 
