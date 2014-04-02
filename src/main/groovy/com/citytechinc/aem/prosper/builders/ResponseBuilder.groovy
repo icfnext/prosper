@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 class ResponseBuilder {
 
     @Delegate
-    private MockHttpServletResponse mockResponse = new MockHttpServletResponse()
+    private final MockHttpServletResponse mockResponse = new MockHttpServletResponse()
 
     /**
      * Build a Sling response with default values.
