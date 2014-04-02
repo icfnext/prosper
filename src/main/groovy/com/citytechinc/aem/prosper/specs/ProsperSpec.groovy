@@ -23,6 +23,7 @@ import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
 import spock.lang.Shared
 
 import javax.jcr.Session
+
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code> and content builders.
  */
@@ -59,7 +60,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
 
         def resourceProvider = new JcrResourceProvider(session, null, false)
 
-        resourceResolverInternal = new MockResourceResolver(resourceProvider, session, resourceResolverAdapters,
+        resourceResolverInternal = new MockResourceResolver(resourceProvider, sessionInternal, resourceResolverAdapters,
             resourceAdapters, adapterFactories)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
     }
@@ -119,7 +120,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      */
     @Override
     void addResourceAdapter(Class adapterType, Closure closure) {
-        resourceResolverInternal.addResourceAdapter(adapterType, closure)
+        resourceResolver.addResourceAdapter(adapterType, closure)
     }
 
     /**
@@ -131,7 +132,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      */
     @Override
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
-        resourceResolverInternal.addResourceResolverAdapter(adapterType, closure)
+        resourceResolver.addResourceResolverAdapter(adapterType, closure)
     }
 
     // accessors for shared instances
@@ -171,7 +172,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @return resource for given path or null
      */
     Resource getResource(String path) {
-        resourceResolverInternal.getResource(path)
+        resourceResolver.getResource(path)
     }
 
     /**
@@ -181,7 +182,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @return Page for given path or null
      */
     Page getPage(String path) {
-        pageManagerInternal.getPage(path)
+        pageManager.getPage(path)
     }
 
     // builders
@@ -193,7 +194,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder() {
-        new RequestBuilder(resourceResolverInternal)
+        new RequestBuilder(resourceResolver)
     }
 
     /**
