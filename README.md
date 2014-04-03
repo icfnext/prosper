@@ -24,47 +24,47 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 
 1. Add Maven dependency to project `pom.xml`.
 
-```xml
-<dependency>
-    <groupId>com.citytechinc.aem.prosper</groupId>
-    <artifactId>prosper</artifactId>
-    <version>0.9.0</version>
-    <scope>test</scope>
-</dependency>
-```
+        ```xml
+        <dependency>
+            <groupId>com.citytechinc.aem.prosper</groupId>
+            <artifactId>prosper</artifactId>
+            <version>0.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        ```
 
 2. Create a `src/test/groovy` directory in your project structure and add a Spock specification extending the base `ProsperSpec`.
 
-```groovy
-import com.citytechinc.aem.prosper.specs.ProsperSpec
+        ```groovy
+        import com.citytechinc.aem.prosper.specs.ProsperSpec
 
-class ExampleSpec extends ProsperSpec {
+        class ExampleSpec extends ProsperSpec {
 
-    def setupSpec() {
-        // use PageBuilder from base spec to create test content
-        pageBuilder.content {
-            home("Home") {
-                "jcr:content"("sling:resourceType": "foundation/components/page")
+            def setupSpec() {
+                // use PageBuilder from base spec to create test content
+                pageBuilder.content {
+                    home("Home") {
+                        "jcr:content"("sling:resourceType": "foundation/components/page")
+                    }
+                }
+            }
+
+            // basic content assertions provided
+            def "home page exists"() {
+                expect:
+                assertPageExists("/content/home")
+            }
+
+            // Node metaclass provided by AEM Groovy Extension simplifies JCR operations
+            def "home page has expected resource type"() {
+                setup:
+                def contentNode = session.getNode("/content/home/jcr:content")
+
+                expect:
+                contentNode.get("sling:resourceType") == "foundation/components/page"
             }
         }
-    }
-
-    // basic content assertions provided
-    def "home page exists"() {
-        expect:
-        assertPageExists("/content/home")
-    }
-
-    // Node metaclass provided by AEM Groovy Extension simplifies JCR operations
-    def "home page has expected resource type"() {
-        setup:
-        def contentNode = session.getNode("/content/home/jcr:content")
-
-        expect:
-        contentNode.get("sling:resourceType") == "foundation/components/page"
-    }
-}
-```
+        ```
 
 3. Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details can be found [here](http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven).
 
