@@ -258,11 +258,11 @@ expect: "page is created and properties match expected values"
 assertPageExists("/content/prosper", pageProperties)
 ```
 
-All `assert...` methods are detailed in the `ProsperSpec` [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
+All available `assert...` methods are detailed in the Prosper [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
 
 ### Mocking Requests and Responses
 
-Testing servlets and request-scoped POJOs require mocking the `SlingHttpServletRequest` and `SlingHttpServletResponse` objects.  The `RequestBuilder` and `ResponseBuilder` instances acquired through the `ProsperSpec` leverage Groovy closures to set the necessary properties and state on these mock objects in a lightweight manner.
+Testing servlets and request-scoped supporting classes require mocking the `SlingHttpServletRequest` and `SlingHttpServletResponse` objects.  The `RequestBuilder` and `ResponseBuilder` instances acquired through the base spec leverage Groovy closures to set the necessary properties and state on these mock objects in a lightweight manner.
 
 Given a Sling servlet:
 
@@ -298,7 +298,7 @@ class TestServlet extends SlingAllMethodsServlet {
 }
 ```
 
-A Prosper specification for this servlet will use the request and response builders to create the necessary method arguments to simulate a POST request to the servlet and verify both the JCR updates and the JSON output that result.
+A Prosper specification for this servlet will use the request and response builders to create the necessary method arguments to simulate a POST request to the servlet and verify both the JCR content updates and the JSON output resulting from the servlet execution.
 
 ```groovy
 class ServletSpec extends ProsperSpec {
@@ -313,6 +313,7 @@ class ServletSpec extends ProsperSpec {
         setup:
         def servlet = new TestServlet()
 
+        // requestBuilder and responseBuilder are inherited from the base spec
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
@@ -330,6 +331,7 @@ class ServletSpec extends ProsperSpec {
         def request = requestBuilder.build {
             parameters = [path: "/content/prosper"]
             selectors = ["one", "two"]
+            contentType = "application/json"
         }
 
         def response = responseBuilder.build()
@@ -346,7 +348,7 @@ class ServletSpec extends ProsperSpec {
 }
 ```
 
-The mock request and response objects
+The mock request and response objects delegate to the [MockHttpServletRequest](http://docs.spring.io/spring/docs/3.2.8.RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html) and [MockHttpServletResponse](http://docs.spring.io/spring/docs/3.2.8.RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletResponse.html) objects from the Spring Test Framework.  The setter methods exposed by these classes are thus made available in the `build` closures for the request and response builders to assist in setting appropriate mock values for the class under test.
 
 ### Adding Sling Adapters
 
@@ -420,7 +422,7 @@ class ExampleSpec extends ProsperSpec {
 
 ### Mocking Services
 
-OSGi services can be mocked (fully or partially) using Spock's [mocking API](http://docs.spockframework.org/en/latest/interaction_based_testing.html#creating-mock-objects).  Classes that inject services using Felix SCR annotations (as in the example servlet below) should use `protected` visibility to allow setting of service fields to mocked instances during testing.
+OSGi services can be mocked (fully or partially) using Spock's [mocking API](http://docs.spockframework.org/en/latest/interaction_based_testing.html#creating-mock-objects).  Classes that inject services using the [Apache Felix SCR annotations](http://felix.apache.org/documentation/subprojects/apache-felix-maven-scr-plugin/scr-annotations.html) (as in the example servlet below) should use `protected` visibility to allow setting of service fields to mocked instances during testing.
 
 ```groovy
 import com.day.cq.replication.ReplicationActionType
@@ -480,13 +482,9 @@ def "servlet with mock service"() {
 }
 ```
 
-### Testing Scenarios
+### Testing JSP Tag Libraries
 
-#### Servlets
-
-#### OSGi Services
-
-#### Tag Libraries
+TODO
 
 ### References
 
