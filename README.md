@@ -484,7 +484,43 @@ def "servlet with mock service"() {
 
 ### Testing JSP Tag Libraries
 
-TODO
+`JspTagSpec` is a separate base spec for testing JSP tag libraries; this spec extends `ProsperSpec` and includes all of the functionality described thus far in addition to some tag-specific considerations.
+
+Tag specs are required to implement the `createTag` method to instantiate the tag under test.  The base spec automatically handles the mocking of the underlying page context and JSP writer to capture tag output and provides an accessor method for tests to verify the output value of tag operations.
+
+```groovy
+import javax.servlet.jsp.JspException
+import javax.servlet.jsp.tagext.TagSupport
+
+class SimpleTag extends TagSupport {
+
+    @Override
+    int doEndTag() throws JspException {
+        pageContext.out.write("hello")
+
+        EVAL_PAGE
+    }
+}
+
+class SimpleTagSpec extends JspTagSpec {
+
+    @Override
+    TagSupport createTag() {
+        new SimpleTag()
+    }
+
+    def "get result"() {
+        when:
+        tag.doEndTag() // 'tag' field is exposed by base class
+
+        then:
+        result == "hello" // 'result' is Groovy shorthand for getResult method from base spec
+    }
+}
+
+```
+
+Tag specs can also override the `addPageContextAttributes` method to populate the mocked page context with additional attribute key-value pairs.
 
 ### References
 
