@@ -9,6 +9,9 @@ import spock.lang.Specification
 import javax.jcr.Node
 import javax.jcr.Session
 
+/**
+ * Basic AEM spec that includes a transient JCR session.
+ */
 class AemSpec extends Specification {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]

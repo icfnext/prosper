@@ -25,7 +25,8 @@ import spock.lang.Shared
 import javax.jcr.Session
 
 /**
- * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code> and content builders.
+ * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
+ * adapter registration capabilities.
  */
 @SuppressWarnings("deprecation")
 abstract class ProsperSpec extends AemSpec implements TestAdaptable {
@@ -312,18 +313,6 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
         resourceAdapters[Page.class] = { Resource resource ->
             NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
         }
-
-        /*
-        resourceAdapters[ValueMap.class] = { Resource resource ->
-            def node = sessionInternal.getNode(resource.path)
-
-            new JcrPropertyMap(node)
-        }
-
-        resourceAdapters[Node.class] = { Resource resource ->
-            sessionInternal.getNode(resource.path)
-        }
-        */
     }
 
     private void addDefaultResourceResolverAdapters() {
