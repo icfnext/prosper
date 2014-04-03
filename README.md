@@ -524,6 +524,13 @@ class SimpleTagSpec extends JspTagSpec {
 
 Tag specs can also override the `addPageContextAttributes` method to populate the mocked page context with additional attribute key-value pairs.
 
+```groovy
+@Override
+Map<String, Object> addPageContextAttributes() {
+    ["language": "Groovy", "version": "2.2.2", "jdk": "1.7"]
+}
+```
+
 ### References
 
 * [Prosper GroovyDocs](http://code.citytechinc.com/prosper/groovydoc/index.html)
