@@ -372,7 +372,8 @@ class ExampleAdapterFactory implements AdapterFactory {
         result
     }
 }
-
+```
+```groovy
 class ExampleSpec extends ProsperSpec {
 
     @Override
