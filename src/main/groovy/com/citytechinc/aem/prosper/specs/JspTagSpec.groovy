@@ -10,7 +10,7 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
 /**
  * Spock specification for testing tag handlers.
  */
-abstract class ProsperJspTagSpec extends ProsperSpec {
+abstract class JspTagSpec extends ProsperSpec {
 
     /**
      * Writer for capturing tag output.

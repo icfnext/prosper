@@ -9,12 +9,12 @@ import org.springframework.mock.web.MockHttpServletRequest
  */
 class RequestBuilder {
 
+    @Delegate
+    private final MockHttpServletRequest mockRequest = new MockHttpServletRequest()
+
     private final ResourceResolver resourceResolver
 
-    @Delegate
-    private MockHttpServletRequest mockRequest = new MockHttpServletRequest()
-
-    private List<String> selectors = []
+    private final List<String> selectors = []
 
     private String path = "/"
 
