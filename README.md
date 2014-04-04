@@ -220,6 +220,10 @@ Both builders automatically save the underlying JCR session after executing the 
 
 In addition to the provided builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
+### Metaclasses
+
+The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.
+
 ### Assertions
 
 Prosper's built-in assertion methods are used within Spock's `then` and `expect` blocks to verify the state of content in the transient repository following execution of a test.  For example, a test that creates a node with property values (either directly or as a side effect of other operations) will want to confirm that the node was created and that the desired property name and values exist in the JCR.
@@ -523,6 +527,13 @@ class SimpleTagSpec extends JspTagSpec {
 ```
 
 Tag specs can also override the `addPageContextAttributes` method to populate the mocked page context with additional attribute key-value pairs.
+
+```groovy
+@Override
+Map<String, Object> addPageContextAttributes() {
+    ["language": "Groovy", "version": "2.2.2", "jdk": "1.7"]
+}
+```
 
 ### References
 
