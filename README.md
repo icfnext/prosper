@@ -262,7 +262,7 @@ expect: "page is created and properties match expected values"
 assertPageExists("/content/prosper", pageProperties)
 ```
 
-All available `assert...` methods are detailed in the Prosper [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
+All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
 
 ### Mocking Requests and Responses
 
