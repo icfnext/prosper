@@ -412,8 +412,12 @@ class ExampleSpec extends ProsperSpec {
         def resource = resourceResolver.getResource("/")
 
         expect:
-        resource.adaptTo(Integer) == 0
-        resource.adaptTo(Map).size() == 0
+        resource.adaptTo(type) == result
+
+        where:
+        type    | result
+        Integer | 0
+        Map     | [:]
     }
 
     def "resource resolver is adaptable to multiple types"() {
