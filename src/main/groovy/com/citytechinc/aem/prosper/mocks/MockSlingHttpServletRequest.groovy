@@ -18,7 +18,7 @@ import javax.servlet.http.Cookie
 class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     @Delegate
-    private MockHttpServletRequest mockRequest
+    private final MockHttpServletRequest mockRequest
 
     private final ResourceResolver resourceResolver
 
@@ -34,7 +34,6 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
         this.resourceResolver = resourceResolver
 
         resource = resourceResolver.resolve(path)
-
         requestParameterMap = MockRequestParameterMap.create(mockRequest)
         requestPathInfo = new MockRequestPathInfo(resourceResolver, path, selectors, extension, suffix)
     }

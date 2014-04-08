@@ -1,11 +1,14 @@
 package com.citytechinc.aem.prosper.specs
 
 import com.day.cq.tagging.TagManager
+import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ValueMap
 
+import javax.jcr.Node
 import javax.jcr.Session
 
 class ProsperSpecSpec extends ProsperSpec {
@@ -40,6 +43,12 @@ class ProsperSpecSpec extends ProsperSpec {
     @Override
     Map<Class, Closure> addResourceResolverAdapters() {
         [(String.class): { "world" }]
+    }
+
+    def setupSpec() {
+        pageBuilder.content {
+            home()
+        }
     }
 
     def "registered adapter factory"() {
@@ -92,5 +101,29 @@ class ProsperSpecSpec extends ProsperSpec {
 
         expect:
         resourceResolver.adaptTo(Map) == [:]
+    }
+
+    def "adapt resource to page"() {
+        setup:
+        def resource = getResource("/content/home")
+
+        expect:
+        resource.adaptTo(Page)
+    }
+
+    def "adapt resource to value map"() {
+        setup:
+        def resource = getResource("/content/home")
+
+        expect:
+        resource.adaptTo(ValueMap)
+    }
+
+    def "adapt resource to node"() {
+        setup:
+        def resource = getResource("/content/home")
+
+        expect:
+        resource.adaptTo(Node)
     }
 }

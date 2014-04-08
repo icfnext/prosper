@@ -6,7 +6,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 class MockSlingHttpServletResponse implements SlingHttpServletResponse {
 
     @Delegate
-    private MockHttpServletResponse mockResponse
+    private final MockHttpServletResponse mockResponse
 
     MockSlingHttpServletResponse(MockHttpServletResponse mockResponse) {
         this.mockResponse = mockResponse

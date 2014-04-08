@@ -11,7 +11,7 @@ class MockResource implements Resource {
 
     private final def adapterFactories
 
-    MockResource(resource, adapters, adapterFactories) {
+    MockResource(Resource resource, adapters, adapterFactories) {
         this.resource = resource
         this.adapters = adapters
         this.adapterFactories = adapterFactories

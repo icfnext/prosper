@@ -4,7 +4,7 @@ import org.apache.sling.api.request.RequestParameter
 
 class MockRequestParameter implements RequestParameter {
 
-    private final def value
+    private final String value
 
     MockRequestParameter(String value) {
         this.value = value
@@ -47,6 +47,11 @@ class MockRequestParameter implements RequestParameter {
 
     @Override
     String getString(String encoding) throws UnsupportedEncodingException {
+        value
+    }
+
+    @Override
+    String toString() {
         value
     }
 }
