@@ -31,19 +31,26 @@ import javax.jcr.Session
 @SuppressWarnings("deprecation")
 abstract class ProsperSpec extends AemSpec implements TestAdaptable {
 
-    @Shared TestResourceResolver resourceResolverInternal
+    @Shared
+    private TestResourceResolver resourceResolverInternal
 
-    @Shared PageManager pageManagerInternal
+    @Shared
+    private PageManager pageManagerInternal
 
-    @Shared NodeBuilder nodeBuilderInternal
+    @Shared
+    private NodeBuilder nodeBuilderInternal
 
-    @Shared PageBuilder pageBuilderInternal
+    @Shared
+    private PageBuilder pageBuilderInternal
 
-    @Shared adapterFactories = []
+    @Shared
+    private def adapterFactories = []
 
-    @Shared resourceResolverAdapters = [:]
+    @Shared
+    private def resourceResolverAdapters = [:]
 
-    @Shared resourceAdapters = [:]
+    @Shared
+    private def resourceAdapters = [:]
 
     // global fixtures
 

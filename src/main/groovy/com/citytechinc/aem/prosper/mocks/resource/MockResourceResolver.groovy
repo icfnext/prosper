@@ -1,4 +1,5 @@
 package com.citytechinc.aem.prosper.mocks.resource
+
 import org.apache.sling.api.resource.NonExistingResource
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceProvider

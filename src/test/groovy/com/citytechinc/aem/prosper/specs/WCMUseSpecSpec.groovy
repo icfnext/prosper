@@ -30,12 +30,10 @@ class WCMUseSpecSpec extends WCMUseSpec {
 
     def "init component"() {
         setup:
-        def component = new TestSightlyComponent()
-
-        init(component, {
+        def component = init(TestSightlyComponent) {
             path = "/content/home/jcr:content/test"
             wcmMode = WCMMode.DISABLED
-        })
+        }
 
         expect:
         component.resource.path == "/content/home/jcr:content/test"

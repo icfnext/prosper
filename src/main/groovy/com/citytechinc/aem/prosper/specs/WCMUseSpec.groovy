@@ -7,7 +7,8 @@ import javax.script.SimpleBindings
 
 class WCMUseSpec extends ProsperSpec {
 
-    public <T extends WCMUse> void init(T instance, @DelegatesTo(value = BindingsBuilder, strategy = Closure.OWNER_FIRST) Closure closure) {
+    public <T extends WCMUse> void init(T instance,
+        @DelegatesTo(value = BindingsBuilder, strategy = Closure.OWNER_FIRST) Closure closure) {
         def bindings
 
         if (closure) {
@@ -17,5 +18,22 @@ class WCMUseSpec extends ProsperSpec {
         }
 
         instance.init(bindings)
+    }
+
+    public <T extends WCMUse> T init(Class<T> type,
+        @DelegatesTo(value = BindingsBuilder, strategy = Closure.OWNER_FIRST) Closure closure) {
+        def bindings
+
+        if (closure) {
+            bindings = new BindingsBuilder(resourceResolver).build(closure)
+        } else {
+            bindings = new SimpleBindings()
+        }
+
+        def instance = type.newInstance()
+
+        instance.init(bindings)
+
+        instance
     }
 }

@@ -20,7 +20,8 @@ class AemSpec extends Specification {
 
     private static SlingRepository repository
 
-    @Shared Session sessionInternal
+    @Shared
+    private Session sessionInternal
 
     // global fixtures
 
