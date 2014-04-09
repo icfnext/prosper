@@ -12,7 +12,7 @@ import javax.jcr.Session
 /**
  * Basic AEM spec that includes a transient JCR session.
  */
-class AemSpec extends Specification {
+abstract class AemSpec extends Specification {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 

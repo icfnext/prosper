@@ -43,14 +43,13 @@ class WCMUseSpecSpec extends WCMUseSpec {
 
     def "init component with mock object"() {
         setup:
-        def component = new TestSightlyComponent()
         def style = Mock(Style)
 
-        init(component, {
+        def component = init(TestSightlyComponent) {
             path = "/content/home/jcr:content/test"
             wcmMode = WCMMode.DISABLED
             currentStyle = style
-        })
+        }
 
         when:
         component.stylePath

@@ -2,7 +2,6 @@ package com.citytechinc.aem.prosper.builders
 
 import com.adobe.cq.sightly.SightlyWCMMode
 import com.adobe.cq.sightly.WCMBindings
-import com.adobe.cq.sightly.WCMUse
 import com.adobe.cq.sightly.internal.WCMInheritanceValueMap
 import com.adobe.granite.xss.XSSAPI
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap
@@ -142,12 +141,6 @@ class BindingsBuilder {
         this.xssApi = xssApi
     }
 
-    public <T extends WCMUse> void init(T instance, Closure closure) {
-        def bindings = build(closure)
-
-        instance.init(bindings)
-    }
-
     Bindings build() {
         build(null)
     }
@@ -162,7 +155,7 @@ class BindingsBuilder {
         createBindings()
     }
 
-    def createBindings() {
+    private def createBindings() {
         def slingRequest = requestBuilder.build()
         def slingResponse = responseBuilder.build()
 
@@ -194,7 +187,7 @@ class BindingsBuilder {
         new SimpleBindings(bindings)
     }
 
-    def createPageBindings(Resource resource) {
+    private def createPageBindings(Resource resource) {
         def pageManager = resourceResolver.adaptTo(PageManager)
         def currentPage = pageManager.getContainingPage(resource)
 
@@ -220,7 +213,7 @@ class BindingsBuilder {
         ]
     }
 
-    def createSlingScriptHelper() {
+    private def createSlingScriptHelper() {
         [
             getService : { Class serviceType ->
                 def instances = services[serviceType]
