@@ -1,7 +1,7 @@
 package com.citytechinc.aem.prosper.mocks
-
 import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
 import com.citytechinc.aem.prosper.mocks.request.MockRequestPathInfo
+import com.google.common.base.Objects
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.request.RequestDispatcherOptions
 import org.apache.sling.api.request.RequestParameter
@@ -144,5 +144,11 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
         }
 
         queryString
+    }
+
+    @Override
+    String toString() {
+        Objects.toStringHelper(this).add("resource", resource).add("requestPathInfo", requestPathInfo).add(
+            "requestParameterMap", requestParameterMap).toString()
     }
 }

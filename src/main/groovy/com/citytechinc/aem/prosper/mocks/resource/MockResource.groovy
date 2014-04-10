@@ -35,4 +35,9 @@ class MockResource implements Resource {
 
         result
     }
+
+    @Override
+    String toString() {
+        resource.toString()
+    }
 }

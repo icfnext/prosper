@@ -32,4 +32,9 @@ class MockRequestParameterMap implements RequestParameterMap {
 
         values ? values[0] : null
     }
+
+    @Override
+    String toString() {
+        map.toString()
+    }
 }
