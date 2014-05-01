@@ -131,7 +131,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     String map(HttpServletRequest request, String resourcePath) {
-        throw new UnsupportedOperationException()
+        resourcePath
     }
 
     @Override
