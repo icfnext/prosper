@@ -1,0 +1,66 @@
+/*
+ * Copyright 1997-2008 Day Management AG
+ * Barfuesserplatz 6, 4001 Basel, Switzerland
+ * All Rights Reserved.
+ *
+ * This software is the confidential and proprietary information of
+ * Day Management AG, ("Confidential Information"). You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with Day.
+ */
+<cq = 'http://www.day.com/jcr/cq/1.0'>
+<sling = 'http://sling.apache.org/jcr/sling/1.0'>
+
+/**
+ *
+ */
+[cq:ClientLibraryFolder] > sling:Folder
+  - categories (string) multiple
+  - dependencies (string) multiple
+  - embed (string) multiple
+  - channels (string) multiple
+
+//-----------------------------------------------------------------------------
+// Widgets
+//-----------------------------------------------------------------------------
+
+/**
+ *
+ */
+[cq:Widget] > nt:unstructured orderable
+  - xtype (string)
+  - name (string)
+  - title (string)
+  + items (nt:base) = cq:WidgetCollection copy
+
+/**
+ *
+ */
+[cq:WidgetCollection] > nt:unstructured
+  orderable
+  + * (cq:Widget) = cq:Widget copy
+
+/**
+ *
+ */
+[cq:Dialog] > cq:Widget orderable
+
+/**
+ *
+ */
+[cq:Panel] > cq:Widget orderable
+
+/**
+ *
+ */
+[cq:TabPanel] > cq:Panel orderable
+  - activeTab (long)
+
+/**
+ *
+ */
+[cq:Field] > cq:Widget orderable
+  - fieldLabel (string)
+  - value (string)
+  - ignoreData (boolean)

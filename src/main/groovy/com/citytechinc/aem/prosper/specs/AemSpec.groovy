@@ -16,7 +16,7 @@ class AemSpec extends Specification {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
-    private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt"]
+    private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
     private static SlingRepository repository
 
