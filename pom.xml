@@ -132,6 +132,8 @@
                                           href="http://download.oracle.com/javase/6/docs/api" />
                                     <link packages="groovy.,org.codehaus.groovy."
                                           href="http://groovy.codehaus.org/api/" />
+                                    <link packages="spock."
+                                          href="http://spockframework.github.io/spock/javadoc/latest/" />
                                 </groovydoc>
                             </target>
                         </configuration>
@@ -330,7 +332,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.2.2</version>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
