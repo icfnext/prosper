@@ -5,6 +5,7 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceProvider
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.resource.JcrResourceUtil
+import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
@@ -28,9 +29,9 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     private boolean closed
 
-    MockResourceResolver(ResourceProvider resourceProvider, Session session, resourceResolverAdapters, resourceAdapters,
-        adapterFactories) {
-        this.resourceProvider = resourceProvider
+    MockResourceResolver(Session session, resourceResolverAdapters, resourceAdapters, adapterFactories) {
+        resourceProvider = new JcrResourceProvider(session, null, null)
+
         this.session = session
         this.resourceResolverAdapters = resourceResolverAdapters
         this.resourceAdapters = resourceAdapters

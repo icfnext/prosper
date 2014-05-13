@@ -12,6 +12,7 @@ import javax.jcr.Session
 /**
  * Basic AEM spec that includes a transient JCR session.
  */
+@SuppressWarnings("deprecated")
 abstract class AemSpec extends Specification {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
@@ -38,7 +39,7 @@ abstract class AemSpec extends Specification {
     def cleanupSpec() {
         removeAllNodes()
 
-        sessionInternal.logout()
+        session.logout()
     }
 
     /**
@@ -55,7 +56,7 @@ abstract class AemSpec extends Specification {
      * @return node for given path
      */
     Node getNode(String path) {
-        sessionInternal.getNode(path)
+        session.getNode(path)
     }
 
     /**
@@ -63,8 +64,8 @@ abstract class AemSpec extends Specification {
      * method to cleanup content before the entire specification has been executed.
      */
     void removeAllNodes() {
-        sessionInternal.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
-        sessionInternal.save()
+        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.save()
     }
 
     // internals
@@ -87,14 +88,14 @@ abstract class AemSpec extends Specification {
     }
 
     private def registerNodeTypes() {
-        sessionInternal = getRepository().loginAdministrative(null)
+        def session = repository.loginAdministrative(null)
 
         NODE_TYPES.each { type ->
-            this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { InputStream stream ->
-                RepositoryUtil.registerNodeType(sessionInternal, stream)
+            this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
+                RepositoryUtil.registerNodeType(session, stream)
             }
         }
 
-        sessionInternal.logout()
+        session.logout()
     }
 }

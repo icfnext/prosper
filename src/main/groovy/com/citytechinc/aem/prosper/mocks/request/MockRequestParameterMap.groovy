@@ -1,9 +1,11 @@
 package com.citytechinc.aem.prosper.mocks.request
 
+import groovy.transform.ToString
 import org.apache.sling.api.request.RequestParameter
 import org.apache.sling.api.request.RequestParameterMap
 import org.springframework.mock.web.MockHttpServletRequest
 
+@ToString(includes = "map")
 class MockRequestParameterMap implements RequestParameterMap {
 
     static RequestParameterMap create(MockHttpServletRequest mockRequest) {
@@ -31,10 +33,5 @@ class MockRequestParameterMap implements RequestParameterMap {
         def values = map[name]
 
         values ? values[0] : null
-    }
-
-    @Override
-    String toString() {
-        map.toString()
     }
 }

@@ -1,10 +1,11 @@
 package com.citytechinc.aem.prosper.mocks.request
 
-import com.google.common.base.Objects
+import groovy.transform.ToString
 import org.apache.sling.api.request.RequestPathInfo
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 
+@ToString(excludes = "resourceResolver")
 class MockRequestPathInfo implements RequestPathInfo {
 
     private final ResourceResolver resourceResolver
@@ -59,11 +60,5 @@ class MockRequestPathInfo implements RequestPathInfo {
         }
 
         suffixResource
-    }
-
-    @Override
-    String toString() {
-        Objects.toStringHelper(this).add("resourcePath", path).add("selectors", selectors).add("extension",
-            extension).add("suffix", suffix).toString()
     }
 }

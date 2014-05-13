@@ -2,7 +2,7 @@ package com.citytechinc.aem.prosper.mocks
 
 import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
 import com.citytechinc.aem.prosper.mocks.request.MockRequestPathInfo
-import com.google.common.base.Objects
+import groovy.transform.ToString
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.request.RequestDispatcherOptions
 import org.apache.sling.api.request.RequestParameter
@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletRequest
 import javax.servlet.RequestDispatcher
 import javax.servlet.http.Cookie
 
+@ToString(includes = ["resource", "requestPathInfo", "requestParameterMap"])
 class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     @Delegate
@@ -156,11 +157,5 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
         }
 
         queryString
-    }
-
-    @Override
-    String toString() {
-        Objects.toStringHelper(this).add("resource", resource).add("requestPathInfo", requestPathInfo).add(
-            "requestParameterMap", requestParameterMap).toString()
     }
 }

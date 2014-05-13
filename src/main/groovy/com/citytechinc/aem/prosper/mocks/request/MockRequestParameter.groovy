@@ -1,7 +1,9 @@
 package com.citytechinc.aem.prosper.mocks.request
 
+import groovy.transform.ToString
 import org.apache.sling.api.request.RequestParameter
 
+@ToString(includes = "value")
 class MockRequestParameter implements RequestParameter {
 
     private final String name
@@ -55,11 +57,6 @@ class MockRequestParameter implements RequestParameter {
 
     @Override
     String getString(String encoding) throws UnsupportedEncodingException {
-        value
-    }
-
-    @Override
-    String toString() {
         value
     }
 }
