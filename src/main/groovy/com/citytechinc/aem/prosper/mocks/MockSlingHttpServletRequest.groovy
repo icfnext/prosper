@@ -70,6 +70,17 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     }
 
     @Override
+    List<RequestParameter> getRequestParameterList() {
+        def result = []
+
+        requestParameterMap.values().each { requestParameterArray ->
+            result.addAll(requestParameterArray as List)
+        }
+
+        result
+    }
+
+    @Override
     RequestDispatcher getRequestDispatcher(String path, RequestDispatcherOptions options) {
         throw new UnsupportedOperationException()
     }

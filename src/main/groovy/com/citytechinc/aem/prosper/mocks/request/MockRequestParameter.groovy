@@ -4,9 +4,12 @@ import org.apache.sling.api.request.RequestParameter
 
 class MockRequestParameter implements RequestParameter {
 
+    private final String name
+
     private final String value
 
-    MockRequestParameter(String value) {
+    MockRequestParameter(String name, String value) {
+        this.name = name
         this.value = value
     }
 
@@ -18,6 +21,11 @@ class MockRequestParameter implements RequestParameter {
     @Override
     String getContentType() {
         throw new UnsupportedOperationException()
+    }
+
+    @Override
+    String getName() {
+        name
     }
 
     @Override
