@@ -1,14 +1,16 @@
 package com.citytechinc.aem.prosper.mocks.request
 
+import groovy.transform.ToString
 import org.apache.sling.api.request.RequestParameter
 import org.apache.sling.api.request.RequestParameterMap
 import org.springframework.mock.web.MockHttpServletRequest
 
+@ToString(includes = "map")
 class MockRequestParameterMap implements RequestParameterMap {
 
     static RequestParameterMap create(MockHttpServletRequest mockRequest) {
         def map = mockRequest.parameterMap.collectEntries { name, values ->
-            [(name): values.collect { new MockRequestParameter(it) }.toArray(new RequestParameter[values.size()])]
+            [(name): values.collect { new MockRequestParameter(name, it) }.toArray(new RequestParameter[values.size()])]
         }
 
         new MockRequestParameterMap(map)

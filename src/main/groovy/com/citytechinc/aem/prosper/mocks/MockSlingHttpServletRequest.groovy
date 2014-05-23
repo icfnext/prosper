@@ -2,6 +2,7 @@ package com.citytechinc.aem.prosper.mocks
 
 import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
 import com.citytechinc.aem.prosper.mocks.request.MockRequestPathInfo
+import groovy.transform.ToString
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.request.RequestDispatcherOptions
 import org.apache.sling.api.request.RequestParameter
@@ -15,18 +16,19 @@ import org.springframework.mock.web.MockHttpServletRequest
 import javax.servlet.RequestDispatcher
 import javax.servlet.http.Cookie
 
+@ToString(includes = ["resource", "requestPathInfo", "requestParameterMap"])
 class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     @Delegate
     private final MockHttpServletRequest mockRequest
 
-    private final def resourceResolver
+    private final ResourceResolver resourceResolver
 
-    private final def resource
+    private final Resource resource
 
-    private final def requestPathInfo
+    private final RequestParameterMap requestParameterMap
 
-    private final def requestParameterMap
+    private final RequestPathInfo requestPathInfo
 
     MockSlingHttpServletRequest(MockHttpServletRequest mockRequest, ResourceResolver resourceResolver, String path,
         List<String> selectors, String extension, String suffix) {
@@ -35,8 +37,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
         resource = resourceResolver.resolve(path)
         requestParameterMap = MockRequestParameterMap.create(mockRequest)
-        requestPathInfo = new MockRequestPathInfo(path: path, extension: extension, suffix: suffix,
-            selectors: selectors)
+        requestPathInfo = new MockRequestPathInfo(resourceResolver, path, selectors, extension, suffix)
     }
 
     @Override
@@ -67,6 +68,17 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     @Override
     RequestParameterMap getRequestParameterMap() {
         requestParameterMap
+    }
+
+    @Override
+    List<RequestParameter> getRequestParameterList() {
+        def result = []
+
+        requestParameterMap.values().each { requestParameterArray ->
+            result.addAll(requestParameterArray as List)
+        }
+
+        result
     }
 
     @Override

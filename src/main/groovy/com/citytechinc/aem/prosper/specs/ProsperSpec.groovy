@@ -19,7 +19,6 @@ import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
 import spock.lang.Shared
 
 import javax.jcr.Session
@@ -31,19 +30,26 @@ import javax.jcr.Session
 @SuppressWarnings("deprecation")
 abstract class ProsperSpec extends AemSpec implements TestAdaptable {
 
-    @Shared TestResourceResolver resourceResolverInternal
+    @Shared
+    private TestResourceResolver resourceResolverInternal
 
-    @Shared PageManager pageManagerInternal
+    @Shared
+    private PageManager pageManagerInternal
 
-    @Shared NodeBuilder nodeBuilderInternal
+    @Shared
+    private NodeBuilder nodeBuilderInternal
 
-    @Shared PageBuilder pageBuilderInternal
+    @Shared
+    private PageBuilder pageBuilderInternal
 
-    @Shared adapterFactories = []
+    @Shared
+    private def adapterFactories = []
 
-    @Shared resourceResolverAdapters = [:]
+    @Shared
+    private def resourceResolverAdapters = [:]
 
-    @Shared resourceAdapters = [:]
+    @Shared
+    private def resourceAdapters = [:]
 
     // global fixtures
 
@@ -59,9 +65,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
 
         addAdapters()
 
-        def resourceProvider = new JcrResourceProvider(session, null, false)
-
-        resourceResolverInternal = new MockResourceResolver(resourceProvider, sessionInternal, resourceResolverAdapters,
+        resourceResolverInternal = new MockResourceResolver(sessionInternal, resourceResolverAdapters,
             resourceAdapters, adapterFactories)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
     }
@@ -215,7 +219,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @param path node path
      */
     void assertNodeExists(String path) {
-        assert sessionInternal.nodeExists(path)
+        assert session.nodeExists(path)
     }
 
     /**
@@ -225,9 +229,9 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @param primaryNodeTypeName primary node type name
      */
     void assertNodeExists(String path, String primaryNodeTypeName) {
-        assert sessionInternal.nodeExists(path)
+        assert session.nodeExists(path)
 
-        def node = sessionInternal.getNode(path)
+        def node = session.getNode(path)
 
         assert node.primaryNodeType.name == primaryNodeTypeName
     }
@@ -239,9 +243,9 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @param properties map of property names and values to verify for the node
      */
     void assertNodeExists(String path, Map<String, Object> properties) {
-        assert sessionInternal.nodeExists(path)
+        assert session.nodeExists(path)
 
-        def node = sessionInternal.getNode(path)
+        def node = session.getNode(path)
 
         properties.each { name, value ->
             assert node.get(name) == value
@@ -256,9 +260,9 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @param properties map of property names and values to verify for the node
      */
     void assertNodeExists(String path, String primaryNodeTypeName, Map<String, Object> properties) {
-        assert sessionInternal.nodeExists(path)
+        assert session.nodeExists(path)
 
-        def node = sessionInternal.getNode(path)
+        def node = session.getNode(path)
 
         assert node.primaryNodeType.name == primaryNodeTypeName
 

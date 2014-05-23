@@ -26,7 +26,6 @@ class RequestBuilderSpec extends ProsperSpec {
 
     def "build request"() {
         setup:
-
         def request = new RequestBuilder(resourceResolver).build {
             path = "/content"
         }
