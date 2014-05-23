@@ -262,7 +262,7 @@ expect: "page is created and properties match expected values"
 assertPageExists("/content/prosper", pageProperties)
 ```
 
-All available `assert...` methods are detailed in the Prosper [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
+All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
 
 ### Mocking Requests and Responses
 
@@ -412,8 +412,12 @@ class ExampleSpec extends ProsperSpec {
         def resource = resourceResolver.getResource("/")
 
         expect:
-        resource.adaptTo(Integer) == 0
-        resource.adaptTo(Map).size() == 0
+        resource.adaptTo(type) == result
+
+        where:
+        type    | result
+        Integer | 0
+        Map     | [:]
     }
 
     def "resource resolver is adaptable to multiple types"() {

@@ -1,7 +1,9 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
+import groovy.transform.ToString
 import org.apache.sling.api.resource.Resource
 
+@ToString(includes = "resource")
 class MockResource implements Resource {
 
     @Delegate

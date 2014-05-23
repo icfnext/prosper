@@ -5,6 +5,7 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceProvider
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.resource.JcrResourceUtil
+import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
@@ -28,9 +29,9 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     private boolean closed
 
-    MockResourceResolver(ResourceProvider resourceProvider, Session session, resourceResolverAdapters, resourceAdapters,
-        adapterFactories) {
-        this.resourceProvider = resourceProvider
+    MockResourceResolver(Session session, resourceResolverAdapters, resourceAdapters, adapterFactories) {
+        resourceProvider = new JcrResourceProvider(session, null, null)
+
         this.session = session
         this.resourceResolverAdapters = resourceResolverAdapters
         this.resourceAdapters = resourceAdapters
@@ -131,12 +132,17 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     String map(HttpServletRequest request, String resourcePath) {
-        throw new UnsupportedOperationException()
+        resourcePath
     }
 
     @Override
     Iterator<Map<String, Object>> queryResources(String query, String language) {
         throw new UnsupportedOperationException()
+    }
+
+    @Override
+    boolean hasChildren(Resource resource) {
+        resource.hasChildren()
     }
 
     @Override
@@ -208,17 +214,37 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     void revert() {
-        throw new UnsupportedOperationException()
+
     }
 
     @Override
     void commit() {
-        throw new UnsupportedOperationException()
+
     }
 
     @Override
     boolean hasChanges() {
+        session.hasPendingChanges()
+    }
+
+    @Override
+    String getParentResourceType(Resource resource) {
         throw new UnsupportedOperationException()
+    }
+
+    @Override
+    String getParentResourceType(String resourceType) {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
+    boolean isResourceType(Resource resource, String resourceType) {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
+    void refresh() {
+
     }
 
     private Resource getResourceInternal(String path) {

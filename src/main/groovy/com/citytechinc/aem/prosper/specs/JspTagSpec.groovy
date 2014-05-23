@@ -1,8 +1,9 @@
 package com.citytechinc.aem.prosper.specs
 
 import org.springframework.mock.web.MockJspWriter
+import org.springframework.mock.web.MockPageContext
 
-import javax.servlet.jsp.PageContext
+import javax.servlet.jsp.JspWriter
 import javax.servlet.jsp.tagext.TagSupport
 
 import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RESOURCE_RESOLVER_NAME
@@ -10,7 +11,7 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
 /**
  * Spock specification for testing tag handlers.
  */
-abstract class JspTagSpec extends ProsperSpec {
+abstract class JspTagSpec<T extends TagSupport> extends ProsperSpec {
 
     /**
      * Writer for capturing tag output.
@@ -20,37 +21,14 @@ abstract class JspTagSpec extends ProsperSpec {
     /**
      * The JSP tag instance under test.
      */
-    TagSupport tag
-
-    /**
-     * Create a mock page context that writes output to a StringWriter.  The resulting output can be retrieved by
-     * calling <code>getResult()</code>.
-     */
-    def setup() {
-        tag = createTag()
-        writer = new StringWriter()
-
-        def pageContext = Mock(PageContext)
-        def jspWriter = new MockJspWriter(writer)
-
-        pageContext.out >> jspWriter
-        pageContext.getAttribute(DEFAULT_RESOURCE_RESOLVER_NAME) >> resourceResolver
-
-        def attributes = addPageContextAttributes()
-
-        attributes.each { name, value ->
-            pageContext.getAttribute(name) >> value
-        }
-
-        tag.pageContext = pageContext
-    }
+    T tag
 
     /**
      * Instantiate the concrete tag class under test.
      *
      * @return tag instance to be tested
      */
-    abstract TagSupport createTag()
+    abstract T createTag()
 
     /**
      * Add additional attributes to the JSP page context for testing.  Implementing specs should override this method
@@ -71,5 +49,33 @@ abstract class JspTagSpec extends ProsperSpec {
      */
     String getResult() {
         writer.toString()
+    }
+
+    /**
+     * Create a mock page context that writes output to a StringWriter.  The resulting output can be retrieved by
+     * calling <code>getResult()</code>.
+     */
+    def setup() {
+        tag = createTag()
+        writer = new StringWriter()
+
+        def jspWriter = new MockJspWriter(writer)
+        def pageContext = new MockPageContext() {
+
+            @Override
+            JspWriter getOut() {
+                jspWriter
+            }
+        }
+
+        pageContext.setAttribute DEFAULT_RESOURCE_RESOLVER_NAME, resourceResolver
+
+        def attributes = addPageContextAttributes()
+
+        attributes.each { name, value ->
+            pageContext.setAttribute name, value
+        }
+
+        tag.pageContext = pageContext
     }
 }
