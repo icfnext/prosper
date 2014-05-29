@@ -14,6 +14,7 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 * While accepting the limitations of testing outside the container, provides minimal/mock implementations of Sling interfaces (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
 * Utilizes Groovy builders from our [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for Sling requests and responses to simplify setup of test cases.
+* Bindings builder for initializing Sightly components with mocked attributes
 
 ## Requirements
 
@@ -28,7 +29,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>0.9.0</version>
+    <version>0.11.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -537,6 +538,57 @@ Tag specs can also override the `addPageContextAttributes` method to populate th
 Map<String, Object> addPageContextAttributes() {
     ["language": "Groovy", "version": "2.2.2", "jdk": "1.7"]
 }
+```
+
+### Sightly
+
+Sightly is the new templating language introduced in AEM6 to replace JSPs for component development.  Sightly includes a [Java API](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly/use-api-in-java.html) that defines an interface as well as an abstract class for implementing component supporting classes.  Prosper provides an additional specification for initializing and testing these component classes using the transient JCR and mocking constructs outlined above.
+  
+```groovy
+import com.adobe.cq.sightly.WCMUse
+
+class SleepyComponent extends WCMUse {
+
+    @Override
+    void activate() throws Exception {
+
+    }
+    
+    boolean isBedtime() {
+        get("isBedtime", true)
+    }  
+}
+```
+```groovy
+class SleepyComponentSpec extends WCMUseSpec {
+
+    def setupSpec() {
+        pageBuilder.content {
+            home {
+                "jcr:content"() {
+                    sleepy(isBedtime: false)
+                }
+            }
+        }
+    }
+    
+    def "sleepy component test"() {
+        setup:
+        def component = init(SleepyComponent) {
+            path = "/content/home/jcr:content/sleepy"
+            wcmMode = WCMMode.DISABLED
+        }
+
+        expect: "component has correct resource and page paths"
+        component.resource.path == "/content/home/jcr:content/test"
+        component.currentPage.path == "/content/home"
+        component.wcmMode.disabled
+        
+        and: "it's not bedtime"
+        !component.bedtime
+    }
+}
+
 ```
 
 ### References
