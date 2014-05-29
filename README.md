@@ -580,7 +580,7 @@ class SleepyComponentSpec extends WCMUseSpec {
         }
 
         expect: "component has correct resource and page paths"
-        component.resource.path == "/content/home/jcr:content/test"
+        component.resource.path == "/content/home/jcr:content/sleepy"
         component.currentPage.path == "/content/home"
         component.wcmMode.disabled
         
