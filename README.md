@@ -263,7 +263,7 @@ expect: "page is created and properties match expected values"
 assertPageExists("/content/prosper", pageProperties)
 ```
 
-All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
+All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://code.citytechinc.com/prosper/groovydocs/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
 
 ### Mocking Requests and Responses
 
@@ -592,7 +592,7 @@ class SleepyComponentSpec extends WCMUseSpec {
 
 ### References
 
-* [Prosper GroovyDocs](http://code.citytechinc.com/prosper/groovydoc/index.html)
+* [Prosper GroovyDocs](http://code.citytechinc.com/prosper/groovydocs/index.html)
 * [Spock Documentation](http://docs.spockframework.org/en/latest/index.html)
 * [Spock Wiki](https://code.google.com/p/spock/w/list)
 * [Groovy Documentation](http://groovy.codehaus.org/Documentation)
