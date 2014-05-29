@@ -181,7 +181,6 @@
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
                     </flowInitContext>
-                    <noReleaseBuild>true</noReleaseBuild>
                 </configuration>
             </plugin>
         </plugins>
