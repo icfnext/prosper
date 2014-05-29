@@ -588,7 +588,6 @@ class SleepyComponentSpec extends WCMUseSpec {
         !component.bedtime
     }
 }
-
 ```
 
 ### References
