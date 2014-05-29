@@ -542,7 +542,7 @@ Map<String, Object> addPageContextAttributes() {
 
 ### Sightly
 
-Sightly is the new templating language introduced in AEM6 to replace JSPs for component development.  Sightly includes a [Java API](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly/use-api-in-java.html) that defines an interface as well as an abstract class for implementing component supporting classes.  Prosper provides an additional specification for initializing and testing these component classes using the transient JCR and mocking constructs outlined above.
+[Sightly](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly.html) is the new templating language introduced in AEM6 to replace JSPs for component development.  Sightly includes a [Java API](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly/use-api-in-java.html) that defines an interface as well as an abstract class for implementing component supporting classes.  Prosper provides an additional specification for initializing and testing these component classes using the transient JCR and mocking constructs outlined above.
   
 ```groovy
 import com.adobe.cq.sightly.WCMUse
