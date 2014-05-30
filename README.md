@@ -120,6 +120,14 @@ Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional co
         </plugin>
     </plugins>
 </build>
+
+<dependencies>
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.3.2</version>
+    </dependency>
+</dependencies>
 ```
 
 Finally, run `mvn test` from the command line to verify that specifications are found and execute successfully.
@@ -171,6 +179,18 @@ class ExampleSpec extends ProsperSpec {
 }
 ```
 
+### Available Fields
+
+The base specification exposes a number of fields for use in test methods.
+
+Field Name | Type | Description
+:---------|:---------|:-----------
+session | [javax.jcr.Session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) | Administrative JCR session
+resourceResolver | [org.apache.sling.api.resource.ResourceResolver](http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/ResourceResolver.html) | Administrative Sling Resource Resolver
+pageManager | [com.day.cq.wcm.api.PageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) | CQ Page Manager
+nodeBuilder | [com.citytechinc.aem.groovy.extension.builders.NodeBuilder](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/builders/NodeBuilder.html) | JCR Node Builder (see below)
+pageBuilder | [com.citytechinc.aem.groovy.extension.builders.PageBuilder](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/builders/PageBuilder.html) | CQ Page Builder (see below)
+
 ### Content Builders
 
 A test specification will often require content such as pages, components, or supporting node structures to facilitate the interactions of the class under test.  Creating a large and/or complex content hierarchy using the JCR and Sling APIs can be tedious and time consuming.  The base `ProsperSpec` simplifies the content creation process by defining two Groovy [builder](http://groovy.codehaus.org/Builders) instances, `pageBuilder` and `nodeBuilder`, that greatly reduce the amount of code needed to produce a working content structure in the JCR.
@@ -219,11 +239,11 @@ The above example will create an `nt:unstructured` (the default type) node at `/
 
 Both builders automatically save the underlying JCR session after executing the provided closure.
 
-In addition to the provided builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
+In addition to the content builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
 ### Metaclasses
 
-The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.
+The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
 
 ### Assertions
 
