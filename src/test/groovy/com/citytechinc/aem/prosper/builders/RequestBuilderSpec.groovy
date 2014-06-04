@@ -12,7 +12,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
     def "build request with no arguments"() {
         setup:
-        def request = new RequestBuilder(resourceResolver).build()
+        def request = requestBuilder.build()
         def requestPathInfo = request.requestPathInfo
 
         expect:
@@ -26,7 +26,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
     def "build request"() {
         setup:
-        def request = new RequestBuilder(resourceResolver).build {
+        def request = requestBuilder.build {
             path = "/content"
         }
 
@@ -36,7 +36,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
     def "build complex request"() {
         setup:
-        def request = new RequestBuilder(resourceResolver).build {
+        def request = requestBuilder.build {
             path = "/content"
             method = testMethod
             suffix = testSuffix
@@ -58,7 +58,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
     def "build request with selectors"() {
         setup:
-        def request = new RequestBuilder(resourceResolver).build {
+        def request = requestBuilder.build {
             path = "/content"
             selectors = selectorList
         }
@@ -78,7 +78,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
     def "build request with parameters argument"() {
         setup:
-        def request = new RequestBuilder(resourceResolver).build {
+        def request = requestBuilder.build {
             path = "/content"
             parameters = ["a": ["1", "2"], "b": ["1"]]
         }
@@ -89,7 +89,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
     def "build request with parameters"() {
         setup:
-        def request = new RequestBuilder(resourceResolver).build {
+        def request = requestBuilder.build {
             path = "/content"
             parameters = map
         }
@@ -109,7 +109,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
     def "build request with attributes"() {
         setup:
-        def request = new RequestBuilder(resourceResolver).build {
+        def request = requestBuilder.build {
             path = "/content"
             setAttribute "a", "1"
             setAttribute "b", BigDecimal.ZERO
