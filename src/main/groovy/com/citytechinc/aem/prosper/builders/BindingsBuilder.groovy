@@ -23,6 +23,9 @@ import org.apache.sling.api.scripting.SlingScriptHelper
 import javax.script.Bindings
 import javax.script.SimpleBindings
 
+/**
+ *
+ */
 class BindingsBuilder {
 
     private final ResourceResolver resourceResolver

@@ -575,7 +575,7 @@ class SleepyComponent extends WCMUse {
     }
     
     boolean isBedtime() {
-        get("isBedtime", true)
+        properties.get("isBedtime", true)
     }  
 }
 ```
