@@ -101,12 +101,13 @@ class RequestBuilder {
      * .Closure)"><code>with</code></a> method.
      *
      * <pre>
-     *  new RequestBuilder(resourceResolver).build {*      serverName = "localhost"
+     *  new RequestBuilder(resourceResolver).build {
+     *      serverName = "localhost"
      *      path = "/content"
      *      method = "GET"
      *      parameters = ["a": ["1", "2"], "b": ["1"]]
      *      extension = "html"
-     *}* </pre>
+     * }</pre>
      *
      * @param closure closure that delegates to this builder and <a href="http://docs.spring.io/spring/docs/3.2.8
      * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html">MockHttpServletRequest</a>

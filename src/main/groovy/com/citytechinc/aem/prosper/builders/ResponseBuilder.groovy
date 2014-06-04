@@ -29,11 +29,12 @@ class ResponseBuilder {
      * .Closure)"><code>with</code></a> method.
      *
      * <pre>
-     *  new ResponseBuilder().build {*      status = 200
+     *  new ResponseBuilder().build {
+     *      status = 200
      *      characterEncoding = "UTF-8"
      *      contentType = "application/json"
      *      addHeader "Connection", "close"
-     *}* </pre>
+     * }</pre>
      *
      * @param closure closure that delegates to this builder and <a href="http://docs.spring.io/spring/docs/3.2.8
      * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletResponse.html">MockHttpServletResponse</a>
