@@ -1,13 +1,13 @@
 package com.citytechinc.aem.prosper.builders
 
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.google.common.base.Charsets
-import spock.lang.Specification
 
-class ResponseBuilderSpec extends Specification {
+class ResponseBuilderSpec extends ProsperSpec {
 
     def "build response"() {
         setup:
-        def response = new ResponseBuilder().build()
+        def response = responseBuilder.build()
 
         expect:
         response.characterEncoding == Charsets.ISO_8859_1.name()
@@ -17,7 +17,7 @@ class ResponseBuilderSpec extends Specification {
 
     def "build response with closure"() {
         setup:
-        def response = new ResponseBuilder().build {
+        def response = responseBuilder.build {
             status = 500
             setHeader "foo", "bar"
         }

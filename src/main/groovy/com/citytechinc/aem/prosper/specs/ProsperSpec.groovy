@@ -1,5 +1,4 @@
 package com.citytechinc.aem.prosper.specs
-
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
@@ -9,6 +8,7 @@ import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.TestResourceResolver
 import com.day.cq.commons.jcr.JcrConstants
+import com.day.cq.replication.Replicator
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.NameConstants
@@ -19,10 +19,10 @@ import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.osgi.service.event.EventAdmin
 import spock.lang.Shared
 
 import javax.jcr.Session
-
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
@@ -322,6 +322,10 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
     private void addDefaultResourceResolverAdapters() {
         resourceResolverAdapters[PageManager.class] = { ResourceResolver resourceResolver ->
             def factory = new PageManagerFactoryImpl()
+
+            factory.replicator = [replicate: {}] as Replicator
+            factory.eventAdmin = [postEvent: {}, sendEvent: {}] as EventAdmin
+            factory.repository = repository
 
             factory.getPageManager(resourceResolver)
         }
