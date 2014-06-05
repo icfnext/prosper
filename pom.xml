@@ -313,6 +313,10 @@
             <artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.event</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.adobe.cq.sightly</groupId>
             <artifactId>cq-wcm-sightly-extension</artifactId>
         </dependency>

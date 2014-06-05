@@ -71,7 +71,7 @@ abstract class AemSpec extends Specification {
     // internals
 
     @Synchronized
-    private def getRepository() {
+    protected def getRepository() {
         if (!repository) {
             RepositoryUtil.startRepository()
 
@@ -87,7 +87,7 @@ abstract class AemSpec extends Specification {
         repository
     }
 
-    private def registerNodeTypes() {
+    protected def registerNodeTypes() {
         def session = repository.loginAdministrative(null)
 
         NODE_TYPES.each { type ->
