@@ -21,8 +21,8 @@ class MockResource implements Resource {
 
     @Override
     <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        def result = (AdapterType) adapterFactories.findResult {
-            adapterFactory -> adapterFactory.getAdapter(this, type)
+        def result = (AdapterType) adapterFactories.findResult { adapterFactory ->
+            adapterFactory.getAdapter(this, type)
         }
 
         if (!result) {

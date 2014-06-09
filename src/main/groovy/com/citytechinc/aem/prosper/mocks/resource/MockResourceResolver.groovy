@@ -1,6 +1,5 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import org.apache.sling.api.resource.NonExistingResource
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceProvider
 import org.apache.sling.api.resource.ResourceResolver
@@ -157,7 +156,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     Resource resolve(String absPath) {
-        getResource(absPath) ?: new NonExistingResource(this, absPath)
+        getResource(absPath) ?: new MockNonExistingResource(this, absPath, resourceAdapters, adapterFactories)
     }
 
     @Override
