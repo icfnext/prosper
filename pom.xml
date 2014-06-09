@@ -11,7 +11,7 @@
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>0.11.3</version>
+    <version>0.11.4-SNAPSHOT</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
