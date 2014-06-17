@@ -450,6 +450,22 @@ class ExampleSpec extends ProsperSpec {
 }
 ```
 
+### Adding JCR Namespaces and Node Types
+
+A number of the more common AEM, JCR, and Sling namespaces and node types are added to the in-memory repository upon
+setup of the first Spec in a set of specifications.  Additional namespaces and node types may be added at runtime by
+overriding the `addCndInputStreams` method of the `AemSpec`.  This method is intended to return a list of `InputStream`
+objects each of which should be the input stream of a CND file.  For more information on the CND node type notation,
+see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) on the Jackrabbit website.  An example of
+an overridden `addCndInputStreams` taken from the `ProsperSpecSpec` internal test is presented below.
+
+```groovy
+@Override
+List<InputStream> addCndInputStreams() {
+    [this.class.getResourceAsStream("/SLING-INF/testnodetypes/test.cnd")]
+}
+```
+
 ### Mocking Services
 
 OSGi services can be mocked (fully or partially) using Spock's [mocking API](http://docs.spockframework.org/en/latest/interaction_based_testing.html#creating-mock-objects).  Classes that inject services using the [Apache Felix SCR annotations](http://felix.apache.org/documentation/subprojects/apache-felix-maven-scr-plugin/scr-annotations.html) (as in the example servlet below) should use `protected` visibility to allow setting of service fields to mocked instances during testing.

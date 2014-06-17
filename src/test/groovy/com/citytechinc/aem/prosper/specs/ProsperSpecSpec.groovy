@@ -45,9 +45,18 @@ class ProsperSpecSpec extends ProsperSpec {
         [(String.class): { "world" }]
     }
 
+    @Override
+    List<InputStream> addCndInputStreams() {
+        [this.class.getResourceAsStream("/SLING-INF/testnodetypes/test.cnd")]
+    }
+
     def setupSpec() {
         pageBuilder.content {
-            home()
+            home() {
+                "jcr:content"() {
+                    testcontent("prospertest:TestType")
+                }
+            }
         }
     }
 
@@ -125,5 +134,13 @@ class ProsperSpecSpec extends ProsperSpec {
 
         expect:
         resource.adaptTo(Node)
+    }
+
+    def "check node type for node with custom type"() {
+        setup:
+        def node = getNode("/content/home/jcr:content/testcontent")
+
+        expect:
+        node.isNodeType("prospertest:TestType")
     }
 }
