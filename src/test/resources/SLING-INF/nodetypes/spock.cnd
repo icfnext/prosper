@@ -1,0 +1,3 @@
+<spock = 'http://www.citytechinc.com/ns/spock/'>
+
+[spock:TestType] > nt:unstructured
