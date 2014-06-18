@@ -4,13 +4,15 @@ import com.adobe.cq.sightly.WCMUse
 import com.day.cq.wcm.api.WCMMode
 import com.day.cq.wcm.api.designer.Style
 
-class WCMUseSpecSpec extends WCMUseSpec {
+class SightlySpecSpec extends SightlySpec {
 
     class TestSightlyComponent extends WCMUse {
 
+        def activated = false
+
         @Override
         void activate() throws Exception {
-
+            activated = true
         }
 
         String getStylePath() {
@@ -39,6 +41,16 @@ class WCMUseSpecSpec extends WCMUseSpec {
         component.resource.path == "/content/home/jcr:content/test"
         component.currentPage.path == "/content/home"
         component.wcmMode.disabled
+    }
+
+    def "init component and activate"() {
+        setup:
+        def component = init(TestSightlyComponent, true) {
+            path = "/content/home/jcr:content/test"
+        }
+
+        expect:
+        component.activated
     }
 
     def "init component with mock object"() {

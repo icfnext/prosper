@@ -7,10 +7,12 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
+import spock.lang.Unroll
 
 import javax.jcr.Node
 import javax.jcr.Session
 
+@Unroll
 class ProsperSpecSpec extends ProsperSpec {
 
     @Override
@@ -45,9 +47,26 @@ class ProsperSpecSpec extends ProsperSpec {
         [(String.class): { "world" }]
     }
 
+    @Override
+    List<InputStream> addCndInputStreams() {
+        [this.class.getResourceAsStream("/SLING-INF/nodetypes/prosper.cnd")]
+    }
+
+    @Override
+    List<String> addNodeTypes() {
+        ["/SLING-INF/nodetypes/spock.cnd"]
+    }
+
     def setupSpec() {
         pageBuilder.content {
-            home()
+            home() {
+                "jcr:content"()
+            }
+        }
+
+        nodeBuilder.etc {
+            prosper("prosper:TestType")
+            spock("spock:TestType")
         }
     }
 
@@ -125,5 +144,18 @@ class ProsperSpecSpec extends ProsperSpec {
 
         expect:
         resource.adaptTo(Node)
+    }
+
+    def "check node type for node with custom type"() {
+        setup:
+        def node = getNode("/etc/prosper")
+
+        expect:
+        node.isNodeType("prosper:TestType")
+
+        where:
+        path           | nodeType
+        "/etc/prosper" | "prosper:TestType"
+        "/etc/spock"   | "spock:TestType"
     }
 }
