@@ -31,6 +31,8 @@ abstract class AemSpec extends Specification {
      */
     def setupSpec() {
         sessionInternal = getRepository().loginAdministrative(null)
+
+        registerCustomNodeTypes()
     }
 
     /**
@@ -68,6 +70,26 @@ abstract class AemSpec extends Specification {
         session.save()
     }
 
+    /**
+     * Add JCR namespaces and node types based on any number of CND file input streams.  Specs should override this
+     * method to add CND files to be registered at runtime.
+     *
+     * @return list of InputStreams to add
+     */
+    List<InputStream> addCndInputStreams() {
+        Collections.emptyList()
+    }
+
+    /**
+     * Add JCR namespaces and node types by providing a list of paths to CND files.  Specs should override this
+     * method to add CND files to be registered at runtime.
+     *
+     * @return list of paths to CND file resources
+     */
+    List<String> addNodeTypes() {
+        Collections.emptyList()
+    }
+
     // internals
 
     @Synchronized
@@ -77,7 +99,7 @@ abstract class AemSpec extends Specification {
 
             repository = RepositoryUtil.getRepository()
 
-            registerNodeTypes()
+            registerCoreNodeTypes()
 
             addShutdownHook {
                 RepositoryUtil.stopRepository()
@@ -87,11 +109,25 @@ abstract class AemSpec extends Specification {
         repository
     }
 
-    protected def registerNodeTypes() {
+    protected def registerCoreNodeTypes() {
         def session = repository.loginAdministrative(null)
 
         NODE_TYPES.each { type ->
             this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
+                RepositoryUtil.registerNodeType(session, stream)
+            }
+        }
+
+        session.logout()
+    }
+
+    protected def registerCustomNodeTypes() {
+        def session = repository.loginAdministrative(null)
+
+        addCndInputStreams()*.withStream { RepositoryUtil.registerNodeType(session, it) }
+
+        addNodeTypes().each { type ->
+            this.class.getResourceAsStream(type).withStream { stream ->
                 RepositoryUtil.registerNodeType(session, stream)
             }
         }
