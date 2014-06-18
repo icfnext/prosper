@@ -72,7 +72,8 @@ abstract class AemSpec extends Specification {
 
     /**
      * Add JCR namespaces and node types based on any number of CND file input streams.  Specs should override this
-     * method to add CND files to be registered at runtime.
+     * method to add CND files to be registered at runtime.  Note that the <code>InputStream</code> is closed
+     * automatically after the CND file is consumed.
      *
      * @return list of InputStreams to add
      */
