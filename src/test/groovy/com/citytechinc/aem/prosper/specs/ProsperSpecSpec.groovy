@@ -47,7 +47,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     @Override
     List<InputStream> addCndInputStreams() {
-        [this.class.getResourceAsStream("/SLING-INF/testnodetypes/test.cnd")]
+        [this.class.getResourceAsStream("/SLING-INF/nodetypes/test.cnd")]
     }
 
     def setupSpec() {

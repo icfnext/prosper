@@ -31,6 +31,7 @@ abstract class AemSpec extends Specification {
      */
     def setupSpec() {
         sessionInternal = getRepository().loginAdministrative(null)
+
         registerCustomNodeTypes()
     }
 
@@ -79,6 +80,16 @@ abstract class AemSpec extends Specification {
         Collections.emptyList()
     }
 
+    /**
+     * Add JCR namespaces and node types by providing a list of paths to CND files.  Specs should override this
+     * method to add CND files to be registered at runtime.
+     *
+     * @return list of paths to CND file resources
+     */
+    List<String> addNodeTypes() {
+        Collections.emptyList()
+    }
+
     // internals
 
     @Synchronized
@@ -113,9 +124,14 @@ abstract class AemSpec extends Specification {
     protected def registerCustomNodeTypes() {
         def session = repository.loginAdministrative(null)
 
-        addCndInputStreams().each { RepositoryUtil.registerNodeType(session, it) }
+        addCndInputStreams()*.withStream { RepositoryUtil.registerNodeType(session, it) }
+
+        addNodeTypes().each { type ->
+            this.class.getResourceAsStream(type).withStream { stream ->
+                RepositoryUtil.registerNodeType(session, stream)
+            }
+        }
 
         session.logout()
     }
-
 }
