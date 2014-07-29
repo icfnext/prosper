@@ -18,6 +18,7 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 
 ## Requirements
 
+* AEM6 (versions prior to 0.10.0 are compatible with CQ 5.6)
 * Maven 3.x
 * Familiarity with Groovy language and the Spock specification syntax (or see included tests for examples).
 
