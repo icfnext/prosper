@@ -1,7 +1,6 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
 import org.apache.sling.api.resource.Resource
-import org.apache.sling.api.resource.ResourceProvider
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.resource.JcrResourceUtil
 import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
@@ -14,7 +13,7 @@ import javax.servlet.http.HttpServletRequest
 @SuppressWarnings("deprecation")
 class MockResourceResolver implements TestResourceResolver, GroovyInterceptable {
 
-    private final ResourceProvider resourceProvider
+    private final JcrResourceProvider resourceProvider
 
     private final Session session
 
@@ -83,11 +82,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
         if (path.startsWith("/")) {
             resource = getResource(path)
         } else {
-            if (base) {
-                resource = getResource("${base.path}/$path")
-            } else {
-                resource = null
-            }
+            resource = base ? getResource("${base.path}/$path") : null
         }
 
         resource
@@ -193,12 +188,12 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     Object getAttribute(String name) {
-        throw new UnsupportedOperationException()
+        resourceProvider.getAttribute(this, name)
     }
 
     @Override
     Iterator<String> getAttributeNames() {
-        throw new UnsupportedOperationException()
+        resourceProvider.getAttributeNames(this)
     }
 
     @Override
@@ -213,17 +208,17 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     void revert() {
-
+        resourceProvider.revert(this)
     }
 
     @Override
     void commit() {
-
+        resourceProvider.commit(this)
     }
 
     @Override
     boolean hasChanges() {
-        session.hasPendingChanges()
+        resourceProvider.hasChanges(this)
     }
 
     @Override
@@ -243,7 +238,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     void refresh() {
-
+        resourceProvider.refresh()
     }
 
     private Resource getResourceInternal(String path) {
