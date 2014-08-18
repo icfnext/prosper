@@ -1,4 +1,5 @@
 package com.citytechinc.aem.prosper.specs
+
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
@@ -23,6 +24,7 @@ import org.osgi.service.event.EventAdmin
 import spock.lang.Shared
 
 import javax.jcr.Session
+
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
@@ -75,10 +77,12 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
     }
 
     /**
-     * Get a new page manager to ensure all caches are cleared.
+     * Refresh the shared resource resolver.
      */
     def setup() {
-        pageManagerInternal = resourceResolver.adaptTo(PageManager)
+        resourceResolver.refresh()
+
+        // pageManagerInternal = resourceResolver.adaptTo(PageManager)
     }
 
     // default adapter methods return empty collections
@@ -323,9 +327,11 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
         resourceResolverAdapters[PageManager.class] = { ResourceResolver resourceResolver ->
             def factory = new PageManagerFactoryImpl()
 
-            factory.replicator = [replicate: {}] as Replicator
-            factory.eventAdmin = [postEvent: {}, sendEvent: {}] as EventAdmin
-            factory.repository = repository
+            factory.with {
+                replicator = [replicate: {}] as Replicator
+                eventAdmin = [postEvent: {}, sendEvent: {}] as EventAdmin
+                repository = this.repository
+            }
 
             factory.getPageManager(resourceResolver)
         }

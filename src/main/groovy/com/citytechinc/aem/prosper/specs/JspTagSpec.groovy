@@ -14,50 +14,24 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
 abstract class JspTagSpec<T extends TagSupport> extends ProsperSpec {
 
     /**
-     * Writer for capturing tag output.
-     */
-    StringWriter writer
-
-    /**
-     * The JSP tag instance under test.
-     */
-    T tag
-
-    /**
-     * Instantiate the concrete tag class under test.
+     * Initialize the given tag instance and return the writer for reading tag output.
      *
-     * @return tag instance to be tested
+     * @param tag
+     * @return
      */
-    abstract T createTag()
-
-    /**
-     * Add additional attributes to the JSP page context for testing.  Implementing specs should override this method
-     * as necessary.
-     *
-     * @return map of attributes names and values
-     */
-    Map<String, Object> addPageContextAttributes() {
-        Collections.emptyMap()
+    Writer init(TagSupport tag) {
+        init(tag, [:])
     }
 
     /**
-     * Get the result of the tag execution (i.e. the contents of the <code>StringWriter</code> containing the tag
-     * output).  This is typically called after executing <code>doEndTag()</code> or other tag methods that write to the
-     * page context output stream.
+     * Initialize the given tag instance and return the writer for reading tag output.
      *
-     * @return string output
+     * @param tag
+     * @param additionalPageContextAttributes
+     * @return
      */
-    String getResult() {
-        writer.toString()
-    }
-
-    /**
-     * Create a mock page context that writes output to a StringWriter.  The resulting output can be retrieved by
-     * calling <code>getResult()</code>.
-     */
-    def setup() {
-        tag = createTag()
-        writer = new StringWriter()
+    Writer init(TagSupport tag, Map<String, Object> additionalPageContextAttributes) {
+        def writer = new StringWriter()
 
         def jspWriter = new MockJspWriter(writer)
         def pageContext = new MockPageContext() {
@@ -68,14 +42,14 @@ abstract class JspTagSpec<T extends TagSupport> extends ProsperSpec {
             }
         }
 
-        pageContext.setAttribute DEFAULT_RESOURCE_RESOLVER_NAME, resourceResolver
+        pageContext.setAttribute(DEFAULT_RESOURCE_RESOLVER_NAME, resourceResolver)
 
-        def attributes = addPageContextAttributes()
-
-        attributes.each { name, value ->
-            pageContext.setAttribute name, value
+        additionalPageContextAttributes.each { name, value ->
+            pageContext.setAttribute(name, value)
         }
 
         tag.pageContext = pageContext
+
+        writer
     }
 }

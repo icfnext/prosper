@@ -5,35 +5,44 @@ import javax.servlet.jsp.tagext.TagSupport
 
 class JspTagSpecSpec extends JspTagSpec {
 
-    @Override
-    TagSupport createTag() {
-        def tag = new TagSupport() {
-            @Override
-            int doEndTag() throws JspException {
-                pageContext.out.write("hello")
+    static class TestTag extends TagSupport {
 
-                EVAL_PAGE
-            }
+        @Override
+        int doStartTag() throws JspException {
+            pageContext.out.write("hello")
+
+            EVAL_PAGE
         }
 
-        tag
+        @Override
+        int doEndTag() throws JspException {
+            pageContext.out.write(pageContext.getAttribute("testName") as String)
+
+            EVAL_PAGE
+        }
     }
 
-    @Override
-    Map<String, Object> addPageContextAttributes() {
-        ["testName": "testValue"]
+    def "init tag and get result"() {
+        setup:
+        def tag = new TestTag()
+        def writer = init(tag)
+
+        when:
+        tag.doStartTag()
+
+        then:
+        writer.toString() == "hello"
     }
 
-    def "get result"() {
+    def "init tag with additional page context attributes and get result"() {
+        setup:
+        def tag = new TestTag()
+        def writer = init(tag, ["testName": "testValue"])
+
         when:
         tag.doEndTag()
 
         then:
-        result == "hello"
-    }
-
-    def "add page context attributes"() {
-        expect:
-        tag.pageContext.getAttribute("testName") == "testValue"
+        writer.toString() == "testValue"
     }
 }
