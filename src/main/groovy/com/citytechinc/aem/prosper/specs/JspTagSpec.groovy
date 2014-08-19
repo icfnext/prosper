@@ -1,11 +1,9 @@
 package com.citytechinc.aem.prosper.specs
 
-import groovy.transform.TupleConstructor
 import org.springframework.mock.web.MockJspWriter
 import org.springframework.mock.web.MockPageContext
 
 import javax.servlet.jsp.JspWriter
-import javax.servlet.jsp.PageContext
 import javax.servlet.jsp.tagext.TagSupport
 
 import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RESOURCE_RESOLVER_NAME
@@ -15,19 +13,11 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
  */
 abstract class JspTagSpec extends ProsperSpec {
 
-    @TupleConstructor
-    class JspTag {
-
-        PageContext pageContext
-
-        Writer writer
-    }
-
     /**
      * Initialize the given tag instance and return the writer for reading tag output.
      *
      * @param tag
-     * @return JSP tag instance containing mock page context and writer
+     * @return JSP tag instance containing mocked page context and writer
      */
     JspTag init(TagSupport tag) {
         init(tag, [:])
@@ -38,7 +28,7 @@ abstract class JspTagSpec extends ProsperSpec {
      *
      * @param tag
      * @param additionalPageContextAttributes
-     * @return JSP tag instance containing mock page context and writer
+     * @return JSP tag instance containing mocked page context and writer
      */
     JspTag init(TagSupport tag, Map<String, Object> additionalPageContextAttributes) {
         def writer = new StringWriter()

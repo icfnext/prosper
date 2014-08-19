@@ -31,7 +31,7 @@ class JspTagSpecSpec extends JspTagSpec {
         tag.doStartTag()
 
         then:
-        jspTag.writer.toString() == "hello"
+        jspTag.output == "hello"
     }
 
     def "init tag with additional page context attributes and get result"() {
