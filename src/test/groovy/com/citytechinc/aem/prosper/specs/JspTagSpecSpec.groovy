@@ -25,24 +25,24 @@ class JspTagSpecSpec extends JspTagSpec {
     def "init tag and get result"() {
         setup:
         def tag = new TestTag()
-        def writer = init(tag)
+        def jspTag = init(tag)
 
         when:
         tag.doStartTag()
 
         then:
-        writer.toString() == "hello"
+        jspTag.writer.toString() == "hello"
     }
 
     def "init tag with additional page context attributes and get result"() {
         setup:
         def tag = new TestTag()
-        def writer = init(tag, ["testName": "testValue"])
+        def jspTag = init(tag, ["testName": "testValue"])
 
         when:
         tag.doEndTag()
 
         then:
-        writer.toString() == "testValue"
+        jspTag.writer.toString() == "testValue"
     }
 }
