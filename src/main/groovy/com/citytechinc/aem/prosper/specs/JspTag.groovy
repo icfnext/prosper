@@ -1,31 +1,33 @@
 package com.citytechinc.aem.prosper.specs
 
-import groovy.transform.TupleConstructor
-
 import javax.servlet.jsp.PageContext
 
 /**
  * Composite class containing the mocked page context and writer for a JSP tag instance.
  */
-@TupleConstructor
-class JspTag {
+final class JspTag {
 
     /**
      * Mock page context for tag under test.
      */
-    PageContext pageContext
+    final PageContext pageContext
 
     /**
      * Writer for capturing tag output.
      */
-    Writer writer
+    private final Writer writer
+
+    JspTag(PageContext pageContext, Writer writer) {
+        this.pageContext = pageContext
+        this.writer = writer
+    }
 
     /**
      * Get the output value for the JSP writer.
      *
      * @return output string
      */
-    String getOutput() {
+    final String getOutput() {
         writer.toString()
     }
 }
