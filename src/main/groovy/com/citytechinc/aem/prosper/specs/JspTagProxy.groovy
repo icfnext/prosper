@@ -5,7 +5,7 @@ import javax.servlet.jsp.PageContext
 /**
  * Composite class containing the mocked page context and writer for a JSP tag instance.
  */
-final class JspTag {
+final class JspTagProxy {
 
     /**
      * Mock page context for tag under test.
@@ -17,7 +17,7 @@ final class JspTag {
      */
     private final Writer writer
 
-    JspTag(PageContext pageContext, Writer writer) {
+    JspTagProxy(PageContext pageContext, Writer writer) {
         this.pageContext = pageContext
         this.writer = writer
     }
