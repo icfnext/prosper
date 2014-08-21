@@ -538,7 +538,7 @@ def "servlet with mock service"() {
 
 `JspTagSpec` is a separate base spec for testing JSP tag libraries; this spec extends `ProsperSpec` and includes all of the functionality described thus far in addition to some tag-specific considerations.
 
-The `init` method in this spec initializes a `TagSupport` instance with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()``.  Tags can also be initialized with additional page context attributes.
+The `init` method in this spec initializes a `TagSupport` instance with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
 
 ```groovy
 import javax.servlet.jsp.JspException
