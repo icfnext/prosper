@@ -45,23 +45,6 @@ abstract class AemSpec extends Specification {
     }
 
     /**
-     * @return admin session
-     */
-    Session getSession() {
-        sessionInternal
-    }
-
-    /**
-     * Get the Node for a path.
-     *
-     * @param path valid JCR Node path
-     * @return node for given path
-     */
-    Node getNode(String path) {
-        session.getNode(path)
-    }
-
-    /**
      * Remove all non-system nodes to cleanup any test data.  This method would typically be called from a test fixture
      * method to cleanup content before the entire specification has been executed.
      */
@@ -91,6 +74,25 @@ abstract class AemSpec extends Specification {
         Collections.emptyList()
     }
 
+    // convenience getters
+
+    /**
+     * @return admin session
+     */
+    Session getSession() {
+        sessionInternal
+    }
+
+    /**
+     * Get the Node for a path.
+     *
+     * @param path valid JCR Node path
+     * @return node for given path
+     */
+    Node getNode(String path) {
+        session.getNode(path)
+    }
+
     // internals
 
     @Synchronized
@@ -110,28 +112,32 @@ abstract class AemSpec extends Specification {
         repository
     }
 
-    protected def registerCoreNodeTypes() {
-        def session = repository.loginAdministrative(null)
-
-        NODE_TYPES.each { type ->
-            this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
-                RepositoryUtil.registerNodeType(session, stream)
+    private void registerCoreNodeTypes() {
+        withSession { Session session ->
+            NODE_TYPES.each { type ->
+                this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
+                    RepositoryUtil.registerNodeType(session, stream)
+                }
             }
         }
-
-        session.logout()
     }
 
-    protected def registerCustomNodeTypes() {
-        def session = repository.loginAdministrative(null)
+    private void registerCustomNodeTypes() {
+        withSession { Session session ->
+            addCndInputStreams()*.withStream { RepositoryUtil.registerNodeType(session, it) }
 
-        addCndInputStreams()*.withStream { RepositoryUtil.registerNodeType(session, it) }
-
-        addNodeTypes().each { type ->
-            this.class.getResourceAsStream(type).withStream { stream ->
-                RepositoryUtil.registerNodeType(session, stream)
+            addNodeTypes().each { type ->
+                this.class.getResourceAsStream(type).withStream { stream ->
+                    RepositoryUtil.registerNodeType(session, stream)
+                }
             }
         }
+    }
+
+    private void withSession(Closure closure) {
+        def session = repository.loginAdministrative(null)
+
+        closure(session)
 
         session.logout()
     }

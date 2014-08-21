@@ -25,24 +25,24 @@ class JspTagSpecSpec extends JspTagSpec {
     def "init tag and get result"() {
         setup:
         def tag = new TestTag()
-        def jspTag = init(tag)
+        def proxy = init(tag)
 
         when:
         tag.doStartTag()
 
         then:
-        jspTag.output == "hello"
+        proxy.output == "hello"
     }
 
     def "init tag with additional page context attributes and get result"() {
         setup:
         def tag = new TestTag()
-        def jspTag = init(tag, ["testName": "testValue"])
+        def proxy = init(tag, ["testName": "testValue"])
 
         when:
         tag.doEndTag()
 
         then:
-        jspTag.writer.toString() == "testValue"
+        proxy.output == "testValue"
     }
 }

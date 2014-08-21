@@ -9,7 +9,7 @@ import javax.servlet.jsp.tagext.TagSupport
 import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RESOURCE_RESOLVER_NAME
 
 /**
- * Spock specification for testing tag handlers.
+ * Spock specification for testing tag support classes.
  */
 abstract class JspTagSpec extends ProsperSpec {
 
@@ -17,9 +17,9 @@ abstract class JspTagSpec extends ProsperSpec {
      * Initialize the given tag instance and return the writer for reading tag output.
      *
      * @param tag
-     * @return JSP tag instance containing mocked page context and writer
+     * @return proxy tag instance containing mocked page context and writer
      */
-    JspTag init(TagSupport tag) {
+    JspTagProxy init(TagSupport tag) {
         init(tag, [:])
     }
 
@@ -28,9 +28,9 @@ abstract class JspTagSpec extends ProsperSpec {
      *
      * @param tag
      * @param additionalPageContextAttributes
-     * @return JSP tag instance containing mocked page context and writer
+     * @return proxy tag instance containing mocked page context and writer
      */
-    JspTag init(TagSupport tag, Map<String, Object> additionalPageContextAttributes) {
+    JspTagProxy init(TagSupport tag, Map<String, Object> additionalPageContextAttributes) {
         def writer = new StringWriter()
         def jspWriter = new MockJspWriter(writer)
         def pageContext = new MockPageContext() {
@@ -49,6 +49,6 @@ abstract class JspTagSpec extends ProsperSpec {
 
         tag.pageContext = pageContext
 
-        new JspTag(pageContext, writer)
+        new JspTagProxy(pageContext, writer)
     }
 }
