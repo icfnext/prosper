@@ -174,6 +174,8 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
         pageManagerInternal
     }
 
+    // convenience getters
+
     /**
      * Get the Resource for a path.
      *

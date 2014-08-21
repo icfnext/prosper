@@ -45,23 +45,6 @@ abstract class AemSpec extends Specification {
     }
 
     /**
-     * @return admin session
-     */
-    Session getSession() {
-        sessionInternal
-    }
-
-    /**
-     * Get the Node for a path.
-     *
-     * @param path valid JCR Node path
-     * @return node for given path
-     */
-    Node getNode(String path) {
-        session.getNode(path)
-    }
-
-    /**
      * Remove all non-system nodes to cleanup any test data.  This method would typically be called from a test fixture
      * method to cleanup content before the entire specification has been executed.
      */
@@ -89,6 +72,25 @@ abstract class AemSpec extends Specification {
      */
     List<String> addNodeTypes() {
         Collections.emptyList()
+    }
+
+    // convenience getters
+
+    /**
+     * @return admin session
+     */
+    Session getSession() {
+        sessionInternal
+    }
+
+    /**
+     * Get the Node for a path.
+     *
+     * @param path valid JCR Node path
+     * @return node for given path
+     */
+    Node getNode(String path) {
+        session.getNode(path)
     }
 
     // internals
