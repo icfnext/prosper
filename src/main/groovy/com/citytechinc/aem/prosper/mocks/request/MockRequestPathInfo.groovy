@@ -10,30 +10,21 @@ class MockRequestPathInfo implements RequestPathInfo {
 
     private final ResourceResolver resourceResolver
 
-    private final String path
-
     private final List<String> selectors
 
-    private final String extension
+    final String resourcePath
 
-    private final String suffix
+    final String extension
 
-    MockRequestPathInfo(resourceResolver, path, selectors, extension, suffix) {
+    final String suffix
+
+    MockRequestPathInfo(ResourceResolver resourceResolver, String resourcePath, List<String> selectors,
+        String extension, String suffix) {
         this.resourceResolver = resourceResolver
-        this.path = path
+        this.resourcePath = resourcePath
         this.selectors = selectors
         this.extension = extension
         this.suffix = suffix
-    }
-
-    @Override
-    String getResourcePath() {
-        path
-    }
-
-    @Override
-    String getExtension() {
-        extension
     }
 
     @Override
@@ -44,11 +35,6 @@ class MockRequestPathInfo implements RequestPathInfo {
     @Override
     String[] getSelectors() {
         selectors as String[]
-    }
-
-    @Override
-    String getSuffix() {
-        suffix
     }
 
     @Override
