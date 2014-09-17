@@ -15,7 +15,6 @@ import com.day.cq.wcm.api.designer.Designer
 import com.day.cq.wcm.api.designer.Style
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.api.resource.ResourceUtil
 import org.apache.sling.api.resource.ValueMap
 import org.apache.sling.api.scripting.SlingBindings
 import org.apache.sling.api.scripting.SlingScriptHelper
@@ -24,7 +23,7 @@ import javax.script.Bindings
 import javax.script.SimpleBindings
 
 /**
- *
+ * Builder for creating <code>Bindings</code> instances containing WCM objects for use in Sightly components.
  */
 class BindingsBuilder {
 
@@ -58,6 +57,11 @@ class BindingsBuilder {
 
     private def xssApi
 
+    /**
+     * Create a new builder.
+     *
+     * @param resourceResolver Sling resource resolver
+     */
     BindingsBuilder(ResourceResolver resourceResolver) {
         this.resourceResolver = resourceResolver
 
@@ -173,7 +177,7 @@ class BindingsBuilder {
             (SlingBindings.REQUEST)        : slingRequest,
             (SlingBindings.RESPONSE)       : slingResponse,
             (SlingBindings.RESOURCE)       : resource,
-            (WCMBindings.PROPERTIES)       : ResourceUtil.getValueMap(resource),
+            (WCMBindings.PROPERTIES)       : resource?.valueMap ?: ValueMap.EMPTY,
             (WCMBindings.WCM_MODE)         : new SightlyWCMMode(slingRequest),
             (WCMBindings.COMPONENT)        : component,
             (WCMBindings.COMPONENT_CONTEXT): componentContext,

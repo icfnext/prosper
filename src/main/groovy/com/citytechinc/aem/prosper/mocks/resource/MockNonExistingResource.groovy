@@ -1,27 +1,21 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
+import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.SyntheticResource
 
 class MockNonExistingResource extends SyntheticResource {
 
-    private final def adapters
+    private final Map<Class, Closure> adapters
 
-    private final def adapterFactories
+    private final List<AdapterFactory> adapterFactories
 
-    MockNonExistingResource(ResourceResolver resourceResolver, String path, adapters, adapterFactories) {
+    MockNonExistingResource(ResourceResolver resourceResolver, String path, Map<Class, Closure> adapters,
+        List<AdapterFactory> adapterFactories) {
         super(resourceResolver, path, "sling:nonexisting")
 
         this.adapters = adapters
         this.adapterFactories = adapterFactories
-    }
-
-    MockNonExistingResource(ResourceResolver resourceResolver, String path,
-        String resourceType) {
-        super(resourceResolver, path, resourceType)
-
-        adapters = [:]
-        adapterFactories = []
     }
 
     @Override

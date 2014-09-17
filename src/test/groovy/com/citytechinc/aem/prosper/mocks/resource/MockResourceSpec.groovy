@@ -2,7 +2,6 @@ package com.citytechinc.aem.prosper.mocks.resource
 
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.google.common.collect.Iterables
-import spock.lang.Ignore
 
 class MockResourceSpec extends ProsperSpec {
 
@@ -102,7 +101,6 @@ class MockResourceSpec extends ProsperSpec {
         !resource.resourceSuperType
     }
 
-    @Ignore
     def "is resource type"() {
         setup:
         def resource = resourceResolver.getResource("/home/jcr:content")

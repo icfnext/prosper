@@ -1,5 +1,6 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
+import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.resource.JcrResourceUtil
@@ -17,17 +18,18 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     private final Session session
 
-    private final def resourceResolverAdapters
+    private final Map<Class, Closure> resourceResolverAdapters
 
-    private final def resourceAdapters
+    private final Map<Class, Closure> resourceAdapters
 
-    private final def adapterFactories
+    private final List<AdapterFactory> adapterFactories
 
-    private def searchPath
+    private String[] searchPath
 
     private boolean closed
 
-    MockResourceResolver(Session session, resourceResolverAdapters, resourceAdapters, adapterFactories) {
+    MockResourceResolver(Session session, Map<Class, Closure> resourceResolverAdapters,
+        Map<Class, Closure> resourceAdapters, List<AdapterFactory> adapterFactories) {
         resourceProvider = new JcrResourceProvider(session, null, null)
 
         this.session = session
@@ -233,7 +235,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     boolean isResourceType(Resource resource, String resourceType) {
-        throw new UnsupportedOperationException()
+        resourceType == resource.resourceType
     }
 
     @Override
