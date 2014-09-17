@@ -235,7 +235,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     boolean isResourceType(Resource resource, String resourceType) {
-        throw new UnsupportedOperationException()
+        resourceType == resource.resourceType
     }
 
     @Override
