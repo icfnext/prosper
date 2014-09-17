@@ -1,6 +1,6 @@
 package com.citytechinc.aem.prosper.mocks.adapter
 
-public interface TestAdaptable {
+interface TestAdaptable {
 
     void addResourceAdapter(Class adapterType, Closure closure)
 
