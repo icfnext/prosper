@@ -1,7 +1,7 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
 import com.citytechinc.aem.prosper.specs.ProsperSpec
-import org.apache.sling.api.resource.NonExistingResource
+import org.apache.sling.api.resource.SyntheticResource
 
 import javax.jcr.query.Query
 
@@ -70,7 +70,7 @@ class MockResourceResolverSpec extends ProsperSpec {
 
     def "resolve non-existing resource"() {
         expect:
-        resourceResolver.resolve("/content/three") instanceof NonExistingResource
+        resourceResolver.resolve("/content/three") instanceof SyntheticResource
     }
 
     def "list children"() {

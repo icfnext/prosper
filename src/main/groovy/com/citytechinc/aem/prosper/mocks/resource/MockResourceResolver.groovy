@@ -1,10 +1,10 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import org.apache.sling.api.resource.NonExistingResource
+import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
-import org.apache.sling.api.resource.ResourceProvider
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.resource.JcrResourceUtil
+import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
@@ -14,23 +14,23 @@ import javax.servlet.http.HttpServletRequest
 @SuppressWarnings("deprecation")
 class MockResourceResolver implements TestResourceResolver, GroovyInterceptable {
 
-    private final ResourceProvider resourceProvider
+    private final JcrResourceProvider resourceProvider
 
     private final Session session
 
-    private final def resourceResolverAdapters
+    private final Map<Class, Closure> resourceResolverAdapters
 
-    private final def resourceAdapters
+    private final Map<Class, Closure> resourceAdapters
 
-    private final def adapterFactories
+    private final List<AdapterFactory> adapterFactories
 
-    private def searchPath
+    private String[] searchPath
 
     private boolean closed
 
-    MockResourceResolver(ResourceProvider resourceProvider, Session session, resourceResolverAdapters, resourceAdapters,
-        adapterFactories) {
-        this.resourceProvider = resourceProvider
+    MockResourceResolver(Session session, Map<Class, Closure> resourceResolverAdapters,
+        Map<Class, Closure> resourceAdapters, List<AdapterFactory> adapterFactories) {
+        this.resourceProvider = new JcrResourceProvider(session, null, false)
         this.session = session
         this.resourceResolverAdapters = resourceResolverAdapters
         this.resourceAdapters = resourceAdapters
@@ -83,11 +83,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
         if (path.startsWith("/")) {
             resource = getResource(path)
         } else {
-            if (base) {
-                resource = getResource("${base.path}/$path")
-            } else {
-                resource = null
-            }
+            resource = base ? getResource("${base.path}/$path") : null
         }
 
         resource
@@ -131,7 +127,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     String map(HttpServletRequest request, String resourcePath) {
-        throw new UnsupportedOperationException()
+        resourcePath
     }
 
     @Override
@@ -151,7 +147,7 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     Resource resolve(String absPath) {
-        getResource(absPath) ?: new NonExistingResource(this, absPath)
+        getResource(absPath) ?: new MockNonExistingResource(this, absPath, resourceAdapters, adapterFactories)
     }
 
     @Override
@@ -188,12 +184,12 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     Object getAttribute(String name) {
-        throw new UnsupportedOperationException()
+        resourceProvider.getAttribute(this, name)
     }
 
     @Override
     Iterator<String> getAttributeNames() {
-        throw new UnsupportedOperationException()
+        resourceProvider.getAttributeNames(this)
     }
 
     @Override
@@ -208,17 +204,17 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     void revert() {
-        throw new UnsupportedOperationException()
+        resourceProvider.revert(this)
     }
 
     @Override
     void commit() {
-        throw new UnsupportedOperationException()
+        resourceProvider.commit(this)
     }
 
     @Override
     boolean hasChanges() {
-        throw new UnsupportedOperationException()
+        resourceProvider.hasChanges(this)
     }
 
     private Resource getResourceInternal(String path) {

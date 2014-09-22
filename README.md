@@ -28,7 +28,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -110,7 +110,7 @@ Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional co
         </plugin>
         <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.16</version>
+            <version>2.17</version>
             <configuration>
                 <includes>
                     <include>**/*Spec*</include>
@@ -119,6 +119,14 @@ Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional co
         </plugin>
     </plugins>
 </build>
+
+<dependencies>
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.3.2</version>
+    </dependency>
+</dependencies>
 ```
 
 Finally, run `mvn test` from the command line to verify that specifications are found and execute successfully.
@@ -170,6 +178,20 @@ class ExampleSpec extends ProsperSpec {
 }
 ```
 
+### Available Fields and Methods
+
+The base specification exposes a number of fields and methods for use in tests.
+
+Field Name | Type | Description
+:---------|:---------|:-----------
+session | [javax.jcr.Session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) | Administrative JCR session
+resourceResolver | [org.apache.sling.api.resource.ResourceResolver](http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/ResourceResolver.html) | Administrative Sling Resource Resolver
+pageManager | [com.day.cq.wcm.api.PageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) | CQ Page Manager
+nodeBuilder | [com.citytechinc.aem.groovy.extension.builders.NodeBuilder](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/builders/NodeBuilder.html) | JCR [Node Builder](https://github.com/Citytechinc/prosper#content-builders)
+pageBuilder | [com.citytechinc.aem.groovy.extension.builders.PageBuilder](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/builders/PageBuilder.html) | CQ [Page Builder](https://github.com/Citytechinc/prosper#content-builders)
+
+See the `ProsperSpec` [GroovyDoc](http://code.citytechinc.com/prosper/groovydocs/com/citytechinc/aem/prosper/specs/ProsperSpec.html) for details on available methods.
+
 ### Content Builders
 
 A test specification will often require content such as pages, components, or supporting node structures to facilitate the interactions of the class under test.  Creating a large and/or complex content hierarchy using the JCR and Sling APIs can be tedious and time consuming.  The base `ProsperSpec` simplifies the content creation process by defining two Groovy [builder](http://groovy.codehaus.org/Builders) instances, `pageBuilder` and `nodeBuilder`, that greatly reduce the amount of code needed to produce a working content structure in the JCR.
@@ -218,11 +240,11 @@ The above example will create an `nt:unstructured` (the default type) node at `/
 
 Both builders automatically save the underlying JCR session after executing the provided closure.
 
-In addition to the provided builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
+In addition to the content builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
 ### Metaclasses
 
-The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.
+The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
 
 ### Assertions
 
@@ -262,7 +284,7 @@ expect: "page is created and properties match expected values"
 assertPageExists("/content/prosper", pageProperties)
 ```
 
-All available `assert...` methods are detailed in the Prosper [GroovyDoc](http://code.citytechinc.com/prosper/groovydoc/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
+All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://code.citytechinc.com/prosper/groovydocs/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
 
 ### Mocking Requests and Responses
 
@@ -412,8 +434,12 @@ class ExampleSpec extends ProsperSpec {
         def resource = resourceResolver.getResource("/")
 
         expect:
-        resource.adaptTo(Integer) == 0
-        resource.adaptTo(Map).size() == 0
+        resource.adaptTo(type) == result
+
+        where:
+        type    | result
+        Integer | 0
+        Map     | [:]
     }
 
     def "resource resolver is adaptable to multiple types"() {
@@ -491,7 +517,7 @@ def "servlet with mock service"() {
 
 `JspTagSpec` is a separate base spec for testing JSP tag libraries; this spec extends `ProsperSpec` and includes all of the functionality described thus far in addition to some tag-specific considerations.
 
-Tag specs are required to implement the `createTag` method to instantiate the tag under test.  The base spec automatically handles the mocking of the underlying page context and JSP writer to capture tag output and provides an accessor method for tests to verify the output value of tag operations.
+The `init` method in this spec initializes a `TagSupport` instance with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
 
 ```groovy
 import javax.servlet.jsp.JspException
@@ -499,9 +525,20 @@ import javax.servlet.jsp.tagext.TagSupport
 
 class SimpleTag extends TagSupport {
 
+    String name
+
+    @Override
+    int doStartTag() throws JspException {
+        pageContext.out.write("hello")
+        
+        EVAL_PAGE
+    }
+
     @Override
     int doEndTag() throws JspException {
-        pageContext.out.write("hello")
+        def prefix = pageContext.getAttribute("prefix") as String
+    
+        pageContext.setAttribute("name", prefix + name)
 
         EVAL_PAGE
     }
@@ -510,34 +547,39 @@ class SimpleTag extends TagSupport {
 ```groovy
 class SimpleTagSpec extends JspTagSpec {
 
-    @Override
-    TagSupport createTag() {
-        new SimpleTag()
-    }
-
-    def "get result"() {
+    def "start tag writes 'hello'"() {
+        setup:
+        def tag = new SimpleTag()
+        def proxy = init(tag)
+        
         when:
-        tag.doEndTag() // 'tag' field is exposed by base class
+        tag.doStartTag()
 
         then:
-        result == "hello" // 'result' is Groovy shorthand for getResult method from base spec
+        proxy.output == "hello"
+    }
+
+    def "end tag sets page context attribute"() {
+        setup:
+        def tag = new SimpleTag()
+        
+        tag.name = "Prosper"
+        
+        def proxy = init(tag, ["prefix": "LiveLongAnd"])
+        
+        when:
+        tag.doEndTag()
+
+        then:
+        proxy.pageContext.getAttribute("name") == "LiveLongAndProsper"
     }
 }
 
-```
-
-Tag specs can also override the `addPageContextAttributes` method to populate the mocked page context with additional attribute key-value pairs.
-
-```groovy
-@Override
-Map<String, Object> addPageContextAttributes() {
-    ["language": "Groovy", "version": "2.2.2", "jdk": "1.7"]
-}
 ```
 
 ### References
 
-* [Prosper GroovyDocs](http://code.citytechinc.com/prosper/groovydoc/index.html)
+* [Prosper GroovyDocs](http://code.citytechinc.com/prosper/groovydocs/index.html)
 * [Spock Documentation](http://docs.spockframework.org/en/latest/index.html)
 * [Spock Wiki](https://code.google.com/p/spock/w/list)
 * [Groovy Documentation](http://groovy.codehaus.org/Documentation)

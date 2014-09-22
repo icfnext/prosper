@@ -7,10 +7,12 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
+import spock.lang.Unroll
 
 import javax.jcr.Node
 import javax.jcr.Session
 
+@Unroll
 class ProsperSpecSpec extends ProsperSpec {
 
     @Override
@@ -47,7 +49,9 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def setupSpec() {
         pageBuilder.content {
-            home()
+            home() {
+                "jcr:content"()
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.TestResourceResolver
 import com.day.cq.commons.jcr.JcrConstants
+import com.day.cq.replication.Replicator
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.NameConstants
@@ -16,12 +17,17 @@ import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
+import groovy.transform.Synchronized
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
+import org.apache.sling.commons.testing.jcr.RepositoryUtil
+import org.apache.sling.jcr.api.SlingRepository
+import org.osgi.service.event.EventAdmin
 import spock.lang.Shared
+import spock.lang.Specification
 
+import javax.jcr.Node
 import javax.jcr.Session
 
 /**
@@ -29,21 +35,37 @@ import javax.jcr.Session
  * adapter registration capabilities.
  */
 @SuppressWarnings("deprecation")
-abstract class ProsperSpec extends AemSpec implements TestAdaptable {
+abstract class ProsperSpec extends Specification implements TestAdaptable {
 
-    @Shared TestResourceResolver resourceResolverInternal
+    private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
-    @Shared PageManager pageManagerInternal
+    private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
-    @Shared NodeBuilder nodeBuilderInternal
+    private static SlingRepository repositoryInternal
 
-    @Shared PageBuilder pageBuilderInternal
+    @Shared
+    private Session sessionInternal
 
-    @Shared adapterFactories = []
+    @Shared
+    private TestResourceResolver resourceResolverInternal
 
-    @Shared resourceResolverAdapters = [:]
+    @Shared
+    private PageManager pageManagerInternal
 
-    @Shared resourceAdapters = [:]
+    @Shared
+    private NodeBuilder nodeBuilderInternal
+
+    @Shared
+    private PageBuilder pageBuilderInternal
+
+    @Shared
+    private List<AdapterFactory> adapterFactories = []
+
+    @Shared
+    private Map<Class, Closure> resourceResolverAdapters = [:]
+
+    @Shared
+    private Map<Class, Closure> resourceAdapters = [:]
 
     // global fixtures
 
@@ -54,30 +76,42 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        nodeBuilderInternal = new NodeBuilder(session)
-        pageBuilderInternal = new PageBuilder(session)
+        sessionInternal = repository.loginAdministrative(null)
+        nodeBuilderInternal = new NodeBuilder(sessionInternal)
+        pageBuilderInternal = new PageBuilder(sessionInternal)
 
         addAdapters()
 
-        def resourceProvider = new JcrResourceProvider(session, null, false)
-
-        resourceResolverInternal = new MockResourceResolver(resourceProvider, sessionInternal, resourceResolverAdapters,
+        resourceResolverInternal = new MockResourceResolver(sessionInternal, resourceResolverAdapters,
             resourceAdapters, adapterFactories)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
     }
 
     def cleanupSpec() {
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
+
+        removeAllNodes()
+
+        sessionInternal.logout()
     }
 
     /**
-     * Get a new page manager to ensure all caches are cleared.
+     * Refresh the shared resource resolver before each test run.
      */
     def setup() {
-        pageManagerInternal = resourceResolver.adaptTo(PageManager)
+        // resourceResolverInternal.refresh()
     }
 
-    // default adapter methods return empty collections
+    /**
+     * Remove all non-system nodes to cleanup any test data.  This method would typically be called from a test fixture
+     * method to cleanup content before the entire specification has been executed.
+     */
+    void removeAllNodes() {
+        sessionInternal.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        sessionInternal.save()
+    }
+
+    // "overridable" instance methods returning default (empty) values
 
     /**
      * Add <code>AdapterFactory</code> instances for adapting <code>Resource</code> or <code>ResourceResolver</code>
@@ -121,7 +155,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      */
     @Override
     void addResourceAdapter(Class adapterType, Closure closure) {
-        resourceResolver.addResourceAdapter(adapterType, closure)
+        resourceResolverInternal.addResourceAdapter(adapterType, closure)
     }
 
     /**
@@ -133,10 +167,27 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      */
     @Override
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
-        resourceResolver.addResourceResolverAdapter(adapterType, closure)
+        resourceResolverInternal.addResourceResolverAdapter(adapterType, closure)
     }
 
     // accessors for shared instances
+
+    /**
+     * @return admin session
+     */
+    Session getSession() {
+        sessionInternal
+    }
+
+    /**
+     * Get the Node for a path.
+     *
+     * @param path valid JCR Node path
+     * @return node for given path
+     */
+    Node getNode(String path) {
+        sessionInternal.getNode(path)
+    }
 
     /**
      * @return JCR node builder
@@ -166,6 +217,8 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
         pageManagerInternal
     }
 
+    // convenience getters
+
     /**
      * Get the Resource for a path.
      *
@@ -173,7 +226,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @return resource for given path or null
      */
     Resource getResource(String path) {
-        resourceResolver.getResource(path)
+        resourceResolverInternal.getResource(path)
     }
 
     /**
@@ -183,7 +236,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @return Page for given path or null
      */
     Page getPage(String path) {
-        pageManager.getPage(path)
+        pageManagerInternal.getPage(path)
     }
 
     // builders
@@ -195,7 +248,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder() {
-        new RequestBuilder(resourceResolver)
+        new RequestBuilder(resourceResolverInternal)
     }
 
     /**
@@ -273,9 +326,9 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
      * @param path page path
      */
     void assertPageExists(String path) {
-        assert session.nodeExists(path)
+        assert sessionInternal.nodeExists(path)
 
-        def pageNode = session.getNode(path)
+        def pageNode = sessionInternal.getNode(path)
 
         assert pageNode.primaryNodeType.name == NameConstants.NT_PAGE
         assert pageNode.hasNode(JcrConstants.JCR_CONTENT)
@@ -290,7 +343,7 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
     void assertPageExists(String path, Map<String, Object> properties) {
         assertPageExists(path)
 
-        def contentNode = session.getNode(path).getNode(JcrConstants.JCR_CONTENT)
+        def contentNode = sessionInternal.getNode(path).getNode(JcrConstants.JCR_CONTENT)
 
         properties.each { name, value ->
             assert contentNode.get(name) == value
@@ -298,6 +351,33 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
     }
 
     // internals
+
+    @Synchronized
+    protected SlingRepository getRepository() {
+        if (!repositoryInternal) {
+            RepositoryUtil.startRepository()
+
+            repositoryInternal = RepositoryUtil.repository
+
+            registerCoreNodeTypes()
+
+            addShutdownHook {
+                RepositoryUtil.stopRepository()
+            }
+        }
+
+        repositoryInternal
+    }
+
+    private void registerCoreNodeTypes() {
+        withSession { Session session ->
+            NODE_TYPES.each { type ->
+                this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
+                    RepositoryUtil.registerNodeType(session, stream)
+                }
+            }
+        }
+    }
 
     private void addAdapters() {
         adapterFactories.addAll(addAdapterFactories())
@@ -319,6 +399,12 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
         resourceResolverAdapters[PageManager.class] = { ResourceResolver resourceResolver ->
             def factory = new PageManagerFactoryImpl()
 
+            factory.with {
+                replicator = [replicate: {}] as Replicator
+                eventAdmin = [postEvent: {}, sendEvent: {}] as EventAdmin
+                repository = this.repository
+            }
+
             factory.getPageManager(resourceResolver)
         }
 
@@ -326,6 +412,16 @@ abstract class ProsperSpec extends AemSpec implements TestAdaptable {
             new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
         }
 
-        resourceResolverAdapters[Session.class] = { session }
+        resourceResolverAdapters[Session.class] = { sessionInternal }
+    }
+
+    private void withSession(Closure closure) {
+        def session = repository.loginAdministrative(null)
+
+        try {
+            closure(session)
+        } finally {
+            session.logout()
+        }
     }
 }
