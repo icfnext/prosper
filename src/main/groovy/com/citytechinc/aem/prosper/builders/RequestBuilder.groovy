@@ -4,12 +4,15 @@ import com.citytechinc.aem.prosper.mocks.MockSlingHttpServletRequest
 import org.apache.sling.api.resource.ResourceResolver
 import org.springframework.mock.web.MockHttpServletRequest
 
+import javax.servlet.http.Cookie
+import javax.servlet.http.HttpSession
+import java.security.Principal
+
 /**
  * Builder to assist in creating <code>SlingHttpServletRequest</code> objects.
  */
 class RequestBuilder {
 
-    @Delegate
     private final MockHttpServletRequest mockRequest = new MockHttpServletRequest()
 
     private final ResourceResolver resourceResolver
@@ -76,9 +79,9 @@ class RequestBuilder {
     void setParameters(Map<String, Object> parameters) {
         parameters.each { name, value ->
             if (value instanceof Collection) {
-                setParameter(name, value as String[])
+                mockRequest.setParameter(name, value as String[])
             } else {
-                setParameter(name, value as String)
+                mockRequest.setParameter(name, value as String)
             }
         }
     }
@@ -121,5 +124,179 @@ class RequestBuilder {
         }
 
         new MockSlingHttpServletRequest(mockRequest, resourceResolver, path, selectors, extension, suffix)
+    }
+
+    // delegate methods
+
+    void setCharacterEncoding(String characterEncoding) {
+        mockRequest.setCharacterEncoding(characterEncoding)
+    }
+
+    void setContent(byte[] content) {
+        mockRequest.setContent(content)
+    }
+
+    void setContentType(String contentType) {
+        mockRequest.setContentType(contentType)
+    }
+
+    void setParameter(String name, String value) {
+        mockRequest.setParameter(name, value)
+    }
+
+    void setParameter(String name, String[] values) {
+        mockRequest.setParameter(name, values)
+    }
+
+    void addParameter(String name, String value) {
+        mockRequest.addParameter(name, value)
+    }
+
+    void addParameter(String name, String[] values) {
+        mockRequest.addParameter(name, values)
+    }
+
+    void addParameters(Map params) {
+        mockRequest.addParameters(params)
+    }
+
+    void removeParameter(String name) {
+        mockRequest.removeParameter(name)
+    }
+
+    void removeAllParameters() {
+        mockRequest.removeAllParameters()
+    }
+
+    void setProtocol(String protocol) {
+        mockRequest.setProtocol(protocol)
+    }
+
+    void setScheme(String scheme) {
+        mockRequest.setScheme(scheme)
+    }
+
+    void setServerName(String serverName) {
+        mockRequest.setServerName(serverName)
+    }
+
+    void setServerPort(int serverPort) {
+        mockRequest.setServerPort(serverPort)
+    }
+
+    void setRemoteAddr(String remoteAddr) {
+        mockRequest.setRemoteAddr(remoteAddr)
+    }
+
+    void setRemoteHost(String remoteHost) {
+        mockRequest.setRemoteHost(remoteHost)
+    }
+
+    void setAttribute(String name, Object value) {
+        mockRequest.setAttribute(name, value)
+    }
+
+    void removeAttribute(String name) {
+        mockRequest.removeAttribute(name)
+    }
+
+    void clearAttributes() {
+        mockRequest.clearAttributes()
+    }
+
+    void addPreferredLocale(Locale locale) {
+        mockRequest.addPreferredLocale(locale)
+    }
+
+    void setPreferredLocales(List<Locale> locales) {
+        mockRequest.setPreferredLocales(locales)
+    }
+
+    void setSecure(boolean secure) {
+        mockRequest.setSecure(secure)
+    }
+
+    void setRemotePort(int remotePort) {
+        mockRequest.setRemotePort(remotePort)
+    }
+
+    void setLocalName(String localName) {
+        mockRequest.setLocalName(localName)
+    }
+
+    void setLocalAddr(String localAddr) {
+        mockRequest.setLocalAddr(localAddr)
+    }
+
+    void setLocalPort(int localPort) {
+        mockRequest.setLocalPort(localPort)
+    }
+
+    void setAuthType(String authType) {
+        mockRequest.setAuthType(authType)
+    }
+
+    void setCookies(Cookie... cookies) {
+        mockRequest.setCookies(cookies)
+    }
+
+    void addHeader(String name, Object value) {
+        mockRequest.addHeader(name, value)
+    }
+
+    void setMethod(String method) {
+        mockRequest.setMethod(method)
+    }
+
+    void setPathInfo(String pathInfo) {
+        mockRequest.setPathInfo(pathInfo)
+    }
+
+    void setContextPath(String contextPath) {
+        mockRequest.setContextPath(contextPath)
+    }
+
+    void setQueryString(String queryString) {
+        mockRequest.setQueryString(queryString)
+    }
+
+    void setRemoteUser(String remoteUser) {
+        mockRequest.setRemoteAddr(remoteUser)
+    }
+
+    void addUserRole(String role) {
+        mockRequest.addUserRole(role)
+    }
+
+    void setUserPrincipal(Principal userPrincipal) {
+        mockRequest.setUserPrincipal(userPrincipal)
+    }
+
+    void setRequestedSessionId(String requestedSessionId) {
+        mockRequest.setRequestedSessionId(requestedSessionId)
+    }
+
+    void setRequestURI(String requestURI) {
+        mockRequest.setRequestURI(requestURI)
+    }
+
+    void setServletPath(String servletPath) {
+        mockRequest.setServletPath(servletPath)
+    }
+
+    void setSession(HttpSession session) {
+        mockRequest.setSession(session)
+    }
+
+    void setRequestedSessionIdValid(boolean requestedSessionIdValid) {
+        mockRequest.setRequestedSessionIdValid(requestedSessionIdValid)
+    }
+
+    void setRequestedSessionIdFromCookie(boolean requestedSessionIdFromCookie) {
+        mockRequest.setRequestedSessionIdFromCookie(requestedSessionIdFromCookie)
+    }
+
+    void setRequestedSessionIdFromURL(boolean requestedSessionIdFromURL) {
+        mockRequest.setRequestedSessionIdFromURL(requestedSessionIdFromURL)
     }
 }

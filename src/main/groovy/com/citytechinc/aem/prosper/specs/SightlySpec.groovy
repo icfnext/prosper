@@ -18,7 +18,7 @@ abstract class SightlySpec extends ProsperSpec {
      * @param closure
      * @return initialized component instance
      */
-    public <T extends Use> T init(Class<T> type, @DelegatesTo(value = BindingsBuilder) Closure closure) {
+    public <T extends Use> T init(Class<T> type, @DelegatesTo(BindingsBuilder) Closure closure) {
         def bindings = new BindingsBuilder(resourceResolver).build(closure)
 
         def instance = type.newInstance()
@@ -36,7 +36,7 @@ abstract class SightlySpec extends ProsperSpec {
      * @param closure
      * @return activated component instance
      */
-    public <T extends WCMUse> T activate(Class<T> type, @DelegatesTo(value = BindingsBuilder) Closure closure) {
+    public <T extends WCMUse> T activate(Class<T> type, @DelegatesTo(BindingsBuilder) Closure closure) {
         def instance = init(type, closure)
 
         instance.activate()
