@@ -33,7 +33,7 @@ class BindingsBuilder {
     private final RequestBuilder requestBuilder
 
     @Delegate
-    private final ResponseBuilder responseBuilder = new ResponseBuilder()
+    private final ResponseBuilder responseBuilder
 
     private final def services = [:]
 
@@ -66,6 +66,7 @@ class BindingsBuilder {
         this.resourceResolver = resourceResolver
 
         requestBuilder = new RequestBuilder(resourceResolver)
+        responseBuilder = new ResponseBuilder()
     }
 
     /**
