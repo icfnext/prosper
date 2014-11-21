@@ -11,7 +11,7 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
 /**
  * Spock specification for testing tag support classes.
  */
-abstract class JspTagSpec extends ProsperSpec {
+abstract class JspTagSpec extends SightlySpec {
 
     /**
      * Initialize the given tag instance and return the writer for reading tag output.
