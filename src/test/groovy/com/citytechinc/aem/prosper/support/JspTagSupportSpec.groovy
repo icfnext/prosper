@@ -1,9 +1,12 @@
-package com.citytechinc.aem.prosper.specs
+package com.citytechinc.aem.prosper.support
+
+import com.citytechinc.aem.prosper.specs.ProsperSpec
+import spock.lang.Shared
 
 import javax.servlet.jsp.JspException
 import javax.servlet.jsp.tagext.TagSupport
 
-class JspTagSpecSpec extends JspTagSpec {
+class JspTagSupportSpec extends ProsperSpec {
 
     static class TestTag extends TagSupport {
 
@@ -22,27 +25,32 @@ class JspTagSpecSpec extends JspTagSpec {
         }
     }
 
+    @Shared
+    JspTagSupport jspTagSupport
+
+    def setupSpec() {
+        jspTagSupport = new JspTagSupport(resourceResolver)
+    }
+
     def "init tag and get result"() {
         setup:
-        def tag = new TestTag()
-        def proxy = init(tag)
+        def tag = jspTagSupport.getJspTag(TestTag)
 
         when:
         tag.doStartTag()
 
         then:
-        proxy.output == "hello"
+        tag.output == "hello"
     }
 
     def "init tag with additional page context attributes and get result"() {
         setup:
-        def tag = new TestTag()
-        def proxy = init(tag, ["testName": "testValue"])
+        def tag = jspTagSupport.getJspTag(TestTag, ["testName": "testValue"])
 
         when:
         tag.doEndTag()
 
         then:
-        proxy.output == "testValue"
+        tag.output == "testValue"
     }
 }

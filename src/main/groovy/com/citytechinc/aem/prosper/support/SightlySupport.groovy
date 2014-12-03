@@ -1,14 +1,17 @@
-package com.citytechinc.aem.prosper.specs
+package com.citytechinc.aem.prosper.support
 
 import com.adobe.cq.sightly.WCMUse
 import com.citytechinc.aem.prosper.builders.BindingsBuilder
 import io.sightly.java.api.Use
+import org.apache.sling.api.resource.ResourceResolver
 
-/**
- * Spock specification for testing Sightly component classes that extend <code>Use</code> or implement
- * <code>Use</code>.
- */
-abstract class SightlySpec extends ProsperSpec {
+class SightlySupport {
+
+    private ResourceResolver resourceResolver
+
+    SightlySupport(ResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver
+    }
 
     /**
      * Instantiate and initialize the component class for the given type, using the provided closure to build the
