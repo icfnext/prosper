@@ -31,7 +31,7 @@ class JspTagProxy<T extends TagSupport> {
      *
      * @return output string
      */
-    String getOutput() {
+    final String getOutput() {
         writer.toString()
     }
 }
