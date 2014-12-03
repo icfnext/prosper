@@ -1,6 +1,6 @@
 package com.citytechinc.aem.prosper.support
 
-import com.citytechinc.aem.prosper.tag.JspTag
+import com.citytechinc.aem.prosper.tag.JspTagProxy
 import org.apache.sling.api.resource.ResourceResolver
 import org.springframework.mock.web.MockJspWriter
 import org.springframework.mock.web.MockPageContext
@@ -24,8 +24,8 @@ class JspTagSupport {
      * @param tagClass
      * @return proxy tag instance containing mocked page context and writer
      */
-    public <T extends TagSupport> JspTag getJspTag(Class<T> tagClass) {
-        getJspTag(tagClass, [:])
+    public <T extends TagSupport> JspTagProxy<T> init(Class<T> tagClass) {
+        init(tagClass, [:])
     }
 
     /**
@@ -35,7 +35,7 @@ class JspTagSupport {
      * @param additionalPageContextAttributes
      * @return proxy tag instance containing mocked page context and writer
      */
-    public <T extends TagSupport> JspTag getJspTag(Class<T> tagClass,
+    public <T extends TagSupport> JspTagProxy<T> init(Class<T> tagClass,
         Map<String, Object> additionalPageContextAttributes) {
         def writer = new StringWriter()
         def jspWriter = new MockJspWriter(writer)
@@ -57,6 +57,6 @@ class JspTagSupport {
 
         tag.pageContext = pageContext
 
-        new JspTag(tag, pageContext, writer)
+        new JspTagProxy(tag, pageContext, writer)
     }
 }

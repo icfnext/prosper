@@ -34,23 +34,23 @@ class JspTagSupportSpec extends ProsperSpec {
 
     def "init tag and get result"() {
         setup:
-        def tag = jspTagSupport.getJspTag(TestTag)
+        def proxy = jspTagSupport.init(TestTag)
 
         when:
-        tag.doStartTag()
+        proxy.tag.doStartTag()
 
         then:
-        tag.output == "hello"
+        proxy.output == "hello"
     }
 
     def "init tag with additional page context attributes and get result"() {
         setup:
-        def tag = jspTagSupport.getJspTag(TestTag, ["testName": "testValue"])
+        def proxy = jspTagSupport.init(TestTag, ["testName": "testValue"])
 
         when:
-        tag.doEndTag()
+        proxy.tag.doEndTag()
 
         then:
-        tag.output == "testValue"
+        proxy.output == "testValue"
     }
 }
