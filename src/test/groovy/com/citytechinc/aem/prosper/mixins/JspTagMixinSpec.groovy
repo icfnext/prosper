@@ -1,11 +1,12 @@
-package com.citytechinc.aem.prosper.traits
+package com.citytechinc.aem.prosper.mixins
 
 import com.citytechinc.aem.prosper.specs.ProsperSpec
+import spock.lang.Shared
 
 import javax.servlet.jsp.JspException
 import javax.servlet.jsp.tagext.TagSupport
 
-class JspTagTraitSpec extends ProsperSpec implements JspTagTrait {
+class JspTagMixinSpec extends ProsperSpec {
 
     static class TestTag extends TagSupport {
 
@@ -24,9 +25,16 @@ class JspTagTraitSpec extends ProsperSpec implements JspTagTrait {
         }
     }
 
+    @Shared
+    JspTagMixin mixin
+
+    def setupSpec() {
+        mixin = new JspTagMixin(resourceResolver)
+    }
+
     def "init tag and get result"() {
         setup:
-        def proxy = init(TestTag)
+        def proxy = mixin.init(TestTag)
 
         when:
         proxy.tag.doStartTag()
@@ -37,7 +45,7 @@ class JspTagTraitSpec extends ProsperSpec implements JspTagTrait {
 
     def "init tag with additional page context attributes and get result"() {
         setup:
-        def proxy = init(TestTag, ["testName": "testValue"])
+        def proxy = mixin.init(TestTag, ["testName": "testValue"])
 
         when:
         proxy.tag.doEndTag()

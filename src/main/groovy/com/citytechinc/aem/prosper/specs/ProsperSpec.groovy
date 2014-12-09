@@ -34,7 +34,6 @@ import javax.jcr.Session
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
  */
-@SuppressWarnings("deprecation")
 abstract class ProsperSpec extends Specification implements TestAdaptable {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
