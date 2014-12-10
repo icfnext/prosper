@@ -30,6 +30,8 @@ import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
+import java.lang.reflect.Field
+
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
@@ -460,9 +462,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     private void addMixins() {
-        def mixins = this.class.declaredFields.findAll { ProsperMixin.isAssignableFrom(it.type) }
-
-        mixins.each { mixin ->
+        findAllMixins(this.class).each { mixin ->
             def instance = mixin.type.getConstructor(ResourceResolver).newInstance(resourceResolver)
 
             mixin.with {
@@ -470,6 +470,19 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
                 set(this, instance)
             }
         }
+    }
+
+    private List<Field> findAllMixins(Class mixinClass) {
+        def mixins = []
+        def clazz = mixinClass
+
+        while (clazz && clazz != ProsperSpec) {
+            mixins.addAll(clazz.declaredFields.findAll { ProsperMixin.isAssignableFrom(it.type) })
+
+            clazz = clazz.superclass
+        }
+
+        mixins
     }
 
     private void withSession(Closure closure) {

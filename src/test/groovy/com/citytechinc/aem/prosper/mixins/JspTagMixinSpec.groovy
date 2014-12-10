@@ -26,11 +26,11 @@ class JspTagMixinSpec extends ProsperSpec {
     }
 
     @Shared
-    JspTagMixin mixin
+    JspTagMixin jspTag
 
     def "init tag and get result"() {
         setup:
-        def proxy = mixin.init(TestTag)
+        def proxy = jspTag.init(TestTag)
 
         when:
         proxy.tag.doStartTag()
@@ -41,7 +41,7 @@ class JspTagMixinSpec extends ProsperSpec {
 
     def "init tag with additional page context attributes and get result"() {
         setup:
-        def proxy = mixin.init(TestTag, ["testName": "testValue"])
+        def proxy = jspTag.init(TestTag, ["testName": "testValue"])
 
         when:
         proxy.tag.doEndTag()

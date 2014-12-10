@@ -46,7 +46,7 @@ class SightlyMixinSpec extends ProsperSpec {
     }
 
     @Shared
-    SightlyMixin mixin
+    SightlyMixin sightly
 
     def setupSpec() {
         pageBuilder.content {
@@ -60,7 +60,7 @@ class SightlyMixinSpec extends ProsperSpec {
 
     def "init component"() {
         setup:
-        def component = mixin.init(TestUseComponent) {
+        def component = sightly.init(TestUseComponent) {
             path = "/content/home/jcr:content/test"
         }
 
@@ -70,7 +70,7 @@ class SightlyMixinSpec extends ProsperSpec {
 
     def "activate component"() {
         setup:
-        def component = mixin.activate(TestWcmUseComponent) {
+        def component = sightly.activate(TestWcmUseComponent) {
             path = "/content/home/jcr:content/test"
             wcmMode = WCMMode.DISABLED
         }
@@ -86,7 +86,7 @@ class SightlyMixinSpec extends ProsperSpec {
         setup:
         def style = Mock(Style)
 
-        def component = mixin.activate(TestWcmUseComponent) {
+        def component = sightly.activate(TestWcmUseComponent) {
             path = "/content/home/jcr:content/test"
             wcmMode = WCMMode.DISABLED
             currentStyle = style
