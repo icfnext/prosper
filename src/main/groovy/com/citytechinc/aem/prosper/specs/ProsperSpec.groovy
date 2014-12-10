@@ -5,6 +5,7 @@ import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
+import com.citytechinc.aem.prosper.mixins.ProsperMixin
 import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.TestResourceResolver
@@ -29,7 +30,6 @@ import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
-
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
@@ -85,6 +85,8 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         resourceResolverInternal = new MockResourceResolver(sessionInternal, resourceResolverAdapters,
             resourceAdapters, adapterFactories)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
+
+        addMixins()
     }
 
     def cleanupSpec() {
@@ -434,10 +436,17 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         resourceResolverAdapters[PageManager.class] = { ResourceResolver resourceResolver ->
             def factory = new PageManagerFactoryImpl()
 
-            factory.with {
-                replicator = [replicate: {}] as Replicator
-                eventAdmin = [postEvent: {}, sendEvent: {}] as EventAdmin
-                repository = this.repository
+            def fields = [
+                replicator: [replicate: {}] as Replicator,
+                eventAdmin: [postEvent: {}, sendEvent: {}] as EventAdmin,
+                repository: this.repository
+            ]
+
+            fields.each { name, instance ->
+                factory.class.getDeclaredField(name).with {
+                    accessible = true
+                    set(factory, instance)
+                }
             }
 
             factory.getPageManager(resourceResolver)
@@ -448,6 +457,19 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         }
 
         resourceResolverAdapters[Session.class] = { sessionInternal }
+    }
+
+    private void addMixins() {
+        def mixins = this.class.declaredFields.findAll { ProsperMixin.isAssignableFrom(it.type) }
+
+        mixins.each { mixin ->
+            def instance = mixin.type.getConstructor(ResourceResolver).newInstance(resourceResolver)
+
+            mixin.with {
+                accessible = true
+                set(this, instance)
+            }
+        }
     }
 
     private void withSession(Closure closure) {

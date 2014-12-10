@@ -8,7 +8,10 @@ import javax.servlet.jsp.tagext.TagSupport
 
 import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RESOURCE_RESOLVER_NAME
 
-class JspTagMixin extends AbstractProsperMixin {
+/**
+ * Mixin providing methods for initializing JSP tag support classes with a mocked page context.
+ */
+class JspTagMixin extends ProsperMixin {
 
     JspTagMixin(ResourceResolver resourceResolver) {
         super(resourceResolver)

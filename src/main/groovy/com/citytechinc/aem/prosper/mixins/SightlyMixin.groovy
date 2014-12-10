@@ -5,7 +5,10 @@ import com.citytechinc.aem.prosper.builders.BindingsBuilder
 import io.sightly.java.api.Use
 import org.apache.sling.api.resource.ResourceResolver
 
-class SightlyMixin extends AbstractProsperMixin {
+/**
+ * Mixin providing methods for initializing Sightly component classes with mocked bindings.
+ */
+class SightlyMixin extends ProsperMixin {
 
     SightlyMixin(ResourceResolver resourceResolver) {
         super(resourceResolver)

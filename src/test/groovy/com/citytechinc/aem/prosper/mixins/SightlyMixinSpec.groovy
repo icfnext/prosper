@@ -49,8 +49,6 @@ class SightlyMixinSpec extends ProsperSpec {
     SightlyMixin mixin
 
     def setupSpec() {
-        mixin = new SightlyMixin(resourceResolver)
-
         pageBuilder.content {
             home("Home") {
                 "jcr:content"() {

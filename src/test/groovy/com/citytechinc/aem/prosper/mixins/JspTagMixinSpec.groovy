@@ -28,10 +28,6 @@ class JspTagMixinSpec extends ProsperSpec {
     @Shared
     JspTagMixin mixin
 
-    def setupSpec() {
-        mixin = new JspTagMixin(resourceResolver)
-    }
-
     def "init tag and get result"() {
         setup:
         def proxy = mixin.init(TestTag)
