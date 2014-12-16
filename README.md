@@ -30,7 +30,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -457,10 +457,10 @@ class ExampleSpec extends ProsperSpec {
 
 A number of the more common AEM, JCR, and Sling namespaces and node types are added to the in-memory repository upon
 setup of the first Spec in a set of specifications.  Additional namespaces and node types may be added at runtime by
-overriding the `addCndInputStreams` or `addNodeTypes` methods of the `AemSpec`.  The former method is intended to return 
+overriding the `addCndInputStreams` or `addNodeTypes` methods of the `AemSpec`.  The former method is intended to return
 a list of `InputStream` objects, each of which should be the input stream of a CND file.  The latter should return a list
 of strings containing paths to classpath CND resources.  For more information on the CND node type notation,
-see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the Apache Jackrabbit documentation.  
+see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the Apache Jackrabbit documentation.
 An example of an overridden `addCndInputStreams` taken from the `ProsperSpecSpec` internal test is presented below.
 
 ```groovy
@@ -534,11 +534,53 @@ def "servlet with mock service"() {
 }
 ```
 
-### Testing JSP Tag Libraries
+### Mixins
 
-`JspTagSpec` is a separate base spec for testing JSP tag libraries; this spec extends `ProsperSpec` and includes all of the functionality described thus far in addition to some tag-specific considerations.
+Prosper mixins are classes that can be added to specifications to provide additional testing functionality.  Two mixins are available by default, but custom mixins can be defined by extending `com.citytechinc.aem.prosper.mixins.ProsperMixin`.
 
-The `init` method in this spec initializes a `TagSupport` instance with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
+```groovy
+import com.citytechinc.aem.prosper.builders.RequestBuilder
+import com.citytechinc.aem.prosper.mixins.ProsperMixin
+import org.apache.sling.api.resource.ResourceResolver
+
+class MobileRequestMixin extends ProsperMixin {
+
+    MobileRequestMixin(ResourceResolver resourceResolver) {
+        super(resourceResolver)
+    }
+
+    def buildMobileRequest(Map<String, Object> parameters) {
+        new RequestBuilder(resourceResolver).build {
+            selectors = ["mobile"]
+            setParameters(parameters)
+        }
+    }
+}
+```
+
+The mixin instance can then be added to Prosper specs by defining and annotating the mixin as a `@Shared` field.  Prosper will automatically inject an instance of any mixin that extends `ProsperMixin`.
+
+```groovy
+import spock.lang.Shared
+
+class MobileRequestMixinSpec extends ProsperSpec {
+
+    @Shared
+    MobileRequestMixin mixin
+
+    def "mixin usage"() {
+        setup:
+        def request = buildMobileRequest([:])
+
+        expect:
+        request.requestPathInfo.selectors[0] == "mobile"
+    }
+}
+```
+
+## JSP Tag Mixin
+
+The `init` methods in `com.citytechinc.aem.prosper.mixins.JspTagMixin` initialize `TagSupport` instances with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
 
 ```groovy
 import javax.servlet.jsp.JspException
@@ -551,14 +593,14 @@ class SimpleTag extends TagSupport {
     @Override
     int doStartTag() throws JspException {
         pageContext.out.write("hello")
-        
+
         EVAL_PAGE
     }
 
     @Override
     int doEndTag() throws JspException {
         def prefix = pageContext.getAttribute("prefix") as String
-    
+
         pageContext.setAttribute("name", prefix + name)
 
         EVAL_PAGE
@@ -566,15 +608,17 @@ class SimpleTag extends TagSupport {
 }
 ```
 ```groovy
-class SimpleTagSpec extends JspTagSpec {
+class SimpleTagSpec extends ProsperSpec {
+
+    @Shared
+    JspTagMixin jspTag
 
     def "start tag writes 'hello'"() {
         setup:
-        def tag = new SimpleTag()
-        def proxy = init(tag)
-        
+        def proxy = jspTag.init(SimpleTag)
+
         when:
-        tag.doStartTag()
+        proxy.tag.doStartTag()
 
         then:
         proxy.output == "hello"
@@ -582,14 +626,12 @@ class SimpleTagSpec extends JspTagSpec {
 
     def "end tag sets page context attribute"() {
         setup:
-        def tag = new SimpleTag()
-        
-        tag.name = "Prosper"
-        
-        def proxy = init(tag, ["prefix": "LiveLongAnd"])
-        
+        def proxy = jspTag.init(SimpleTag, ["prefix": "LiveLongAnd"])
+
+        proxy.tag.name = "Prosper"
+
         when:
-        tag.doEndTag()
+        proxy.tag.doEndTag()
 
         then:
         proxy.pageContext.getAttribute("name") == "LiveLongAndProsper"
@@ -598,10 +640,10 @@ class SimpleTagSpec extends JspTagSpec {
 
 ```
 
-### Sightly
+## Sightly Mixin
 
-[Sightly](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly.html) is the new templating language introduced in AEM6 to replace JSPs for component development.  Sightly includes a [Java API](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly/use-api-in-java.html) that defines an interface as well as an abstract class for implementing component supporting classes.  Prosper provides an additional specification for initializing and testing these component classes using the transient JCR and mocking constructs outlined above.
-  
+[Sightly](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly.html) is the new templating language introduced in AEM6 to replace JSPs for component development.  Sightly includes a [Java API](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly/use-api-in-java.html) that defines an interface as well as an abstract class for implementing component supporting classes.  Prosper provides a mixin for initializing and testing these component classes using the transient JCR and mocking constructs outlined above.
+
 ```groovy
 import com.adobe.cq.sightly.WCMUse
 
@@ -611,14 +653,17 @@ class SleepyComponent extends WCMUse {
     void activate() throws Exception {
 
     }
-    
+
     boolean isBedtime() {
         properties.get("isBedtime", true)
-    }  
+    }
 }
 ```
 ```groovy
-class SleepyComponentSpec extends WCMUseSpec {
+class SleepyComponentSpec extends ProsperSpec {
+
+    @Shared
+    SightlyMixin sightly
 
     def setupSpec() {
         pageBuilder.content {
@@ -629,10 +674,10 @@ class SleepyComponentSpec extends WCMUseSpec {
             }
         }
     }
-    
+
     def "sleepy component test"() {
         setup:
-        def component = activate(SleepyComponent) {
+        def component = sightly.activate(SleepyComponent) {
             path = "/content/home/jcr:content/sleepy"
             wcmMode = WCMMode.DISABLED
         }
@@ -641,7 +686,7 @@ class SleepyComponentSpec extends WCMUseSpec {
         component.resource.path == "/content/home/jcr:content/sleepy"
         component.currentPage.path == "/content/home"
         component.wcmMode.disabled
-        
+
         and: "it's not bedtime"
         !component.bedtime
     }

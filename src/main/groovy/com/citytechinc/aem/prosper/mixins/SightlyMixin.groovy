@@ -1,16 +1,17 @@
-package com.citytechinc.aem.prosper.support
+package com.citytechinc.aem.prosper.mixins
 
 import com.adobe.cq.sightly.WCMUse
 import com.citytechinc.aem.prosper.builders.BindingsBuilder
 import io.sightly.java.api.Use
 import org.apache.sling.api.resource.ResourceResolver
 
-class SightlySupport {
+/**
+ * Mixin providing methods for initializing Sightly component classes with mocked bindings.
+ */
+class SightlyMixin extends ProsperMixin {
 
-    private ResourceResolver resourceResolver
-
-    SightlySupport(ResourceResolver resourceResolver) {
-        this.resourceResolver = resourceResolver
+    SightlyMixin(ResourceResolver resourceResolver) {
+        super(resourceResolver)
     }
 
     /**
