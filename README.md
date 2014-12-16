@@ -558,7 +558,7 @@ class MobileRequestMixin extends ProsperMixin {
 }
 ```
 
-The mixin instance can then be added to Prosper specs by defining an instance of the mixin and annotating it as a `@Shared` field.  Prosper will automatically inject an instance of any mixin that extends `ProsperMixin`.
+The mixin instance can then be added to Prosper specs by defining and annotating the mixin as a `@Shared` field.  Prosper will automatically inject an instance of any mixin that extends `ProsperMixin`.
 
 ```groovy
 import spock.lang.Shared
@@ -580,7 +580,7 @@ class MobileRequestMixinSpec extends ProsperSpec {
 
 ## JSP Tag Mixin
 
-The `init` methods in `JspTagMixin` initialize `TagSupport` instances with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
+The `init` methods in `com.citytechinc.aem.prosper.mixins.JspTagMixin` initialize `TagSupport` instances with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
 
 ```groovy
 import javax.servlet.jsp.JspException
