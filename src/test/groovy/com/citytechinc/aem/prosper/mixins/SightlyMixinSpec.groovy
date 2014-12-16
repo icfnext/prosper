@@ -1,17 +1,19 @@
-package com.citytechinc.aem.prosper.specs
+package com.citytechinc.aem.prosper.mixins
 
 import com.adobe.cq.sightly.WCMUse
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.api.WCMMode
 import com.day.cq.wcm.api.designer.Style
 import io.sightly.java.api.Use
 import org.apache.sling.api.resource.Resource
+import spock.lang.Shared
 
 import javax.script.Bindings
 
 import static org.apache.sling.api.scripting.SlingBindings.RESOURCE
 
-class SightlySpecSpec extends SightlySpec {
+class SightlyMixinSpec extends ProsperSpec {
 
     class TestUseComponent implements Use {
 
@@ -43,6 +45,9 @@ class SightlySpecSpec extends SightlySpec {
         }
     }
 
+    @Shared
+    SightlyMixin sightly
+
     def setupSpec() {
         pageBuilder.content {
             home("Home") {
@@ -55,7 +60,7 @@ class SightlySpecSpec extends SightlySpec {
 
     def "init component"() {
         setup:
-        def component = init(TestUseComponent) {
+        def component = sightly.init(TestUseComponent) {
             path = "/content/home/jcr:content/test"
         }
 
@@ -65,7 +70,7 @@ class SightlySpecSpec extends SightlySpec {
 
     def "activate component"() {
         setup:
-        def component = activate(TestWcmUseComponent) {
+        def component = sightly.activate(TestWcmUseComponent) {
             path = "/content/home/jcr:content/test"
             wcmMode = WCMMode.DISABLED
         }
@@ -81,7 +86,7 @@ class SightlySpecSpec extends SightlySpec {
         setup:
         def style = Mock(Style)
 
-        def component = activate(TestWcmUseComponent) {
+        def component = sightly.activate(TestWcmUseComponent) {
             path = "/content/home/jcr:content/test"
             wcmMode = WCMMode.DISABLED
             currentStyle = style
