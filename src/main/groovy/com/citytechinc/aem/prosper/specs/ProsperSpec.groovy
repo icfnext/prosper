@@ -18,6 +18,8 @@ import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
+import com.day.jcr.vault.fs.io.FileArchive
+import com.day.jcr.vault.fs.io.Importer
 import groovy.transform.Synchronized
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
@@ -89,6 +91,8 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
 
         addMixins()
+
+        importVaultContent()
     }
 
     def cleanupSpec() {
@@ -483,6 +487,20 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         }
 
         mixins
+    }
+
+    private void importVaultContent() {
+        def contentRootUrl = getClass().getResource("/test-content")
+        if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
+            def contentImporter = new Importer();
+            def contentArchive = new FileArchive(new File(contentRootUrl.file))
+            try {
+                contentArchive.open(false)
+                contentImporter.run(contentArchive, session.rootNode)
+            } finally {
+                contentArchive.close()
+            }
+        }
     }
 
     private void withSession(Closure closure) {

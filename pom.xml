@@ -248,6 +248,12 @@
             <artifactId>org.osgi.compendium</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.day.jcr.vault</groupId>
+            <artifactId>com.day.jcr.vault</artifactId>
+            <!-- Latest version not in Adobe maven repository -->
+            <version>2.4.6</version>
+        </dependency>
+        <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
         </dependency>
