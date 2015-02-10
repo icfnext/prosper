@@ -244,6 +244,10 @@ Both builders automatically save the underlying JCR session after executing the 
 
 In addition to the content builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
+### Content Import
+
+Another way to generate supporting content is to import a vault exported/packaged content structure.  To take advantage of the content import, simply create a test-content directory within your test resources location (ex. test/resources/test-content).  The test-content directory must contain a child jcr\_root directory and META-INF directory.  The jcr\_root directory will contain all the vault exported/packaged content.  The only file required to be in the META-INF directory is the vault/filter.xml file containing filters for the imported content (See a generated AEM package for a full listing of files within the META-INF directory).  Once the vault content and filter.xml is in place, it will automatically be imported for use within your unit tests.
+
 ### Metaclasses
 
 The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
