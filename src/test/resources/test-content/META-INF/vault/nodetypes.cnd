@@ -1,0 +1,77 @@
+<'sling'='http://sling.apache.org/jcr/sling/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+<'cq'='http://www.day.com/jcr/cq/1.0'>
+<'dam'='http://www.day.com/dam/1.0'>
+<'jcr'='http://www.jcp.org/jcr/1.0'>
+<'mix'='http://www.jcp.org/jcr/mix/1.0'>
+
+[sling:Folder] > nt:folder
+  - * (undefined)
+  - * (undefined) multiple
+  + * (nt:base) = sling:Folder version
+
+[sling:Redirect] > sling:Resource
+  mixin
+  - sling:target (undefined)
+
+[sling:Resource]
+  mixin
+  - sling:resourceType (string)
+
+[sling:OrderedFolder] > sling:Folder
+  orderable
+  + * (nt:base) = sling:OrderedFolder version
+
+[cq:ReplicationStatus]
+  mixin
+  - cq:lastReplicatedBy (string) ignore
+  - cq:lastPublished (date) ignore
+  - cq:lastReplicationStatus (string) ignore
+  - cq:lastPublishedBy (string) ignore
+  - cq:lastReplicationAction (string) ignore
+  - cq:lastReplicated (date) ignore
+
+[cq:OwnerTaggable] > cq:Taggable
+  mixin
+
+[cq:Taggable]
+  mixin
+  - cq:tags (string) multiple
+
+[dam:Asset] > nt:hierarchyNode
+  primaryitem jcr:content
+  + jcr:content (dam:AssetContent) = dam:AssetContent
+  + * (nt:base) = nt:base version
+
+[dam:AssetContent] > nt:unstructured
+  orderable
+  + metadata (nt:unstructured)
+  + renditions (nt:folder)
+  + related (nt:unstructured)
+
+[sling:VanityPath]
+  mixin
+  - sling:vanityPath (string) multiple
+  - sling:redirectStatus (long)
+  - sling:vanityOrder (long)
+  - sling:redirect (boolean)
+
+[cq:PageContent] > cq:OwnerTaggable, cq:ReplicationStatus, mix:created, mix:title, nt:unstructured, sling:Resource, sling:VanityPath
+  orderable
+  - cq:lastModified (date)
+  - cq:template (string)
+  - pageTitle (string)
+  - offTime (date)
+  - hideInNav (boolean)
+  - cq:lastModifiedBy (string)
+  - onTime (date)
+  - jcr:language (string)
+  - cq:allowedTemplates (string) multiple
+  - cq:designPath (string)
+  - navTitle (string)
+
+[cq:Page] > nt:hierarchyNode
+  orderable primaryitem jcr:content
+  + jcr:content (nt:base) = nt:unstructured
+  + * (nt:base) = nt:base version
+

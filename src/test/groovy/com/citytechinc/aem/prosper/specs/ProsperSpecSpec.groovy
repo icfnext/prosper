@@ -158,4 +158,15 @@ class ProsperSpecSpec extends ProsperSpec {
         "/etc/prosper" | "prosper:TestType"
         "/etc/spock"   | "spock:TestType"
     }
+
+    def "verify test content was imported successfully"() {
+        expect:
+        getResource(path)
+
+        where:
+        path << [
+            "/content",
+            "/content/home"
+        ]
+    }
 }
