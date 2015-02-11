@@ -18,9 +18,9 @@ import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
-import com.day.jcr.vault.fs.io.FileArchive
-import com.day.jcr.vault.fs.io.Importer
 import groovy.transform.Synchronized
+import org.apache.jackrabbit.vault.fs.io.FileArchive
+import org.apache.jackrabbit.vault.fs.io.Importer
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
