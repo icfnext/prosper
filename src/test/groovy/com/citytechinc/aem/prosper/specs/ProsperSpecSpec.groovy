@@ -7,6 +7,7 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
+import org.apache.sling.commons.json.jcr.JsonItemWriter
 import spock.lang.Unroll
 
 import javax.jcr.Node
@@ -67,6 +68,10 @@ class ProsperSpecSpec extends ProsperSpec {
         nodeBuilder.etc {
             prosper("prosper:TestType")
             spock("spock:TestType")
+        }
+
+        new File("/Users/mark/Downloads/out.json").withWriter {
+            new JsonItemWriter(null).dump(session.getNode("/content"), it, -1, true)
         }
     }
 
@@ -157,5 +162,9 @@ class ProsperSpecSpec extends ProsperSpec {
         path           | nodeType
         "/etc/prosper" | "prosper:TestType"
         "/etc/spock"   | "spock:TestType"
+    }
+
+    def "import vault content"() {
+
     }
 }

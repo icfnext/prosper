@@ -18,9 +18,9 @@ import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
-import com.day.jcr.vault.fs.io.FileArchive
-import com.day.jcr.vault.fs.io.Importer
 import groovy.transform.Synchronized
+import org.apache.jackrabbit.vault.fs.io.FileArchive
+import org.apache.jackrabbit.vault.fs.io.Importer
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -490,10 +490,12 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     private void importVaultContent() {
-        def contentRootUrl = getClass().getResource("/test-content")
+        def contentRootUrl = this.class.getResource("/test-content")
+
         if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
-            def contentImporter = new Importer();
+            def contentImporter = new Importer()
             def contentArchive = new FileArchive(new File(contentRootUrl.file))
+
             try {
                 contentArchive.open(false)
                 contentImporter.run(contentArchive, session.rootNode)
