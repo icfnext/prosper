@@ -1,5 +1,7 @@
 package com.citytechinc.aem.prosper.specs
 
+import com.citytechinc.aem.prosper.annotations.ContentFilter
+import com.citytechinc.aem.prosper.annotations.ContentFilters
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
@@ -13,6 +15,14 @@ import javax.jcr.Node
 import javax.jcr.Session
 
 @Unroll
+@ContentFilters(
+    xml = "/test-content/META-INF/vault/filter.xml",
+    filters = [
+        @ContentFilter(
+            root = "/etc"
+        )
+    ]
+)
 class ProsperSpecSpec extends ProsperSpec {
 
     @Override
@@ -55,16 +65,6 @@ class ProsperSpecSpec extends ProsperSpec {
     @Override
     List<String> addNodeTypes() {
         ["/SLING-INF/nodetypes/spock.cnd"]
-    }
-
-    @Override
-    String getFilterXmlPath() {
-        "/test-content/META-INF/vault/filter.xml"
-    }
-
-    @Override
-    List<String> addFilterPaths() {
-        ["/etc"]
     }
 
     def setupSpec() {

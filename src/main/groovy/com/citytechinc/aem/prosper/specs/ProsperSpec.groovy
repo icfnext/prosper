@@ -3,6 +3,9 @@ package com.citytechinc.aem.prosper.specs
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
+import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
+import com.citytechinc.aem.prosper.annotations.ContentFilters
+import com.citytechinc.aem.prosper.annotations.SkipContentImport
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
@@ -20,7 +23,9 @@ import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.Synchronized
 import org.apache.jackrabbit.vault.fs.api.PathFilterSet
+import org.apache.jackrabbit.vault.fs.api.WorkspaceFilter
 import org.apache.jackrabbit.vault.fs.config.DefaultWorkspaceFilter
+import org.apache.jackrabbit.vault.fs.filter.DefaultPathFilter
 import org.apache.jackrabbit.vault.fs.io.FileArchive
 import org.apache.jackrabbit.vault.fs.io.ImportOptions
 import org.apache.jackrabbit.vault.fs.io.Importer
@@ -72,9 +77,6 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
 
     @Shared
     private Map<Class, Closure> resourceAdapters = [:]
-
-    @Shared
-    private List<String> filterPaths = []
 
     // global fixtures
 
@@ -203,27 +205,6 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     @Override
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
         resourceResolverInternal.addResourceResolverAdapter(adapterType, closure)
-    }
-
-    /**
-     * Gets a path to a complete vault filter.xml file.  The provided filter.xml file will be used when automatically
-     * importing content from the test-content directory.  Specs should override this method to provide the path to a
-     * complete vault filter.xml file at runtime.
-     *
-     * @param filterXmlPath The path to a complete filter.xml file.
-     */
-    String getFilterXmlPath() {
-        ""
-    }
-
-    /**
-     * Adds additional JCR content paths for content that should be imported from the test-content directory.  Specs should
-     * override this method to specify what content should be automatically imported for their tests.
-     *
-     * @return list of JCR content paths to content that should be imported.
-     */
-    List<String> addFilterPaths() {
-        Collections.emptyList()
     }
 
     // accessors for shared instances
@@ -517,22 +498,8 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     private void importVaultContent() {
-        def filterXmlPath = getFilterXmlPath()
-        filterPaths.addAll(addFilterPaths())
-
-        if (filterXmlPath || filterPaths) {
-            def filter = new DefaultWorkspaceFilter();
-            if (filterXmlPath) {
-                filter.load(this.class.getResourceAsStream(filterXmlPath))
-            }
-            filterPaths.each { filterPath ->
-                filter.add(new PathFilterSet(filterPath))
-            }
-
-            def contentImportOptions = new ImportOptions()
-            contentImportOptions.setFilter(filter)
-            def contentImporter = new Importer(contentImportOptions);
-
+        if (!this.class.isAnnotationPresent(SkipContentImport.class)) {
+            def contentImporter = buildContentImporter()
             def contentRootUrl = this.class.getResource("/test-content")
             if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
                 def contentArchive = new FileArchive(new File(contentRootUrl.file))
@@ -544,6 +511,54 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
                 }
             }
         }
+    }
+
+    private Importer buildContentImporter() {
+        def contentImporter
+
+        if (this.class.isAnnotationPresent(ContentFilters.class)) {
+            def contentImportOptions = new ImportOptions()
+            contentImportOptions.setFilter(buildContentImportFilter(this.class.getAnnotation(ContentFilters.class)))
+            contentImporter = new Importer(contentImportOptions)
+        } else {
+            contentImporter = new Importer()
+        }
+
+        contentImporter
+    }
+
+    private WorkspaceFilter buildContentImportFilter(ContentFilters filterDefinitions) {
+        def contentImportFilter = new DefaultWorkspaceFilter()
+
+        if (filterDefinitions.xml()) {
+            contentImportFilter.load(this.class.getResourceAsStream(filterDefinitions.xml()))
+        }
+
+        if (filterDefinitions.filters()) {
+            filterDefinitions.filters().each { filterDefinition ->
+                if (filterDefinition.root()) {
+                    def pathFilterSet = new PathFilterSet(filterDefinition.root())
+
+                    if (filterDefinition.mode()) {
+                        pathFilterSet.setImportMode(filterDefinition.mode())
+                    }
+
+                    if (filterDefinition.rules()) {
+                        filterDefinition.rules().each { rule ->
+                            if (rule.type() == ContentFilterRuleType.INCLUDE) {
+                                pathFilterSet.addInclude(new DefaultPathFilter(rule.pattern()))
+                            } else if (rule.type() == ContentFilterRuleType.EXCLUDE) {
+                                pathFilterSet.addExclude(new DefaultPathFilter(rule.pattern()))
+                            }
+                        }
+                    }
+
+                    contentImportFilter.add(pathFilterSet)
+                }
+            }
+        }
+
+        contentImportFilter
     }
 
     private void withSession(Closure closure) {
