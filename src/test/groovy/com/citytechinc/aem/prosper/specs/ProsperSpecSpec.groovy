@@ -7,7 +7,6 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
-import org.apache.sling.commons.json.jcr.JsonItemWriter
 import spock.lang.Unroll
 
 import javax.jcr.Node
@@ -59,19 +58,9 @@ class ProsperSpecSpec extends ProsperSpec {
     }
 
     def setupSpec() {
-        pageBuilder.content {
-            home() {
-                "jcr:content"()
-            }
-        }
-
         nodeBuilder.etc {
             prosper("prosper:TestType")
             spock("spock:TestType")
-        }
-
-        new File("/Users/mark/Downloads/out.json").withWriter {
-            new JsonItemWriter(null).dump(session.getNode("/content"), it, -1, true)
         }
     }
 
@@ -129,7 +118,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "adapt resource to page"() {
         setup:
-        def resource = getResource("/content/home")
+        def resource = getResource("/content/prosper")
 
         expect:
         resource.adaptTo(Page)
@@ -137,7 +126,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "adapt resource to value map"() {
         setup:
-        def resource = getResource("/content/home")
+        def resource = getResource("/content/prosper")
 
         expect:
         resource.adaptTo(ValueMap)
@@ -145,7 +134,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "adapt resource to node"() {
         setup:
-        def resource = getResource("/content/home")
+        def resource = getResource("/content/prosper")
 
         expect:
         resource.adaptTo(Node)
@@ -162,9 +151,5 @@ class ProsperSpecSpec extends ProsperSpec {
         path           | nodeType
         "/etc/prosper" | "prosper:TestType"
         "/etc/spock"   | "spock:TestType"
-    }
-
-    def "import vault content"() {
-
     }
 }

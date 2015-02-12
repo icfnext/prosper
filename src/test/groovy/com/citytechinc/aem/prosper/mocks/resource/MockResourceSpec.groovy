@@ -5,25 +5,19 @@ import com.google.common.collect.Iterables
 
 class MockResourceSpec extends ProsperSpec {
 
-    def setupSpec() {
-        pageBuilder.home {
-            "jcr:content"("Home", "sling:resourceType": "type", "sling:resourceSuperType": "supertype")
-        }
-    }
-
     def "get path"() {
         expect:
-        resourceResolver.getResource("/home").path == "/home"
+        resourceResolver.getResource("/content/prosper").path == "/content/prosper"
     }
 
     def "get name"() {
         expect:
-        resourceResolver.getResource("/home").name == "home"
+        resourceResolver.getResource("/content/prosper").name == "prosper"
     }
 
     def "get parent"() {
         setup:
-        def resource = resourceResolver.getResource("/home")
+        def resource = resourceResolver.getResource("/content")
 
         expect:
         resource.parent.path == session.rootNode.path
@@ -39,31 +33,31 @@ class MockResourceSpec extends ProsperSpec {
 
     def "list children"() {
         setup:
-        def resource = resourceResolver.getResource("/home")
+        def resource = resourceResolver.getResource("/content")
 
         expect:
-        resource.listChildren().size() == 1
+        resource.listChildren().size() == 2
     }
 
     def "get children"() {
         setup:
-        def resource = resourceResolver.getResource("/home")
+        def resource = resourceResolver.getResource("/content")
 
         expect:
-        Iterables.size(resource.children) == 1
+        Iterables.size(resource.children) == 2
     }
 
     def "get child"() {
         setup:
-        def resource = resourceResolver.getResource("/home")
+        def resource = resourceResolver.getResource("/content/prosper")
 
         expect:
-        resource.getChild("jcr:content").path == "/home/jcr:content"
+        resource.getChild("jcr:content").path == "/content/prosper/jcr:content"
     }
 
     def "get child for non-existent node returns null"() {
         setup:
-        def resource = resourceResolver.getResource("/home")
+        def resource = resourceResolver.getResource("/content/prosper")
 
         expect:
         !resource.getChild("ghost")
@@ -71,31 +65,31 @@ class MockResourceSpec extends ProsperSpec {
 
     def "get resource type"() {
         setup:
-        def resource = resourceResolver.getResource("/home/jcr:content")
+        def resource = resourceResolver.getResource("/content/prosper/jcr:content")
 
         expect:
-        resource.resourceType == "type"
+        resource.resourceType == "prosper/components/page/prosper"
     }
 
     def "get resource type when property does not exist"() {
         setup:
-        def resource = resourceResolver.getResource("/home")
+        def resource = resourceResolver.getResource("/content/dam")
 
         expect:
-        resource.resourceType == "cq:Page"
+        resource.resourceType == "sling:OrderedFolder"
     }
 
     def "get resource super type"() {
         setup:
-        def resource = resourceResolver.getResource("/home/jcr:content")
+        def resource = resourceResolver.getResource("/content/prosper/jcr:content")
 
         expect:
-        resource.resourceSuperType == "supertype"
+        resource.resourceSuperType == "foundation/components/page"
     }
 
     def "get resource super type when property does not exist"() {
         setup:
-        def resource = resourceResolver.getResource("/home")
+        def resource = resourceResolver.getResource("/content")
 
         expect:
         !resource.resourceSuperType
@@ -103,10 +97,10 @@ class MockResourceSpec extends ProsperSpec {
 
     def "is resource type"() {
         setup:
-        def resource = resourceResolver.getResource("/home/jcr:content")
+        def resource = resourceResolver.getResource("/content/prosper/jcr:content")
 
         expect:
-        resource.isResourceType("type")
-        !resource.isResourceType("none")
+        resource.isResourceType("prosper/components/page/prosper")
+        !resource.isResourceType("spock")
     }
 }

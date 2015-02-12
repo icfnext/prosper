@@ -8,5 +8,10 @@
         jcr:mixinTypes="[mix:versionable]"
         jcr:primaryType="cq:PageContent"
         jcr:title="Prosper"
-        sling:resourceType="prosper/components/page/prosper" />
+        sling:resourceType="prosper/components/page/prosper"
+        sling:resourceSuperType="foundation/components/page">
+        <test
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="prosper/components/content/prosper" />
+    </jcr:content>
 </jcr:root>

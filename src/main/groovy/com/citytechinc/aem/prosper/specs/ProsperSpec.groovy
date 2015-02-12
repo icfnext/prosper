@@ -490,7 +490,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     private void importVaultContent() {
-        def contentRootUrl = this.class.getResource("/test-content")
+        def contentRootUrl = this.class.getResource("/SLING-INF/content")
 
         if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
             def contentImporter = new Importer()
