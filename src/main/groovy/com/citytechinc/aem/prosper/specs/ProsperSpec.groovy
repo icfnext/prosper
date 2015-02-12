@@ -19,7 +19,10 @@ import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.Synchronized
+import org.apache.jackrabbit.vault.fs.api.PathFilterSet
+import org.apache.jackrabbit.vault.fs.config.DefaultWorkspaceFilter
 import org.apache.jackrabbit.vault.fs.io.FileArchive
+import org.apache.jackrabbit.vault.fs.io.ImportOptions
 import org.apache.jackrabbit.vault.fs.io.Importer
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
@@ -69,6 +72,9 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
 
     @Shared
     private Map<Class, Closure> resourceAdapters = [:]
+
+    @Shared
+    private List<String> filterPaths = []
 
     // global fixtures
 
@@ -197,6 +203,27 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     @Override
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
         resourceResolverInternal.addResourceResolverAdapter(adapterType, closure)
+    }
+
+    /**
+     * Gets a path to a complete vault filter.xml file.  The provided filter.xml file will be used when automatically
+     * importing content from the test-content directory.  Specs should override this method to provide the path to a
+     * complete vault filter.xml file at runtime.
+     *
+     * @param filterXmlPath The path to a complete filter.xml file.
+     */
+    String getFilterXmlPath() {
+        ""
+    }
+
+    /**
+     * Adds additional JCR content paths for content that should be imported from the test-content directory.  Specs should
+     * override this method to specify what content should be automatically imported for their tests.
+     *
+     * @return list of JCR content paths to content that should be imported.
+     */
+    List<String> addFilterPaths() {
+        Collections.emptyList()
     }
 
     // accessors for shared instances
@@ -490,15 +517,31 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     private void importVaultContent() {
-        def contentRootUrl = getClass().getResource("/test-content")
-        if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
-            def contentImporter = new Importer();
-            def contentArchive = new FileArchive(new File(contentRootUrl.file))
-            try {
-                contentArchive.open(false)
-                contentImporter.run(contentArchive, session.rootNode)
-            } finally {
-                contentArchive.close()
+        def filterXmlPath = getFilterXmlPath()
+        filterPaths.addAll(addFilterPaths())
+
+        if (filterXmlPath || filterPaths) {
+            def filter = new DefaultWorkspaceFilter();
+            if (filterXmlPath) {
+                filter.load(this.class.getResourceAsStream(filterXmlPath))
+            }
+            filterPaths.each { filterPath ->
+                filter.add(new PathFilterSet(filterPath))
+            }
+
+            def contentImportOptions = new ImportOptions()
+            contentImportOptions.setFilter(filter)
+            def contentImporter = new Importer(contentImportOptions);
+
+            def contentRootUrl = this.class.getResource("/test-content")
+            if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
+                def contentArchive = new FileArchive(new File(contentRootUrl.file))
+                try {
+                    contentArchive.open(false)
+                    contentImporter.run(contentArchive, session.rootNode)
+                } finally {
+                    contentArchive.close()
+                }
             }
         }
     }

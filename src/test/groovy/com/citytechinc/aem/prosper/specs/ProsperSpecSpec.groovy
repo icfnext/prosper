@@ -57,6 +57,16 @@ class ProsperSpecSpec extends ProsperSpec {
         ["/SLING-INF/nodetypes/spock.cnd"]
     }
 
+    @Override
+    String getFilterXmlPath() {
+        "/test-content/META-INF/vault/filter.xml"
+    }
+
+    @Override
+    List<String> addFilterPaths() {
+        ["/etc"]
+    }
+
     def setupSpec() {
         pageBuilder.content {
             home() {
@@ -165,8 +175,9 @@ class ProsperSpecSpec extends ProsperSpec {
 
         where:
         path << [
-            "/content",
-            "/content/home"
+            "/content/home/page",
+            "/content/home/page2",
+            "/etc/designs/my-app"
         ]
     }
 }
