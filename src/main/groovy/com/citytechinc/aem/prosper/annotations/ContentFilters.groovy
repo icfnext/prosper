@@ -6,6 +6,9 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 
+/**
+ * Specify the filters to use when importing content for an annotated spec.
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -19,5 +22,12 @@ import java.lang.annotation.Target
      */
     String xml() default ""
 
+    /**
+     * Explicitly define filters for the content import.  These filters will override any filters defined in either
+     * the default filter.xml file or one defined using the <code>xml</code> property on this annotation.  Thus,
+     * specs should define either this property or the <code>xml</code> property, but not both.
+     *
+     * @return array of content filters to apply when importing content for this spec
+     */
     ContentFilter[] filters() default []
 }

@@ -20,6 +20,7 @@ import javax.jcr.Session
 @ContentFilters(
     filters = [
         @ContentFilter(root = "/content", rules = [
+            @ContentFilterRule(pattern = "/content/prosper(/.*)?", type = ContentFilterRuleType.INCLUDE),
             @ContentFilterRule(pattern = "/content/dam(/.*)?", type = ContentFilterRuleType.EXCLUDE)
         ]),
         @ContentFilter(root = "/etc")

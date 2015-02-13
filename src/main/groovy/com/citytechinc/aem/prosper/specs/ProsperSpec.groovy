@@ -32,7 +32,6 @@ import org.apache.jackrabbit.vault.fs.io.Importer
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.commons.json.jcr.JsonItemWriter
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
 import org.osgi.service.event.EventAdmin
@@ -42,6 +41,7 @@ import spock.lang.Specification
 import javax.jcr.Node
 import javax.jcr.Session
 import java.lang.reflect.Field
+
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
@@ -100,10 +100,6 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
 
         addMixins()
         importVaultContent()
-
-        new File("/Users/mark/Downloads/out.json").withWriter {
-            new JsonItemWriter(null).dump(session.rootNode, it, -1, true)
-        }
     }
 
     def cleanupSpec() {
@@ -529,8 +525,6 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
 
             importOptions.filter = buildContentImportFilter(this.class.getAnnotation(ContentFilters))
             importer = new Importer(importOptions)
-
-            println importer.options.filter.sourceAsString
         } else {
             importer = new Importer()
         }
@@ -545,24 +539,22 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
             filter.load(this.class.getResourceAsStream(filterDefinitions.xml()))
         }
 
-        if (filterDefinitions.filters()) {
-            filterDefinitions.filters().each { filterDefinition ->
-                def pathFilterSet = new PathFilterSet(filterDefinition.root())
+        filterDefinitions.filters().each { filterDefinition ->
+            def pathFilterSet = new PathFilterSet(filterDefinition.root())
 
-                pathFilterSet.importMode = filterDefinition.mode()
+            pathFilterSet.importMode = filterDefinition.mode()
 
-                filterDefinition.rules().each { rule ->
-                    def pathFilter = new DefaultPathFilter(rule.pattern())
+            filterDefinition.rules().each { rule ->
+                def pathFilter = new DefaultPathFilter(rule.pattern())
 
-                    if (rule.type() == ContentFilterRuleType.INCLUDE) {
-                        pathFilterSet.addInclude(pathFilter)
-                    } else if (rule.type() == ContentFilterRuleType.EXCLUDE) {
-                        pathFilterSet.addExclude(pathFilter)
-                    }
+                if (rule.type() == ContentFilterRuleType.INCLUDE) {
+                    pathFilterSet.addInclude(pathFilter)
+                } else if (rule.type() == ContentFilterRuleType.EXCLUDE) {
+                    pathFilterSet.addExclude(pathFilter)
                 }
-
-                filter.add(pathFilterSet)
             }
+
+            filter.add(pathFilterSet)
         }
 
         filter

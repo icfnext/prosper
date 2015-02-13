@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/content">
-        <include pattern="/content/prosper(/.*)?"/>
-        <exclude pattern="/content/dam(/.*)?"/>
-    </filter>
+    <filter root="/content/dam/st-bernardus-logo.jpg" />
+    <filter root="/content/prosper" />
     <filter root="/etc/designs/default" />
 </workspaceFilter>

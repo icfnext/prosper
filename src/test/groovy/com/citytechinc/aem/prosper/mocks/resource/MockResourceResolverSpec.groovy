@@ -1,12 +1,10 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import com.citytechinc.aem.prosper.annotations.SkipContentImport
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.resource.SyntheticResource
 
 import javax.jcr.query.Query
 
-@SkipContentImport
 class MockResourceResolverSpec extends ProsperSpec {
 
     def "get resource"() {
