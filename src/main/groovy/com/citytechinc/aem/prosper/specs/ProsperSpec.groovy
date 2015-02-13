@@ -1,8 +1,8 @@
 package com.citytechinc.aem.prosper.specs
-
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
+import com.citytechinc.aem.prosper.annotations.ImporterConfiguration
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
@@ -19,11 +19,15 @@ import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.Synchronized
+import org.apache.jackrabbit.vault.fs.api.PathFilterSet
+import org.apache.jackrabbit.vault.fs.config.DefaultWorkspaceFilter
 import org.apache.jackrabbit.vault.fs.io.FileArchive
+import org.apache.jackrabbit.vault.fs.io.ImportOptions
 import org.apache.jackrabbit.vault.fs.io.Importer
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.commons.json.jcr.JsonItemWriter
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
 import org.osgi.service.event.EventAdmin
@@ -33,7 +37,6 @@ import spock.lang.Specification
 import javax.jcr.Node
 import javax.jcr.Session
 import java.lang.reflect.Field
-
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
@@ -91,8 +94,11 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
 
         addMixins()
-
         importVaultContent()
+
+        new File("/Users/mark/Downloads/out.json").withWriter {
+            new JsonItemWriter(null).dump(session.rootNode, it, -1, true)
+        }
     }
 
     def cleanupSpec() {
@@ -493,16 +499,46 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         def contentRootUrl = this.class.getResource("/SLING-INF/content")
 
         if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
-            def contentImporter = new Importer()
             def contentArchive = new FileArchive(new File(contentRootUrl.file))
 
             try {
                 contentArchive.open(false)
-                contentImporter.run(contentArchive, session.rootNode)
+                getImporter().run(contentArchive, session.rootNode)
             } finally {
                 contentArchive.close()
             }
         }
+    }
+
+    private Importer getImporter() {
+        def importer
+
+        if (this.class.isAnnotationPresent(ImporterConfiguration)) {
+            def configuration = this.class.getAnnotation(ImporterConfiguration)
+
+            def filterXmlPath = configuration.filterXmlPath()
+            def filterPaths = configuration.filterPaths()
+
+            def filter = new DefaultWorkspaceFilter()
+
+            if (filterXmlPath) {
+                filter.load(this.class.getResourceAsStream(filterXmlPath))
+            }
+
+            filterPaths.each { filterPath ->
+                filter.add(new PathFilterSet(filterPath))
+            }
+
+            def importOptions = new ImportOptions()
+
+            importOptions.filter = filter
+
+            importer = new Importer(importOptions)
+        } else {
+            importer = new Importer()
+        }
+
+        importer
     }
 
     private void withSession(Closure closure) {

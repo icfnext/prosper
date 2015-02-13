@@ -1,5 +1,6 @@
 package com.citytechinc.aem.prosper.specs
 
+import com.citytechinc.aem.prosper.annotations.ImporterConfiguration
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
@@ -13,6 +14,7 @@ import javax.jcr.Node
 import javax.jcr.Session
 
 @Unroll
+@ImporterConfiguration(filterXmlPath = "/SLING-INF/content/META-INF/vault/filter.xml", filterPaths = ["/etc"])
 class ProsperSpecSpec extends ProsperSpec {
 
     @Override
@@ -151,5 +153,17 @@ class ProsperSpecSpec extends ProsperSpec {
         path           | nodeType
         "/etc/prosper" | "prosper:TestType"
         "/etc/spock"   | "spock:TestType"
+    }
+
+    def "verify test content was imported successfully"() {
+        expect:
+        getResource(path)
+
+        where:
+        path << [
+            "/content/dam",
+            "/content/prosper",
+            "/etc/designs/default"
+        ]
     }
 }

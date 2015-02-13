@@ -246,7 +246,31 @@ In addition to the content builders, the [session](http://www.day.com/maven/jsr1
 
 ### Content Import
 
-Another way to generate supporting content is to import a vault exported/packaged content structure.  To take advantage of the content import, simply create a test-content directory within your test resources location (ex. test/resources/test-content).  The test-content directory must contain a child jcr\_root directory and META-INF directory.  The jcr\_root directory will contain all the vault exported/packaged content.  The only file required to be in the META-INF directory is the vault/filter.xml file containing filters for the imported content (See a generated AEM package for a full listing of files within the META-INF directory).  Once the vault content and filter.xml is in place, it will automatically be imported for use within your unit tests.
+Another way to generate supporting content is to import a vault exported/packaged content structure.  To take advantage of the content import, simply create a test-content directory within your test resources location (ex. test/resources/test-content).  The test-content directory must contain a child jcr\_root directory and META-INF directory.  The jcr\_root directory will contain all the vault exported/packaged content.  The META-INF directory will contain all the vault configuration xml files typically found within an AEM package.
+
+To have your Spec import the content within the test-content directory, you will need to provide the location to a filter.xml and/or provide a list of JCR paths to the content you want included in the import.
+
+#### Using a filter.xml File
+
+Providing a complete filter.xml file will allow you to configure multiple filter rules in a single location and take full advantage of all the vault filtering capabilities.  The example below shows how you can provide a path to the filter.xml file.
+
+```groovy
+@Override
+String getFilterXmlPath() {
+    "/test-content/META-INF/vault/filter.xml"
+}
+```
+
+#### Using a List of JCR Paths
+
+Along with the filter.xml file, you can provide a list of JCR paths to select the exact content you will need for your Spec.  This allows you to isolate the content you need for your test.  The example below shows how you can provide a list of JCR paths.
+
+```groovy
+@Override
+List<String> addFilterPaths() {
+    ["/content/home/test-page","/etc"]
+}
+```
 
 ### Metaclasses
 
