@@ -1,8 +1,11 @@
 package com.citytechinc.aem.prosper.specs
+
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
-import com.citytechinc.aem.prosper.annotations.ImporterConfiguration
+import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
+import com.citytechinc.aem.prosper.annotations.ContentFilters
+import com.citytechinc.aem.prosper.annotations.SkipContentImport
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
@@ -20,7 +23,9 @@ import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.Synchronized
 import org.apache.jackrabbit.vault.fs.api.PathFilterSet
+import org.apache.jackrabbit.vault.fs.api.WorkspaceFilter
 import org.apache.jackrabbit.vault.fs.config.DefaultWorkspaceFilter
+import org.apache.jackrabbit.vault.fs.filter.DefaultPathFilter
 import org.apache.jackrabbit.vault.fs.io.FileArchive
 import org.apache.jackrabbit.vault.fs.io.ImportOptions
 import org.apache.jackrabbit.vault.fs.io.Importer
@@ -405,12 +410,16 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     private void registerCoreNodeTypes() {
-        withSession { Session session ->
+        def session = repository.loginAdministrative(null)
+
+        try {
             NODE_TYPES.each { type ->
                 this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
                     RepositoryUtil.registerNodeType(session, stream)
                 }
             }
+        } finally {
+            session.logout()
         }
     }
 
@@ -496,44 +505,32 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     private void importVaultContent() {
-        def contentRootUrl = this.class.getResource("/SLING-INF/content")
+        if (!this.class.isAnnotationPresent(SkipContentImport)) {
+            def contentRootUrl = this.class.getResource("/SLING-INF/content")
 
-        if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
-            def contentArchive = new FileArchive(new File(contentRootUrl.file))
+            if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
+                def contentArchive = new FileArchive(new File(contentRootUrl.file))
 
-            try {
-                contentArchive.open(false)
-                getImporter().run(contentArchive, session.rootNode)
-            } finally {
-                contentArchive.close()
+                try {
+                    contentArchive.open(false)
+                    buildContentImporter().run(contentArchive, session.rootNode)
+                } finally {
+                    contentArchive.close()
+                }
             }
         }
     }
 
-    private Importer getImporter() {
+    private Importer buildContentImporter() {
         def importer
 
-        if (this.class.isAnnotationPresent(ImporterConfiguration)) {
-            def configuration = this.class.getAnnotation(ImporterConfiguration)
-
-            def filterXmlPath = configuration.filterXmlPath()
-            def filterPaths = configuration.filterPaths()
-
-            def filter = new DefaultWorkspaceFilter()
-
-            if (filterXmlPath) {
-                filter.load(this.class.getResourceAsStream(filterXmlPath))
-            }
-
-            filterPaths.each { filterPath ->
-                filter.add(new PathFilterSet(filterPath))
-            }
-
+        if (this.class.isAnnotationPresent(ContentFilters)) {
             def importOptions = new ImportOptions()
 
-            importOptions.filter = filter
-
+            importOptions.filter = buildContentImportFilter(this.class.getAnnotation(ContentFilters))
             importer = new Importer(importOptions)
+
+            println importer.options.filter.sourceAsString
         } else {
             importer = new Importer()
         }
@@ -541,13 +538,33 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         importer
     }
 
-    private void withSession(Closure closure) {
-        def session = repository.loginAdministrative(null)
+    private WorkspaceFilter buildContentImportFilter(ContentFilters filterDefinitions) {
+        def filter = new DefaultWorkspaceFilter()
 
-        try {
-            closure(session)
-        } finally {
-            session.logout()
+        if (filterDefinitions.xml()) {
+            filter.load(this.class.getResourceAsStream(filterDefinitions.xml()))
         }
+
+        if (filterDefinitions.filters()) {
+            filterDefinitions.filters().each { filterDefinition ->
+                def pathFilterSet = new PathFilterSet(filterDefinition.root())
+
+                pathFilterSet.importMode = filterDefinition.mode()
+
+                filterDefinition.rules().each { rule ->
+                    def pathFilter = new DefaultPathFilter(rule.pattern())
+
+                    if (rule.type() == ContentFilterRuleType.INCLUDE) {
+                        pathFilterSet.addInclude(pathFilter)
+                    } else if (rule.type() == ContentFilterRuleType.EXCLUDE) {
+                        pathFilterSet.addExclude(pathFilter)
+                    }
+                }
+
+                filter.add(pathFilterSet)
+            }
+        }
+
+        filter
     }
 }

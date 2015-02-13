@@ -1,6 +1,9 @@
 package com.citytechinc.aem.prosper.specs
 
-import com.citytechinc.aem.prosper.annotations.ImporterConfiguration
+import com.citytechinc.aem.prosper.annotations.ContentFilter
+import com.citytechinc.aem.prosper.annotations.ContentFilterRule
+import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
+import com.citytechinc.aem.prosper.annotations.ContentFilters
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
@@ -14,7 +17,14 @@ import javax.jcr.Node
 import javax.jcr.Session
 
 @Unroll
-@ImporterConfiguration(filterXmlPath = "/SLING-INF/content/META-INF/vault/filter.xml", filterPaths = ["/etc"])
+@ContentFilters(
+    filters = [
+        @ContentFilter(root = "/content", rules = [
+            @ContentFilterRule(pattern = "/content/dam(/.*)?", type = ContentFilterRuleType.EXCLUDE)
+        ]),
+        @ContentFilter(root = "/etc")
+    ]
+)
 class ProsperSpecSpec extends ProsperSpec {
 
     @Override
