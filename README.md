@@ -526,22 +526,20 @@ class ExampleSpec extends ProsperSpec {
 
 ### Adding JCR Namespaces and Node Types
 
-A number of the more common AEM, JCR, and Sling namespaces and node types are added to the in-memory repository upon
-setup of the first Spec in a set of specifications.  Additional namespaces and node types may be added at runtime by
-overriding the `addCndInputStreams` or `addNodeTypes` methods of the `AemSpec`.  The former method is intended to return
-a list of `InputStream` objects, each of which should be the input stream of a CND file.  The latter should return a list
-of strings containing paths to classpath CND resources.  For more information on the CND node type notation,
-see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the Apache Jackrabbit documentation.
-An example of an overridden `addCndInputStreams` taken from the `ProsperSpecSpec` internal test is presented below.
+Many of the common AEM, JCR, and Sling namespaces and node types are registered when the Prosper test repository is
+ created.  Additional namespaces and node types may be added at runtime by annotating a test spec with the
+ `@NodeTypes` annotation and supplying an array containing paths to classpath .cnd file resources.  For more information
+ on the CND node type notation, see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the
+ Apache Jackrabbit documentation.  An example of the annotation usage is presented below.
 
 ```groovy
-@Override
-List<InputStream> addCndInputStreams() {
-    [this.class.getResourceAsStream("/SLING-INF/testnodetypes/test.cnd")]
+import com.citytechinc.aem.prosper.annotations.NodeTypes
+
+@NodeTypes("/SLING-INF/nodetypes/spock.cnd")
+class ExampleSpec extends ProsperSpec {
+
 }
 ```
-
-Note that the `InputStream` is closed automatically after the CND file is consumed.
 
 ### Mocking Services
 
