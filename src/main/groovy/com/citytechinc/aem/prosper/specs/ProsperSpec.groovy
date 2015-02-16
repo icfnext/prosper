@@ -395,11 +395,12 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
             def contentRootUrl = this.class.getResource("/SLING-INF/content")
 
             if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
+                def contentImporter = buildContentImporter()
                 def contentArchive = new FileArchive(new File(contentRootUrl.file))
 
                 try {
                     contentArchive.open(false)
-                    buildContentImporter().run(contentArchive, session.rootNode)
+                    contentImporter.run(contentArchive, session.rootNode)
                 } finally {
                     contentArchive.close()
                 }
@@ -408,25 +409,25 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
     }
 
     private Importer buildContentImporter() {
-        def importer
+        def contentImporter
 
         if (this.class.isAnnotationPresent(ContentFilters)) {
-            def importOptions = new ImportOptions()
+            def contentImportOptions = new ImportOptions()
 
-            importOptions.filter = buildContentImportFilter(this.class.getAnnotation(ContentFilters))
-            importer = new Importer(importOptions)
+            contentImportOptions.filter = buildContentImportFilter(this.class.getAnnotation(ContentFilters))
+            contentImporter = new Importer(contentImportOptions)
         } else {
-            importer = new Importer()
+            contentImporter = new Importer()
         }
 
-        importer
+        contentImporter
     }
 
     private WorkspaceFilter buildContentImportFilter(ContentFilters filterDefinitions) {
-        def filter = new DefaultWorkspaceFilter()
+        def contentImportFilter = new DefaultWorkspaceFilter()
 
         if (filterDefinitions.xml()) {
-            filter.load(this.class.getResourceAsStream(filterDefinitions.xml()))
+            contentImportFilter.load(this.class.getResourceAsStream(filterDefinitions.xml()))
         }
 
         filterDefinitions.filters().each { filterDefinition ->
@@ -444,9 +445,9 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
                 }
             }
 
-            filter.add(pathFilterSet)
+            contentImportFilter.add(pathFilterSet)
         }
 
-        filter
+        contentImportFilter
     }
 }

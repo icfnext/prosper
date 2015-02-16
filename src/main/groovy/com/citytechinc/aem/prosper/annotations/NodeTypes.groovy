@@ -16,6 +16,8 @@ import java.lang.annotation.Target
 @interface NodeTypes {
 
     /**
+     * Set additional node types to register for the annotated spec.
+     *
      * @return array of paths to CND file resources
      */
     String[] value() default []
