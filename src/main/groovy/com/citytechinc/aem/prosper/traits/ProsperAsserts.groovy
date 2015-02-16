@@ -5,6 +5,9 @@ import com.day.cq.wcm.api.NameConstants
 
 import javax.jcr.Session
 
+/**
+ * Assertion methods for use in specification <code>expect</code> blocks.
+ */
 trait ProsperAsserts {
 
     abstract Session getSession()

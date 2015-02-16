@@ -5,6 +5,7 @@ import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
 import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
 import com.citytechinc.aem.prosper.annotations.ContentFilters
+import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.annotations.SkipContentImport
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
@@ -12,7 +13,7 @@ import com.citytechinc.aem.prosper.mixins.ProsperMixin
 import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.TestResourceResolver
-import com.day.cq.commons.jcr.JcrConstants
+import com.citytechinc.aem.prosper.traits.ProsperAsserts
 import com.day.cq.replication.Replicator
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
@@ -46,7 +47,7 @@ import java.lang.reflect.Field
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
  */
-abstract class ProsperSpec extends Specification implements TestAdaptable {
+abstract class ProsperSpec extends Specification implements TestAdaptable, ProsperAsserts {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
@@ -91,7 +92,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         nodeBuilderInternal = new NodeBuilder(sessionInternal)
         pageBuilderInternal = new PageBuilder(sessionInternal)
 
-        registerCustomNodeTypes()
+        registerNodeTypes()
         addAdapters()
 
         resourceResolverInternal = new MockResourceResolver(sessionInternal, resourceResolverAdapters,
@@ -127,27 +128,6 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
     }
 
     // "overridable" instance methods returning default (empty) values
-
-    /**
-     * Add JCR namespaces and node types based on any number of CND file input streams.  Specs should override this
-     * method to add CND files to be registered at runtime.  Note that the <code>InputStream</code> is closed
-     * automatically after the CND file is consumed.
-     *
-     * @return list of InputStreams to add
-     */
-    List<InputStream> addCndInputStreams() {
-        Collections.emptyList()
-    }
-
-    /**
-     * Add JCR namespaces and node types by providing a list of paths to CND files.  Specs should override this
-     * method to add CND files to be registered at runtime.
-     *
-     * @return list of paths to CND file resources
-     */
-    List<String> addNodeTypes() {
-        Collections.emptyList()
-    }
 
     /**
      * Add <code>AdapterFactory</code> instances for adapting <code>Resource</code> or <code>ResourceResolver</code>
@@ -296,96 +276,6 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         new ResponseBuilder()
     }
 
-    // assertion methods for use in Spock specification 'expect' blocks
-
-    /**
-     * Assert that a node exists for the given path.
-     *
-     * @param path node path
-     */
-    void assertNodeExists(String path) {
-        assert sessionInternal.nodeExists(path)
-    }
-
-    /**
-     * Assert that a node exists for the given path and node type.
-     *
-     * @param path node path
-     * @param primaryNodeTypeName primary node type name
-     */
-    void assertNodeExists(String path, String primaryNodeTypeName) {
-        assert sessionInternal.nodeExists(path)
-
-        def node = sessionInternal.getNode(path)
-
-        assert node.primaryNodeType.name == primaryNodeTypeName
-    }
-
-    /**
-     * Assert that a node exists for the given path and property map.
-     *
-     * @param path node path
-     * @param properties map of property names and values to verify for the node
-     */
-    void assertNodeExists(String path, Map<String, Object> properties) {
-        assert sessionInternal.nodeExists(path)
-
-        def node = sessionInternal.getNode(path)
-
-        properties.each { name, value ->
-            assert node.get(name) == value
-        }
-    }
-
-    /**
-     * Assert that a node exists for the given path, node type, and property map.
-     *
-     * @param path node path
-     * @param primaryNodeTypeName primary node type name
-     * @param properties map of property names and values to verify for the node
-     */
-    void assertNodeExists(String path, String primaryNodeTypeName, Map<String, Object> properties) {
-        assert sessionInternal.nodeExists(path)
-
-        def node = sessionInternal.getNode(path)
-
-        assert node.primaryNodeType.name == primaryNodeTypeName
-
-        properties.each { name, value ->
-            assert node.get(name) == value
-        }
-    }
-
-    /**
-     * Assert that a page exists for the given path.
-     *
-     * @param path page path
-     */
-    void assertPageExists(String path) {
-        assert sessionInternal.nodeExists(path)
-
-        def pageNode = sessionInternal.getNode(path)
-
-        assert pageNode.primaryNodeType.name == NameConstants.NT_PAGE
-        assert pageNode.hasNode(JcrConstants.JCR_CONTENT)
-    }
-
-    /**
-     * Assert that a page exists for the given path and contains the given properties.
-     *
-     * @param path page path
-     * @param properties map of property names and values to verify for the page
-     */
-    void assertPageExists(String path, Map<String, Object> properties) {
-        assertPageExists(path)
-
-        def contentNode = sessionInternal.getNode(path).getNode(JcrConstants.JCR_CONTENT)
-
-        properties.each { name, value ->
-            assert contentNode.get(name) == value
-        }
-    }
-
     // internals
 
     @Synchronized
@@ -409,26 +299,26 @@ abstract class ProsperSpec extends Specification implements TestAdaptable {
         def session = repository.loginAdministrative(null)
 
         try {
-            NODE_TYPES.each { type ->
-                this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
-                    RepositoryUtil.registerNodeType(session, stream)
-                }
-            }
+            def cndResourcePaths = NODE_TYPES.collect { type -> "/SLING-INF/nodetypes/${type}.cnd" }
+
+            registerNodeTypes(session, cndResourcePaths)
         } finally {
             session.logout()
         }
     }
 
-    private void registerCustomNodeTypes() {
-        addCndInputStreams().each {
-            it.withStream { stream ->
-                RepositoryUtil.registerNodeType(sessionInternal, stream)
-            }
-        }
+    private void registerNodeTypes() {
+        if (this.class.isAnnotationPresent(NodeTypes)) {
+            def cndResourcePaths = this.class.getAnnotation(NodeTypes).value() as List
 
-        addNodeTypes().each { type ->
-            this.class.getResourceAsStream(type).withStream { stream ->
-                RepositoryUtil.registerNodeType(sessionInternal, stream)
+            registerNodeTypes(sessionInternal, cndResourcePaths)
+        }
+    }
+
+    private void registerNodeTypes(Session session, List<String> cndResourcePaths) {
+        cndResourcePaths.each { cndResourcePath ->
+            this.class.getResourceAsStream(cndResourcePath).withStream { stream ->
+                RepositoryUtil.registerNodeType(session, stream)
             }
         }
     }
