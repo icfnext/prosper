@@ -6,7 +6,8 @@ import com.day.cq.wcm.api.NameConstants
 import javax.jcr.Session
 
 /**
- * Assertion methods for use in specification <code>expect</code> blocks.
+ * Assertion methods for use in specification <code>expect</code> blocks.  These methods are "mixed in" at runtime to
+ * all specs that extend <code>ProsperSpec</code>.
  */
 trait ProsperAsserts {
 
