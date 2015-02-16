@@ -246,23 +246,24 @@ In addition to the content builders, the [session](http://www.day.com/maven/jsr1
 
 ### Content Import
 
-Another way to generate supporting content is to import a vault exported/packaged content structure.  The content import is completely automatic and will run for all your Specs when it detects content to import.  To take advantage of the content import, simply create a `SLING-INF/content` directory within your project's test resources location (ex. `src/test/resources/SLING-INF/content`).  The `content` directory must contain a child `jcr\_root` directory and `META-INF` directory.  The `jcr\_root` directory will contain all the vault exported/packaged content.  The `META-INF` directory will contain all the vault configuration xml files typically found within an AEM package.
+Another way to generate supporting content is to import a vault exported/packaged content structure.  The content import is completely automatic and will run for all your specs when it detects content to import.  To take advantage of the content import, simply create a `SLING-INF/content` directory within your project's test resources location (ex. `src/test/resources/SLING-INF/content`).  The `content` directory must contain a child `jcr_root` directory and `META-INF` directory.  The `jcr_root` directory will contain all the vault exported/packaged content.  The `META-INF` directory will contain all the vault configuration xml files typically found within an AEM package.
 
 #### Specifying a `filter.xml` File
 
-You can specify an alternative filter.xml file by using the class level ContentFilters annotation.  Simply provide the path to the filter.xml file in the xml element and it will be used instead of the filter.xml file within the META-INF/vault directory.  The example below shows how you can provide a path to a filter.xml file.
+You can specify an alternative `filter.xml` file by using the class level `ContentFilters` annotation.  Simply provide the path to the `filter.xml` file in the XML element and it will be used instead of the `filter.xml` file within the META-INF/vault directory.  The example below shows how you can provide a path to a filter.xml file.
 
 ```groovy
 @ContentFilters(
-    xml = "/test-content/META-INF/vault/alt-filter.xml"
+    xml = "/SLING-INF/content/META-INF/vault/alt-filter.xml"
 )
 class MySpec extends ProsperSpec {
+
 }
 ```
 
 #### Dynamic Filters
 
-You can also dynamically generate Spec specific filters by using the various content filter annotations.  This allows you to isolate the content you need for your individual Specs.  The example below shows how you can define a dynamic filter.
+You can also dynamically generate spec-specific filters by using the various content filter annotations.  This allows you to isolate the content you need for your individual specs.  The example below shows how you can define a dynamic filter.
 
 ```groovy
 @ContentFilters(
@@ -280,14 +281,15 @@ You can also dynamically generate Spec specific filters by using the various con
     ]
 )
 class MySpec extends ProsperSpec {
+
 }
 ```
 
-It is also possible to extend the provided filter.xml file through dynamic filters.  This allows you to provide common filters and define specific filters for your Spec.  The example below shows how you can extend an existing filter.xml file.
+It is also possible to extend the provided `filter.xml` file through dynamic filters.  This allows you to provide common filters and define specific filters for your spec.  The example below shows how you can extend an existing `filter.xml` file.
 
 ```groovy
 @ContentFilters(
-    xml = "/test-content/META-INF/vault/alt-filter.xml",
+    xml = "/SLING-INF/content/META-INF/vault/alt-filter.xml",
     filters = [
         @ContentFilter(
             root = "/etc",
@@ -302,16 +304,18 @@ It is also possible to extend the provided filter.xml file through dynamic filte
     ]
 )
 class MySpec extends ProsperSpec {
+
 }
 ```
 
 #### Skipping Content Import
 
-In some cases you may not want to import content for your Spec.  In order to skip the content import, simply place the @SkipContentImport annotation at the top of your Spec.  The example below shows a Spec that skips the content import.
+In some cases you may not want to import content for your spec.  To skip the content import, annotate your spec class with `@SkipContentImport`.  The example below shows a spec that skips the content import.
 
 ```groovy
 @SkipContentImport
 class MySpec extends ProsperSpec {
+
 }
 ```
 
