@@ -246,9 +246,9 @@ In addition to the content builders, the [session](http://www.day.com/maven/jsr1
 
 ### Content Import
 
-Another way to generate supporting content is to import a vault exported/packaged content structure.  The content import is completely automatic and will run for all your Specs when it detects content to import.  To take advantage of the content import, simply create a test-content directory within your test resources location (ex. test/resources/test-content).  The test-content directory must contain a child jcr\_root directory and META-INF directory.  The jcr\_root directory will contain all the vault exported/packaged content.  The META-INF directory will contain all the vault configuration xml files typically found within an AEM package.
+Another way to generate supporting content is to import a vault exported/packaged content structure.  The content import is completely automatic and will run for all your Specs when it detects content to import.  To take advantage of the content import, simply create a `SLING-INF/content` directory within your project's test resources location (ex. `src/test/resources/SLING-INF/content`).  The `content` directory must contain a child `jcr\_root` directory and `META-INF` directory.  The `jcr\_root` directory will contain all the vault exported/packaged content.  The `META-INF` directory will contain all the vault configuration xml files typically found within an AEM package.
 
-#### Specifying a filter.xml File
+#### Specifying a `filter.xml` File
 
 You can specify an alternative filter.xml file by using the class level ContentFilters annotation.  Simply provide the path to the filter.xml file in the xml element and it will be used instead of the filter.xml file within the META-INF/vault directory.  The example below shows how you can provide a path to a filter.xml file.
 
