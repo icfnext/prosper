@@ -30,7 +30,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
