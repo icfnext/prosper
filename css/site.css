@@ -1,0 +1,28 @@
+#banner .pull-right{
+	float:left;
+	padding-left:20px;
+	width:70%;
+}
+
+#bannerLeft img{
+	width:100px;
+}
+
+@media (max-width:480px){
+	#banner .pull-right{
+		float:left;
+		padding-left:0px;
+	}
+}
+
+@media (min-width:996px){
+	#banner .span12{
+		position:relative;
+	}
+	
+	#banner .pull-right{
+		position:absolute;
+		top:25%;
+		left:100px;
+	}
+}
