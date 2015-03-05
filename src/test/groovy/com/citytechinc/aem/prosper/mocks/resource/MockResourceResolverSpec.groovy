@@ -7,13 +7,6 @@ import javax.jcr.query.Query
 
 class MockResourceResolverSpec extends ProsperSpec {
 
-    def setupSpec() {
-        nodeBuilder.content {
-            one()
-            two()
-        }
-    }
-
     def "get resource"() {
         expect:
         resourceResolver.getResource("/content").path == "/content"
@@ -21,7 +14,7 @@ class MockResourceResolverSpec extends ProsperSpec {
 
     def "get non-existent resource returns null"() {
         expect:
-        !resourceResolver.getResource("/etc")
+        !resourceResolver.getResource("/var")
     }
 
     def "get resource for malformed path returns null"() {
@@ -34,7 +27,7 @@ class MockResourceResolverSpec extends ProsperSpec {
         def baseResource = resourceResolver.getResource("/content")
 
         expect:
-        resourceResolver.getResource(baseResource, "one").path == "/content/one"
+        resourceResolver.getResource(baseResource, "prosper").path == "/content/prosper"
     }
 
     def "get resource with base resource and absolute path returns absolute path"() {
@@ -42,17 +35,17 @@ class MockResourceResolverSpec extends ProsperSpec {
         def baseResource = resourceResolver.getResource("/content")
 
         expect:
-        resourceResolver.getResource(baseResource, "/content/one").path == "/content/one"
+        resourceResolver.getResource(baseResource, "/content/prosper").path == "/content/prosper"
     }
 
     def "get resource with null base resource returns null"() {
         expect:
-        !resourceResolver.getResource(null, "one")
+        !resourceResolver.getResource(null, "prosper")
     }
 
     def "get resource with null base resource and absolute path returns absolute path"() {
         expect:
-        resourceResolver.getResource(null, "/content/one").path == "/content/one"
+        resourceResolver.getResource(null, "/content/prosper").path == "/content/prosper"
     }
 
     def "get resource with base resource and malformed path returns null"() {
@@ -70,7 +63,7 @@ class MockResourceResolverSpec extends ProsperSpec {
 
     def "resolve non-existing resource"() {
         expect:
-        resourceResolver.resolve("/content/three") instanceof SyntheticResource
+        resourceResolver.resolve("/content/spock") instanceof SyntheticResource
     }
 
     def "list children"() {
@@ -91,16 +84,16 @@ class MockResourceResolverSpec extends ProsperSpec {
 
     def "get search path"() {
         setup:
-        resourceResolver.setSearchPath("/content/one")
+        resourceResolver.setSearchPath("/content/prosper")
 
         expect:
-        resourceResolver.searchPath == ["/content/one"]
+        resourceResolver.searchPath == ["/content/prosper"]
     }
 
     def "find resources using XPath"() {
         expect:
         resourceResolver.findResources("/jcr:root/content//*[jcr:primaryType='nt:unstructured']",
-            Query.XPATH).size() == 2
+            Query.XPATH).size() == 3
     }
 
     def "is live after close"() {

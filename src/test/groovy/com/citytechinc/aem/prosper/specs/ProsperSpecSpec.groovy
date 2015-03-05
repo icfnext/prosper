@@ -1,5 +1,10 @@
 package com.citytechinc.aem.prosper.specs
 
+import com.citytechinc.aem.prosper.annotations.ContentFilter
+import com.citytechinc.aem.prosper.annotations.ContentFilterRule
+import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
+import com.citytechinc.aem.prosper.annotations.ContentFilters
+import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
@@ -13,6 +18,16 @@ import javax.jcr.Node
 import javax.jcr.Session
 
 @Unroll
+@ContentFilters(
+    filters = [
+        @ContentFilter(root = "/content", rules = [
+            @ContentFilterRule(pattern = "/content/prosper(/.*)?", type = ContentFilterRuleType.INCLUDE),
+            @ContentFilterRule(pattern = "/content/dam(/.*)?", type = ContentFilterRuleType.EXCLUDE)
+        ]),
+        @ContentFilter(root = "/etc")
+    ]
+)
+@NodeTypes("/SLING-INF/nodetypes/spock.cnd")
 class ProsperSpecSpec extends ProsperSpec {
 
     @Override
@@ -47,25 +62,8 @@ class ProsperSpecSpec extends ProsperSpec {
         [(String.class): { "world" }]
     }
 
-    @Override
-    List<InputStream> addCndInputStreams() {
-        [this.class.getResourceAsStream("/SLING-INF/nodetypes/prosper.cnd")]
-    }
-
-    @Override
-    List<String> addNodeTypes() {
-        ["/SLING-INF/nodetypes/spock.cnd"]
-    }
-
     def setupSpec() {
-        pageBuilder.content {
-            home() {
-                "jcr:content"()
-            }
-        }
-
         nodeBuilder.etc {
-            prosper("prosper:TestType")
             spock("spock:TestType")
         }
     }
@@ -124,7 +122,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "adapt resource to page"() {
         setup:
-        def resource = getResource("/content/home")
+        def resource = getResource("/content/prosper")
 
         expect:
         resource.adaptTo(Page)
@@ -132,7 +130,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "adapt resource to value map"() {
         setup:
-        def resource = getResource("/content/home")
+        def resource = getResource("/content/prosper")
 
         expect:
         resource.adaptTo(ValueMap)
@@ -140,22 +138,30 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "adapt resource to node"() {
         setup:
-        def resource = getResource("/content/home")
+        def resource = getResource("/content/prosper")
 
         expect:
         resource.adaptTo(Node)
     }
 
     def "check node type for node with custom type"() {
-        setup:
-        def node = getNode("/etc/prosper")
-
         expect:
-        node.isNodeType("prosper:TestType")
+        getNode("/etc/spock").isNodeType("spock:TestType")
+    }
+
+    def "verify test content was imported successfully"() {
+        expect:
+        getResource(path)
 
         where:
-        path           | nodeType
-        "/etc/prosper" | "prosper:TestType"
-        "/etc/spock"   | "spock:TestType"
+        path << [
+            "/content/prosper",
+            "/etc/designs/default"
+        ]
+    }
+
+    def "verify excluded content was not imported"() {
+        expect:
+        !getResource("/content/dam")
     }
 }

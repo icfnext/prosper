@@ -13,34 +13,28 @@ import spock.lang.Unroll
 @Unroll
 class BindingsBuilderSpec extends ProsperSpec {
 
-    def setupSpec() {
-        pageBuilder.content {
-            home()
-        }
-    }
-
     def "get resource"() {
         setup:
         def bindings = new BindingsBuilder(resourceResolver).build {
-            path = "/content/home/jcr:content"
+            path = "/content/prosper/jcr:content"
         }
 
         def resource = bindings.get(SlingBindings.RESOURCE) as Resource
 
         expect:
-        resource.path == "/content/home/jcr:content"
+        resource.path == "/content/prosper/jcr:content"
     }
 
     def "get current page"() {
         setup:
         def bindings = new BindingsBuilder(resourceResolver).build {
-            path = "/content/home/jcr:content"
+            path = "/content/prosper/jcr:content"
         }
 
         def currentPage = bindings.get(WCMBindings.CURRENT_PAGE) as Page
 
         expect:
-        currentPage.path == "/content/home"
+        currentPage.path == "/content/prosper"
     }
 
     def "set wcm mode"() {

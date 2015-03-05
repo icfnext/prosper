@@ -48,37 +48,27 @@ class SightlyMixinSpec extends ProsperSpec {
     @Shared
     SightlyMixin sightly
 
-    def setupSpec() {
-        pageBuilder.content {
-            home("Home") {
-                "jcr:content"() {
-                    test()
-                }
-            }
-        }
-    }
-
     def "init component"() {
         setup:
         def component = sightly.init(TestUseComponent) {
-            path = "/content/home/jcr:content/test"
+            path = "/content/prosper/jcr:content/test"
         }
 
         expect:
-        component.pageTitle == "Home"
+        component.pageTitle == "Prosper"
     }
 
     def "activate component"() {
         setup:
         def component = sightly.activate(TestWcmUseComponent) {
-            path = "/content/home/jcr:content/test"
+            path = "/content/prosper/jcr:content/test"
             wcmMode = WCMMode.DISABLED
         }
 
         expect:
         component.activated
-        component.resource.path == "/content/home/jcr:content/test"
-        component.currentPage.path == "/content/home"
+        component.resource.path == "/content/prosper/jcr:content/test"
+        component.currentPage.path == "/content/prosper"
         component.wcmMode.disabled
     }
 
@@ -87,7 +77,7 @@ class SightlyMixinSpec extends ProsperSpec {
         def style = Mock(Style)
 
         def component = sightly.activate(TestWcmUseComponent) {
-            path = "/content/home/jcr:content/test"
+            path = "/content/prosper/jcr:content/test"
             wcmMode = WCMMode.DISABLED
             currentStyle = style
         }

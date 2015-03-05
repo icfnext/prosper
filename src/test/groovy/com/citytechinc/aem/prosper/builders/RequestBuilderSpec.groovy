@@ -6,10 +6,6 @@ import spock.lang.Unroll
 @Unroll
 class RequestBuilderSpec extends ProsperSpec {
 
-    def setupSpec() {
-        nodeBuilder.content()
-    }
-
     def "build request with no arguments"() {
         setup:
         def request = requestBuilder.build()

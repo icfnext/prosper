@@ -8,8 +8,6 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "resolve resource for path"() {
         setup:
-        nodeBuilder.content()
-
         def request = new RequestBuilder(resourceResolver).build {
             path = "/content"
         }
@@ -22,12 +20,12 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
     def "resolve resource for non-existent path"() {
         setup:
         def request = new RequestBuilder(resourceResolver).build {
-            path = "/content/foo"
+            path = "/content/spock"
         }
 
         expect:
         request.resource instanceof SyntheticResource
-        request.resource.path == "/content/foo"
+        request.resource.path == "/content/spock"
     }
 
     def "get request parameter returns null"() {

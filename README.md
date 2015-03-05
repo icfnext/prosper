@@ -30,7 +30,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -244,6 +244,81 @@ Both builders automatically save the underlying JCR session after executing the 
 
 In addition to the content builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
+### Content Import
+
+Another way to generate supporting content is to import a vault exported/packaged content structure.  The content import is completely automatic and will run for all of your specs when it detects content to import.  To take advantage of the content import, simply create a `SLING-INF/content` directory within your project's test resources location (ex. `src/test/resources/SLING-INF/content`).  The `content` directory must contain a child `jcr_root` directory and `META-INF` directory.  The `jcr_root` directory will contain all the vault exported/packaged content.  The `META-INF` directory will contain all the vault configuration XML files typically found within an AEM package.
+
+#### Specifying a `filter.xml` File
+
+You can specify an alternative `filter.xml` file by using the class level `com.citytechinc.aem.prosper.annotations.ContentFilters` annotation.  Simply provide the path to the `filter.xml` file in the XML element and it will be used instead of the `filter.xml` file within the META-INF/vault directory.  The example below shows how you can provide a path to a non-default `filter.xml` file.
+
+```groovy
+@ContentFilters(
+    xml = "/SLING-INF/content/META-INF/vault/alt-filter.xml"
+)
+class MySpec extends ProsperSpec {
+
+}
+```
+
+#### Dynamic Filters
+
+You can also dynamically generate spec-specific filters by using the various content filter annotations.  This allows you to isolate the content you need for your individual specs.  The example below shows how you can define a dynamic filter.
+
+```groovy
+@ContentFilters(
+    filters = [
+        @ContentFilter(
+            root = "/etc",
+            mode = ImportMode.REPLACE,
+            rules = [
+                @ContentFilterRule(
+                    type = ContentFilterRuleType.EXCLUDE,
+                    pattern = "/etc/tags"
+                )
+            ]
+        )
+    ]
+)
+class MySpec extends ProsperSpec {
+
+}
+```
+
+It is also possible to extend the provided `filter.xml` file through dynamic filters.  This allows you to provide common filters in the XML file and define specific filters for your spec with the annotations.  The example below shows how you can extend an existing `filter.xml` file.
+
+```groovy
+@ContentFilters(
+    xml = "/SLING-INF/content/META-INF/vault/alt-filter.xml",
+    filters = [
+        @ContentFilter(
+            root = "/etc",
+            mode = ImportMode.REPLACE,
+            rules = [
+                @ContentFilterRule(
+                    type = ContentFilterRuleType.EXCLUDE,
+                    pattern = "/etc/tags"
+                )
+            ]
+        )
+    ]
+)
+class MySpec extends ProsperSpec {
+
+}
+```
+
+#### Skipping Content Import
+
+In some cases you may not want to import content for your spec.  To skip the content import, annotate your spec class with `@SkipContentImport`.  The example below shows a spec that skips the content import.
+
+```groovy
+@SkipContentImport
+class MySpec extends ProsperSpec {
+
+}
+```
+
 ### Metaclasses
 
 The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
@@ -455,22 +530,20 @@ class ExampleSpec extends ProsperSpec {
 
 ### Adding JCR Namespaces and Node Types
 
-A number of the more common AEM, JCR, and Sling namespaces and node types are added to the in-memory repository upon
-setup of the first Spec in a set of specifications.  Additional namespaces and node types may be added at runtime by
-overriding the `addCndInputStreams` or `addNodeTypes` methods of the `AemSpec`.  The former method is intended to return
-a list of `InputStream` objects, each of which should be the input stream of a CND file.  The latter should return a list
-of strings containing paths to classpath CND resources.  For more information on the CND node type notation,
-see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the Apache Jackrabbit documentation.
-An example of an overridden `addCndInputStreams` taken from the `ProsperSpecSpec` internal test is presented below.
+Many of the common AEM, JCR, and Sling namespaces and node types are registered when the Prosper test repository is
+ created.  Additional namespaces and node types may be added at runtime by annotating a test spec with the
+ `@NodeTypes` annotation and supplying an array containing paths to classpath .cnd file resources.  For more information
+ on the CND node type notation, see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the
+ Apache Jackrabbit documentation.  An example of the annotation usage is presented below.
 
 ```groovy
-@Override
-List<InputStream> addCndInputStreams() {
-    [this.class.getResourceAsStream("/SLING-INF/testnodetypes/test.cnd")]
+import com.citytechinc.aem.prosper.annotations.NodeTypes
+
+@NodeTypes("/SLING-INF/nodetypes/spock.cnd")
+class ExampleSpec extends ProsperSpec {
+
 }
 ```
-
-Note that the `InputStream` is closed automatically after the CND file is consumed.
 
 ### Mocking Services
 
