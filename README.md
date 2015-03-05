@@ -246,11 +246,11 @@ In addition to the content builders, the [session](http://www.day.com/maven/jsr1
 
 ### Content Import
 
-Another way to generate supporting content is to import a vault exported/packaged content structure.  The content import is completely automatic and will run for all your specs when it detects content to import.  To take advantage of the content import, simply create a `SLING-INF/content` directory within your project's test resources location (ex. `src/test/resources/SLING-INF/content`).  The `content` directory must contain a child `jcr_root` directory and `META-INF` directory.  The `jcr_root` directory will contain all the vault exported/packaged content.  The `META-INF` directory will contain all the vault configuration xml files typically found within an AEM package.
+Another way to generate supporting content is to import a vault exported/packaged content structure.  The content import is completely automatic and will run for all of your specs when it detects content to import.  To take advantage of the content import, simply create a `SLING-INF/content` directory within your project's test resources location (ex. `src/test/resources/SLING-INF/content`).  The `content` directory must contain a child `jcr_root` directory and `META-INF` directory.  The `jcr_root` directory will contain all the vault exported/packaged content.  The `META-INF` directory will contain all the vault configuration XML files typically found within an AEM package.
 
 #### Specifying a `filter.xml` File
 
-You can specify an alternative `filter.xml` file by using the class level `ContentFilters` annotation.  Simply provide the path to the `filter.xml` file in the XML element and it will be used instead of the `filter.xml` file within the META-INF/vault directory.  The example below shows how you can provide a path to a filter.xml file.
+You can specify an alternative `filter.xml` file by using the class level `com.citytechinc.aem.prosper.annotations.ContentFilters` annotation.  Simply provide the path to the `filter.xml` file in the XML element and it will be used instead of the `filter.xml` file within the META-INF/vault directory.  The example below shows how you can provide a path to a non-default `filter.xml` file.
 
 ```groovy
 @ContentFilters(
@@ -285,7 +285,7 @@ class MySpec extends ProsperSpec {
 }
 ```
 
-It is also possible to extend the provided `filter.xml` file through dynamic filters.  This allows you to provide common filters and define specific filters for your spec.  The example below shows how you can extend an existing `filter.xml` file.
+It is also possible to extend the provided `filter.xml` file through dynamic filters.  This allows you to provide common filters in the XML file and define specific filters for your spec with the annotations.  The example below shows how you can extend an existing `filter.xml` file.
 
 ```groovy
 @ContentFilters(
