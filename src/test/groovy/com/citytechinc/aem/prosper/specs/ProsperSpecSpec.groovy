@@ -1,13 +1,11 @@
 package com.citytechinc.aem.prosper.specs
 
-import com.citytechinc.aem.prosper.annotations.ContentFilter
-import com.citytechinc.aem.prosper.annotations.ContentFilterRule
-import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
-import com.citytechinc.aem.prosper.annotations.ContentFilters
-import com.citytechinc.aem.prosper.annotations.NodeTypes
+import com.citytechinc.aem.prosper.adapters.OSGiRegisteredAdapterFactory
+import com.citytechinc.aem.prosper.annotations.*
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
+import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -62,6 +60,11 @@ class ProsperSpecSpec extends ProsperSpec {
         [(String.class): { "world" }]
     }
 
+    @Override
+    Map<Class, Closure> addRequestAdapters() {
+        [(String.class): { "!" }]
+    }
+
     def setupSpec() {
         nodeBuilder.etc {
             spock("spock:TestType")
@@ -104,6 +107,11 @@ class ProsperSpecSpec extends ProsperSpec {
         resourceResolver.adaptTo(String) == "world"
     }
 
+    def "additional request adapter"() {
+        expect:
+        requestBuilder.build().adaptTo(String) == "!"
+    }
+
     def "add resource adapter for test"() {
         setup:
         addResourceAdapter(Map, { [:] })
@@ -118,6 +126,23 @@ class ProsperSpecSpec extends ProsperSpec {
 
         expect:
         resourceResolver.adaptTo(Map) == [:]
+    }
+
+    def "add request adapter for test"() {
+        setup:
+        addAdapter(SlingHttpServletRequest, Map, { [adapted: "request"] })
+
+        expect:
+        requestBuilder.build().adaptTo(Map) == [adapted: "request"]
+    }
+
+    def "add OSGi registered adapter for test"() {
+        setup:
+        addAdapter(new OSGiRegisteredAdapterFactory())
+
+        expect:
+        requestBuilder.build().adaptTo(Long) == 1984l
+        resourceResolver.adaptTo(Long) == null
     }
 
     def "adapt resource to page"() {
