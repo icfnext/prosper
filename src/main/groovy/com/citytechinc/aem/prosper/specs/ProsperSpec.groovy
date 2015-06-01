@@ -170,7 +170,6 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
      *
      * @return map of adapter types to adapter functions
      */
-    //TODO: Test adding request adapters
     Map<Class, Closure> addRequestAdapters() {
         Collections.emptyMap()
     }
