@@ -15,7 +15,7 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "get resource"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver).build {
+        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
             path = "/content/prosper/jcr:content"
         }
 
@@ -27,7 +27,7 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "get current page"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver).build {
+        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
             path = "/content/prosper/jcr:content"
         }
 
@@ -39,7 +39,7 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "set wcm mode"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver).build {
+        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
             wcmMode = WCMMode.DISABLED
         }
 
@@ -51,7 +51,7 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "get service"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver).build {
+        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
             addService String, "hello"
         }
 
@@ -68,7 +68,7 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "get services with filter"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver).build {
+        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
             addServices String, ["", ""] as String[], "foo"
             addServices String, [""] as String[], "foo"
             addServices String, [""] as String[], "bar"

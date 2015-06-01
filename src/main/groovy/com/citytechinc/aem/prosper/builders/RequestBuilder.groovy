@@ -1,6 +1,7 @@
 package com.citytechinc.aem.prosper.builders
 
 import com.citytechinc.aem.prosper.mocks.MockSlingHttpServletRequest
+import com.citytechinc.aem.prosper.mocks.adapter.TestAdapterManager
 import org.apache.sling.api.resource.ResourceResolver
 import org.springframework.mock.web.MockHttpServletRequest
 
@@ -17,6 +18,8 @@ class RequestBuilder {
 
     private final ResourceResolver resourceResolver
 
+    private final TestAdapterManager adapterManager
+
     private final List<String> selectors = []
 
     private String path = "/"
@@ -29,9 +32,11 @@ class RequestBuilder {
      * Create a request builder without a preset path.
      *
      * @param resourceResolver Sling resource resolver
+     * @param adapterManager Manager used to adapt objects.
      */
-    RequestBuilder(ResourceResolver resourceResolver) {
+    RequestBuilder(ResourceResolver resourceResolver, TestAdapterManager adapterManager) {
         this.resourceResolver = resourceResolver
+        this.adapterManager = adapterManager
     }
 
     /**
@@ -123,7 +128,8 @@ class RequestBuilder {
             closure()
         }
 
-        new MockSlingHttpServletRequest(mockRequest, resourceResolver, path, selectors, extension, suffix)
+        new MockSlingHttpServletRequest(mockRequest, resourceResolver, path, selectors, extension, suffix,
+            adapterManager)
     }
 
     // delegate methods

@@ -4,6 +4,7 @@ import com.adobe.cq.sightly.SightlyWCMMode
 import com.adobe.cq.sightly.WCMBindings
 import com.adobe.cq.sightly.internal.WCMInheritanceValueMap
 import com.adobe.granite.xss.XSSAPI
+import com.citytechinc.aem.prosper.mocks.adapter.TestAdapterManager
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.api.WCMMode
@@ -18,6 +19,7 @@ import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
 import org.apache.sling.api.scripting.SlingBindings
 import org.apache.sling.api.scripting.SlingScriptHelper
+import org.osgi.framework.BundleContext
 
 import javax.script.Bindings
 import javax.script.SimpleBindings
@@ -28,6 +30,8 @@ import javax.script.SimpleBindings
 class BindingsBuilder {
 
     private final ResourceResolver resourceResolver
+
+    private final BundleContext bundleContext
 
     @Delegate
     private final RequestBuilder requestBuilder
@@ -58,14 +62,16 @@ class BindingsBuilder {
     private def xssApi
 
     /**
-     * Create a new builder.
+     * Create a new builder with a bundle context.
      *
      * @param resourceResolver Sling resource resolver
+     * @param bundleContext The bundle context
      */
-    BindingsBuilder(ResourceResolver resourceResolver) {
+    BindingsBuilder(ResourceResolver resourceResolver, BundleContext bundleContext) {
         this.resourceResolver = resourceResolver
+        this.bundleContext = bundleContext
 
-        requestBuilder = new RequestBuilder(resourceResolver)
+        requestBuilder = new RequestBuilder(resourceResolver, new TestAdapterManager(bundleContext))
         responseBuilder = new ResponseBuilder()
     }
 

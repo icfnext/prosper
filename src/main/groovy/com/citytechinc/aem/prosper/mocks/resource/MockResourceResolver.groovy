@@ -1,5 +1,6 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
+import com.citytechinc.aem.prosper.mocks.adapter.TestAdapterManager
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -17,34 +18,37 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     private final Session session
 
-    private final Map<Class, Closure> resourceResolverAdapters
-
-    private final Map<Class, Closure> resourceAdapters
-
-    private final List<AdapterFactory> adapterFactories
+    private final TestAdapterManager adapterManager
 
     private String[] searchPath
 
     private boolean closed
 
-    MockResourceResolver(Session session, Map<Class, Closure> resourceResolverAdapters,
-        Map<Class, Closure> resourceAdapters, List<AdapterFactory> adapterFactories) {
+    MockResourceResolver(Session session, TestAdapterManager adapterManager) {
         resourceProvider = new JcrResourceProvider(session, null, null)
 
         this.session = session
-        this.resourceResolverAdapters = resourceResolverAdapters
-        this.resourceAdapters = resourceAdapters
-        this.adapterFactories = adapterFactories
+        this.adapterManager = adapterManager
     }
 
     @Override
     void addResourceAdapter(Class adapterType, Closure closure) {
-        resourceAdapters.put(adapterType, closure)
+        adapterManager.addAdapter(Resource.class, adapterType, closure)
     }
 
     @Override
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
-        resourceResolverAdapters.put(adapterType, closure)
+        adapterManager.addAdapter(ResourceResolver.class, adapterType, closure)
+    }
+
+    @Override
+    void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
+        adapterManager.addAdapter(adaptableType, adapterType, closure)
+    }
+
+    @Override
+    void addAdapter(AdapterFactory adapterFactory) {
+        adapterManager.addAdapter(adapterFactory)
     }
 
     @Override
@@ -152,24 +156,12 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
 
     @Override
     Resource resolve(String absPath) {
-        getResource(absPath) ?: new MockNonExistingResource(this, absPath, resourceAdapters, adapterFactories)
+        getResource(absPath) ?: new MockNonExistingResource(this, absPath, adapterManager)
     }
 
     @Override
     <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        def result = (AdapterType) adapterFactories.findResult {
-            adapterFactory -> adapterFactory.getAdapter(this, type)
-        }
-
-        if (!result) {
-            def adapter = resourceResolverAdapters.find { it.key == type }
-
-            if (adapter) {
-                result = (AdapterType) adapter.value.call(this)
-            }
-        }
-
-        result
+        adapterManager.adapt(this, type)
     }
 
     @Override
@@ -245,6 +237,6 @@ class MockResourceResolver implements TestResourceResolver, GroovyInterceptable 
     private Resource getResourceInternal(String path) {
         def jcrResource = resourceProvider.getResource(this, path)
 
-        new MockResource(jcrResource, resourceAdapters, adapterFactories)
+        new MockResource(jcrResource, adapterManager)
     }
 }

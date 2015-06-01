@@ -23,7 +23,7 @@ class SightlyMixin extends ProsperMixin {
      * @return initialized component instance
      */
     public <T extends Use> T init(Class<T> type, @DelegatesTo(BindingsBuilder) Closure closure) {
-        def bindings = new BindingsBuilder(resourceResolver).build(closure)
+        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build(closure)
 
         def instance = type.newInstance()
 
