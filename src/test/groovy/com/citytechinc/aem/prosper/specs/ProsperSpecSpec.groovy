@@ -1,7 +1,11 @@
 package com.citytechinc.aem.prosper.specs
 
 import com.citytechinc.aem.prosper.adapters.OSGiRegisteredAdapterFactory
-import com.citytechinc.aem.prosper.annotations.*
+import com.citytechinc.aem.prosper.annotations.ContentFilter
+import com.citytechinc.aem.prosper.annotations.ContentFilterRule
+import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
+import com.citytechinc.aem.prosper.annotations.ContentFilters
+import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager

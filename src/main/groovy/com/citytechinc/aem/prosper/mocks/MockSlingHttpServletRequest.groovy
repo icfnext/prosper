@@ -5,7 +5,11 @@ import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
 import com.citytechinc.aem.prosper.mocks.request.MockRequestPathInfo
 import groovy.transform.ToString
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.request.*
+import org.apache.sling.api.request.RequestDispatcherOptions
+import org.apache.sling.api.request.RequestParameter
+import org.apache.sling.api.request.RequestParameterMap
+import org.apache.sling.api.request.RequestPathInfo
+import org.apache.sling.api.request.RequestProgressTracker
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.springframework.mock.web.MockHttpServletRequest
@@ -30,8 +34,8 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     private final TestAdapterManager adapterManager
 
     MockSlingHttpServletRequest(MockHttpServletRequest mockRequest, ResourceResolver resourceResolver, String path,
-                                List<String> selectors, String extension, String suffix,
-                                TestAdapterManager adapterManager) {
+        List<String> selectors, String extension, String suffix,
+        TestAdapterManager adapterManager) {
         this.mockRequest = mockRequest
         this.resourceResolver = resourceResolver
 
