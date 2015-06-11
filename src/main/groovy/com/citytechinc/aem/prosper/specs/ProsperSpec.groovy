@@ -293,7 +293,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
      * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder() {
-        new RequestBuilder(resourceResolverInternal, adapterManagerInternal)
+        new RequestBuilder(resourceResolverInternal, bundleContextInternal)
     }
 
     /**

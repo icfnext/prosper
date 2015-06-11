@@ -8,7 +8,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "resolve resource for path"() {
         setup:
-        def request = new RequestBuilder(resourceResolver, null).build {
+        def request = new RequestBuilder(resourceResolver, bundleContext).build {
             path = "/content"
         }
 
@@ -19,7 +19,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "resolve resource for non-existent path"() {
         setup:
-        def request = new RequestBuilder(resourceResolver, null).build {
+        def request = new RequestBuilder(resourceResolver, bundleContext).build {
             path = "/content/spock"
         }
 
@@ -30,7 +30,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "get request parameter returns null"() {
         setup:
-        def request = new RequestBuilder(resourceResolver, null).build()
+        def request = new RequestBuilder(resourceResolver, bundleContext).build()
 
         expect:
         !request.getRequestParameter("a")
@@ -39,7 +39,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "get request parameter"() {
         setup:
-        def request = new RequestBuilder(resourceResolver, null).build {
+        def request = new RequestBuilder(resourceResolver, bundleContext).build {
             parameters = ["a": ["alpha"]]
         }
 
@@ -49,7 +49,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "get request parameters"() {
         setup:
-        def request = new RequestBuilder(resourceResolver, null).build {
+        def request = new RequestBuilder(resourceResolver, bundleContext).build {
             parameters = ["a": ["alpha1", "alpha2"]]
         }
 
@@ -59,7 +59,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "get parameter returns null"() {
         setup:
-        def request = new RequestBuilder(resourceResolver, null).build()
+        def request = new RequestBuilder(resourceResolver, bundleContext).build()
 
         expect:
         !request.getParameter("a")
@@ -68,7 +68,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "get parameter"() {
         setup:
-        def request = new RequestBuilder(resourceResolver, null).build {
+        def request = new RequestBuilder(resourceResolver, bundleContext).build {
             parameters = ["a": ["alpha"]]
         }
 
@@ -78,7 +78,7 @@ class MockSlingHttpServletRequestSpec extends ProsperSpec {
 
     def "get parameters"() {
         setup:
-        def request = new RequestBuilder(resourceResolver, null).build {
+        def request = new RequestBuilder(resourceResolver, bundleContext).build {
             parameters = ["a": ["alpha1", "alpha2"]]
         }
 

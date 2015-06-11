@@ -1,10 +1,8 @@
 package com.citytechinc.aem.prosper.builders
-
 import com.adobe.cq.sightly.SightlyWCMMode
 import com.adobe.cq.sightly.WCMBindings
 import com.adobe.cq.sightly.internal.WCMInheritanceValueMap
 import com.adobe.granite.xss.XSSAPI
-import com.citytechinc.aem.prosper.mocks.adapter.TestAdapterManager
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.api.WCMMode
@@ -23,7 +21,6 @@ import org.osgi.framework.BundleContext
 
 import javax.script.Bindings
 import javax.script.SimpleBindings
-
 /**
  * Builder for creating <code>Bindings</code> instances containing WCM objects for use in Sightly components.
  */
@@ -71,7 +68,7 @@ class BindingsBuilder {
         this.resourceResolver = resourceResolver
         this.bundleContext = bundleContext
 
-        requestBuilder = new RequestBuilder(resourceResolver, new TestAdapterManager(bundleContext))
+        requestBuilder = new RequestBuilder(resourceResolver, bundleContext)
         responseBuilder = new ResponseBuilder()
     }
 

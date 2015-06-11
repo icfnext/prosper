@@ -3,6 +3,7 @@ package com.citytechinc.aem.prosper.builders
 import com.citytechinc.aem.prosper.mocks.MockSlingHttpServletRequest
 import com.citytechinc.aem.prosper.mocks.adapter.TestAdapterManager
 import org.apache.sling.api.resource.ResourceResolver
+import org.osgi.framework.BundleContext
 import org.springframework.mock.web.MockHttpServletRequest
 
 import javax.servlet.http.Cookie
@@ -32,11 +33,11 @@ class RequestBuilder {
      * Create a request builder without a preset path.
      *
      * @param resourceResolver Sling resource resolver
-     * @param adapterManager Manager used to adapt objects.
+     * @param bundleContext BundleContext containing registered services.
      */
-    RequestBuilder(ResourceResolver resourceResolver, TestAdapterManager adapterManager) {
+    RequestBuilder(ResourceResolver resourceResolver, BundleContext bundleContext) {
         this.resourceResolver = resourceResolver
-        this.adapterManager = adapterManager
+        this.adapterManager = new TestAdapterManager(bundleContext)
     }
 
     /**
