@@ -1,6 +1,5 @@
 package com.citytechinc.aem.prosper.mocks.adapter
 
-import com.google.common.collect.Lists
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.commons.osgi.PropertiesUtil
 import org.osgi.framework.BundleContext
@@ -29,8 +28,8 @@ class TestAdapterManager {
 
     public <AdapterType> AdapterType adapt(Object adaptable, Class<AdapterType> adapterType) {
         //find all adapter factories
-        def adapterFactories = Lists.newArrayList(
-            bundleContext.getServiceReferences(AdapterFactory.class.getName(), null)
+        def adapterFactories = (
+            (bundleContext.getServiceReferences(AdapterFactory.class.getName(), null) ?: []) as List
         ).findResults { ServiceReference serviceReference ->
             final AdapterFactory adapterFactory
 
