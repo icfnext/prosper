@@ -647,7 +647,7 @@ class MobileRequestMixin extends ProsperMixin {
     }
 
     def buildMobileRequest(Map<String, Object> parameters) {
-        new RequestBuilder(resourceResolver, new TestAdapterManager(bundleContext)).build {
+        new RequestBuilder(resourceResolver, bundleContext).build {
             selectors = ["mobile"]
             setParameters(parameters)
         }
