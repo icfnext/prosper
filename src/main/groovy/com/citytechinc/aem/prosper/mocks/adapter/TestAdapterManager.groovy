@@ -53,7 +53,7 @@ class TestAdapterManager {
             adapterFactory
         }
 
-        //try to find result using matched adapter factories first
+        //try to find result using matched adapter factories
         def result = (AdapterType) adapterFactories.findResult {
             adapterFactory -> adapterFactory.getAdapter(adaptable, adapterType)
         }
