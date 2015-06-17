@@ -142,7 +142,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add OSGi registered adapter for test"() {
         setup:
-        addAdapter(new OSGiRegisteredAdapterFactory())
+        addAdapterFactory(new OSGiRegisteredAdapterFactory())
 
         expect:
         requestBuilder.build().adaptTo(Long) == 1984l

@@ -1,12 +1,12 @@
 package com.citytechinc.aem.prosper.mixins
 
-import com.adobe.cq.sightly.WCMUse
+import com.adobe.cq.sightly.WCMUsePojo
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.api.WCMMode
 import com.day.cq.wcm.api.designer.Style
-import io.sightly.java.api.Use
 import org.apache.sling.api.resource.Resource
+import org.apache.sling.scripting.sightly.pojo.Use
 import spock.lang.Shared
 
 import javax.script.Bindings
@@ -31,7 +31,7 @@ class SightlyMixinSpec extends ProsperSpec {
         }
     }
 
-    class TestWcmUseComponent extends WCMUse {
+    class TestWcmUseComponent extends WCMUsePojo {
 
         def activated = false
 

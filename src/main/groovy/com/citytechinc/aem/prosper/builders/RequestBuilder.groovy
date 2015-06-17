@@ -1,9 +1,9 @@
 package com.citytechinc.aem.prosper.builders
 
 import com.citytechinc.aem.prosper.mocks.MockSlingHttpServletRequest
-import com.citytechinc.aem.prosper.mocks.adapter.TestAdapterManager
+import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdapterManager
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.resource.ResourceResolver
-import org.osgi.framework.BundleContext
 import org.springframework.mock.web.MockHttpServletRequest
 
 import javax.servlet.http.Cookie
@@ -19,7 +19,7 @@ class RequestBuilder {
 
     private final ResourceResolver resourceResolver
 
-    private final TestAdapterManager adapterManager
+    private final ProsperAdapterManager adapterManager
 
     private final List<String> selectors = []
 
@@ -30,14 +30,14 @@ class RequestBuilder {
     private String extension = ""
 
     /**
-     * Create a request builder without a preset path.
+     * Create a request builder for a test spec.
      *
      * @param resourceResolver Sling resource resolver
-     * @param bundleContext BundleContext containing registered services.
+     * @param adapterManager adapter manager for the current specification
      */
-    RequestBuilder(ResourceResolver resourceResolver, BundleContext bundleContext) {
-        this.resourceResolver = resourceResolver
-        this.adapterManager = new TestAdapterManager(bundleContext)
+    RequestBuilder(ProsperSpec spec) {
+        resourceResolver = spec.resourceResolver
+        adapterManager = spec.adapterManager
     }
 
     /**
@@ -110,13 +110,12 @@ class RequestBuilder {
      * .Closure)"><code>with</code></a> method.
      *
      * <pre>
-     *  new RequestBuilder(resourceResolver).build {
-     *      serverName = "localhost"
+     *  new RequestBuilder(resourceResolver).build {*      serverName = "localhost"
      *      path = "/content"
      *      method = "GET"
      *      parameters = ["a": ["1", "2"], "b": ["1"]]
      *      extension = "html"
-     * }</pre>
+     *}</pre>
      *
      * @param closure closure that delegates to this builder and <a href="http://docs.spring.io/spring/docs/3.2.8
      * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html">MockHttpServletRequest</a>

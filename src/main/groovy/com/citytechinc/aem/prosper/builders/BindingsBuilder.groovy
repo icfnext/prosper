@@ -1,8 +1,9 @@
 package com.citytechinc.aem.prosper.builders
+
 import com.adobe.cq.sightly.SightlyWCMMode
 import com.adobe.cq.sightly.WCMBindings
 import com.adobe.cq.sightly.internal.WCMInheritanceValueMap
-import com.adobe.granite.xss.XSSAPI
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap
 import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.api.WCMMode
@@ -16,11 +17,13 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
 import org.apache.sling.api.scripting.SlingBindings
-import org.apache.sling.api.scripting.SlingScriptHelper
+import org.apache.sling.testing.mock.sling.MockSling
+import org.apache.sling.xss.XSSAPI
 import org.osgi.framework.BundleContext
 
 import javax.script.Bindings
 import javax.script.SimpleBindings
+
 /**
  * Builder for creating <code>Bindings</code> instances containing WCM objects for use in Sightly components.
  */
@@ -36,39 +39,34 @@ class BindingsBuilder {
     @Delegate
     private final ResponseBuilder responseBuilder
 
-    private final def services = [:]
+    private WCMMode wcmMode
 
-    private final def servicesWithFilters = [:]
+    private Component component
 
-    private def wcmMode
+    private ComponentContext componentContext
 
-    private def component
+    private Design currentDesign
 
-    private def componentContext
+    private Style currentStyle
 
-    private def currentDesign
+    private Designer designer
 
-    private def currentStyle
+    private EditContext editContext
 
-    private def designer
+    private Design resourceDesign
 
-    private def editContext
-
-    private def resourceDesign
-
-    private def xssApi
+    private XSSAPI xssApi
 
     /**
-     * Create a new builder with a bundle context.
+     * Create a new builder for a test spec.
      *
      * @param resourceResolver Sling resource resolver
-     * @param bundleContext The bundle context
+     * @param adapterManager adapter manager for the current spec
      */
-    BindingsBuilder(ResourceResolver resourceResolver, BundleContext bundleContext) {
-        this.resourceResolver = resourceResolver
-        this.bundleContext = bundleContext
-
-        requestBuilder = new RequestBuilder(resourceResolver, bundleContext)
+    BindingsBuilder(ProsperSpec spec) {
+        resourceResolver = spec.resourceResolver
+        bundleContext = spec.bundleContext
+        requestBuilder = new RequestBuilder(spec)
         responseBuilder = new ResponseBuilder()
     }
 
@@ -78,37 +76,11 @@ class BindingsBuilder {
      * @param serviceType type of service to register
      * @param instance service instance (real or mocked)
      */
-    public <T> void addService(Class<T> serviceType, T instance) {
-        assert serviceType != null, "service type must be non-null"
-        assert instance != null, "service instance must be non-null"
+    public <T> void registerService(Class<T> serviceType, T instance) {
+        assert serviceType, "service type must be non-null"
+        assert instance, "service instance must be non-null"
 
-        services[serviceType] = [instance]
-    }
-
-    /**
-     * Add service instances and associated filter criteria to the mock Sling Script Helper.  This method can be called
-     * multiple times to register different service and filter value combinations.
-     *
-     * @param serviceType type of service to register
-     * @param instances array of service instances for the given service type and filter
-     * @param filter filter string
-     */
-    public <T> void addServices(Class<T> serviceType, T[] instances, String filter) {
-        assert serviceType != null, "service type must be non-null"
-        assert instances != null, "service instances must be non-null"
-
-        if (filter == null) {
-            services[serviceType] = instances as List
-        } else {
-            def map = servicesWithFilters[serviceType] ?: [:]
-            def allInstances = map[filter] ?: []
-
-            allInstances.addAll(instances as List)
-
-            map[filter] = allInstances
-
-            servicesWithFilters[serviceType] = map
-        }
+        bundleContext.registerService(serviceType.name, instance, null)
     }
 
     /**
@@ -163,10 +135,10 @@ class BindingsBuilder {
             closure()
         }
 
-        createBindings()
+        buildBindings()
     }
 
-    private def createBindings() {
+    private def buildBindings() {
         def slingRequest = requestBuilder.build()
         def slingResponse = responseBuilder.build()
 
@@ -177,7 +149,7 @@ class BindingsBuilder {
         def resource = slingRequest.resource
 
         def bindings = [
-            (SlingBindings.SLING)          : createSlingScriptHelper(),
+            (SlingBindings.SLING)          : MockSling.newSlingScriptHelper(slingRequest, slingResponse, bundleContext),
             (SlingBindings.REQUEST)        : slingRequest,
             (SlingBindings.RESPONSE)       : slingResponse,
             (SlingBindings.RESOURCE)       : resource,
@@ -193,14 +165,20 @@ class BindingsBuilder {
             (WCMBindings.XSSAPI)           : xssApi
         ]
 
-        bindings.putAll(createPageBindings(resource))
+        bindings.putAll(buildPageBindings(resource))
 
         new SimpleBindings(bindings)
     }
 
-    private def createPageBindings(Resource resource) {
+    private def buildPageBindings(Resource resource) {
+        def bindings = [:]
+
         def pageManager = resourceResolver.adaptTo(PageManager)
         def currentPage = pageManager.getContainingPage(resource)
+
+        bindings.put(WCMBindings.PAGE_MANAGER, pageManager)
+        bindings.put(WCMBindings.CURRENT_PAGE, currentPage)
+        bindings.put(WCMBindings.RESOURCE_PAGE, currentPage)
 
         def inheritedPageProperties
         def pageProperties
@@ -215,40 +193,9 @@ class BindingsBuilder {
             pageProperties = ValueMap.EMPTY
         }
 
-        [
-            (WCMBindings.CURRENT_PAGE)             : currentPage,
-            (WCMBindings.RESOURCE_PAGE)            : currentPage,
-            (WCMBindings.PAGE_MANAGER)             : pageManager,
-            (WCMBindings.INHERITED_PAGE_PROPERTIES): inheritedPageProperties,
-            (WCMBindings.PAGE_PROPERTIES)          : pageProperties
-        ]
-    }
+        bindings.put(WCMBindings.INHERITED_PAGE_PROPERTIES, inheritedPageProperties)
+        bindings.put(WCMBindings.PAGE_PROPERTIES, pageProperties)
 
-    private def createSlingScriptHelper() {
-        [
-            getService : { Class serviceType ->
-                def instances = services[serviceType]
-
-                instances?.getAt(0)
-            },
-            getServices: { Class serviceType, String filter ->
-                def result
-
-                if (filter == null) {
-                    def servicesNoFilters = services[serviceType] ?: []
-                    def servicesFilters = []
-
-                    servicesWithFilters[serviceType]?.each { entry ->
-                        servicesFilters.addAll(entry.value)
-                    }
-
-                    result = (servicesNoFilters + servicesFilters).toArray()
-                } else {
-                    result = servicesWithFilters[serviceType]?.get(filter)?.toArray()
-                }
-
-                result
-            }
-        ] as SlingScriptHelper
+        bindings
     }
 }

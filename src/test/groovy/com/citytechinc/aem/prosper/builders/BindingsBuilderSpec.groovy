@@ -15,7 +15,7 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "get resource"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
+        def bindings = bindingsBuilder.build {
             path = "/content/prosper/jcr:content"
         }
 
@@ -27,7 +27,7 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "get current page"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
+        def bindings = bindingsBuilder.build {
             path = "/content/prosper/jcr:content"
         }
 
@@ -39,7 +39,7 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "set wcm mode"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
+        def bindings = bindingsBuilder.build {
             wcmMode = WCMMode.DISABLED
         }
 
@@ -51,8 +51,8 @@ class BindingsBuilderSpec extends ProsperSpec {
 
     def "get service"() {
         setup:
-        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
-            addService String, "hello"
+        def bindings = bindingsBuilder.build {
+            registerService String, "hello"
         }
 
         def sling = bindings.get(SlingBindings.SLING) as SlingScriptHelper
@@ -64,29 +64,5 @@ class BindingsBuilderSpec extends ProsperSpec {
         serviceType | service
         String      | "hello"
         Integer     | null
-    }
-
-    def "get services with filter"() {
-        setup:
-        def bindings = new BindingsBuilder(resourceResolver, bundleContext).build {
-            addServices String, ["", ""] as String[], "foo"
-            addServices String, [""] as String[], "foo"
-            addServices String, [""] as String[], "bar"
-            addServices Integer, [1, 2] as Integer[], "foo"
-            addServices Long, [] as Long[], "foo"
-        }
-
-        def sling = bindings.get(SlingBindings.SLING) as SlingScriptHelper
-
-        expect:
-        sling.getServices(serviceType, filter).length == length
-
-        where:
-        serviceType | filter | length
-        String      | "foo"  | 3
-        String      | "bar"  | 1
-        String      | null   | 4
-        Integer     | "foo"  | 2
-        Long        | "foo"  | 0
     }
 }

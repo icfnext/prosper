@@ -2,7 +2,8 @@ package com.citytechinc.aem.prosper.mocks.adapter
 
 import org.apache.sling.api.adapter.AdapterFactory
 
-interface TestAdaptable {
+interface ProsperAdaptable {
+
     @Deprecated
     void addResourceAdapter(Class adapterType, Closure closure)
 
@@ -11,5 +12,5 @@ interface TestAdaptable {
 
     void addAdapter(Class adaptableType, Class adapterType, Closure closure)
 
-    void addAdapter(AdapterFactory adapterFactory)
+    void addAdapterFactory(AdapterFactory adapterFactory)
 }

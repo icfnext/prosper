@@ -1,7 +1,6 @@
 package com.citytechinc.aem.prosper.mixins
 
-import org.apache.sling.api.resource.ResourceResolver
-import org.osgi.framework.BundleContext
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 
 /**
  * Base class for Prosper mixins.  Custom mixins may extend this class to provide additional functionality to specs.
@@ -10,11 +9,9 @@ import org.osgi.framework.BundleContext
  */
 abstract class ProsperMixin {
 
-    protected ResourceResolver resourceResolver
+    protected ProsperSpec spec
 
-    protected BundleContext bundleContext
-
-    ProsperMixin(ResourceResolver resourceResolver) {
-        this.resourceResolver = resourceResolver
+    ProsperMixin(ProsperSpec spec) {
+        this.spec = spec
     }
 }

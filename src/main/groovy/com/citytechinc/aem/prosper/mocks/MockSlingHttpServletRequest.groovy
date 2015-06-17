@@ -1,6 +1,6 @@
 package com.citytechinc.aem.prosper.mocks
 
-import com.citytechinc.aem.prosper.mocks.adapter.TestAdapterManager
+import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
 import com.citytechinc.aem.prosper.mocks.request.MockRequestPathInfo
 import groovy.transform.ToString
@@ -25,24 +25,23 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     private final ResourceResolver resourceResolver
 
+    private final ProsperAdapterManager adapterManager
+
     private final Resource resource
 
     private final RequestParameterMap requestParameterMap
 
     private final RequestPathInfo requestPathInfo
 
-    private final TestAdapterManager adapterManager
-
     MockSlingHttpServletRequest(MockHttpServletRequest mockRequest, ResourceResolver resourceResolver, String path,
-        List<String> selectors, String extension, String suffix,
-        TestAdapterManager adapterManager) {
+        List<String> selectors, String extension, String suffix, ProsperAdapterManager adapterManager) {
         this.mockRequest = mockRequest
         this.resourceResolver = resourceResolver
+        this.adapterManager = adapterManager
 
         resource = resourceResolver.resolve(path)
         requestParameterMap = MockRequestParameterMap.create(mockRequest)
         requestPathInfo = new MockRequestPathInfo(resourceResolver, path, selectors, extension, suffix)
-        this.adapterManager = adapterManager
     }
 
     @Override
