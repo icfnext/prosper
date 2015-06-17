@@ -6,6 +6,7 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.resource.JcrResourceUtil
 import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
+import org.apache.sling.jcr.resource.internal.helper.jcr.PathMapper
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
@@ -25,7 +26,7 @@ class MockResourceResolver implements ProsperResourceResolver, GroovyInterceptab
     private boolean closed
 
     MockResourceResolver(Session session, ProsperAdapterManager adapterManager) {
-        resourceProvider = new JcrResourceProvider(session, null, null, null)
+        resourceProvider = new JcrResourceProvider(session, null, null, new PathMapper())
 
         this.session = session
         this.adapterManager = adapterManager
