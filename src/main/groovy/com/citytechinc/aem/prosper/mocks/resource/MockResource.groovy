@@ -1,7 +1,7 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
+import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdapterManager
 import groovy.transform.ToString
-import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 
 @ToString(includes = "resource")
@@ -10,30 +10,20 @@ class MockResource implements Resource {
     @Delegate
     private final Resource resource
 
-    private final Map<Class, Closure> adapters
+    private final ProsperAdapterManager adapterManager
 
-    private final List<AdapterFactory> adapterFactories
-
-    MockResource(Resource resource, Map<Class, Closure> adapters, List<AdapterFactory> adapterFactories) {
+    MockResource(Resource resource, ProsperAdapterManager adapterManager) {
         this.resource = resource
-        this.adapters = adapters
-        this.adapterFactories = adapterFactories
+        this.adapterManager = adapterManager
     }
 
     @Override
     <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        def result = (AdapterType) adapterFactories.findResult { adapterFactory ->
-            adapterFactory.getAdapter(this, type)
-        }
+        def result = adapterManager.adapt(this, type)
 
-        if (!result) {
-            def adapter = adapters.find { it.key == type }
-
-            if (adapter) {
-                result = (AdapterType) adapter.value.call(this)
-            } else {
-                result = resource.adaptTo(type)
-            }
+        // specifically check for null so we don't incorrectly check empty collections
+        if (result == null) {
+            result = resource.adaptTo(type)
         }
 
         result

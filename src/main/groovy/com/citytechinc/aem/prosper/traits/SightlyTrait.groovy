@@ -1,18 +1,12 @@
-package com.citytechinc.aem.prosper.mixins
+package com.citytechinc.aem.prosper.traits
 
 import com.adobe.cq.sightly.WCMUsePojo
 import com.citytechinc.aem.prosper.builders.BindingsBuilder
-import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.sling.scripting.sightly.pojo.Use
 
-/**
- * Mixin providing methods for initializing Sightly component classes with mocked bindings.
- */
-class SightlyMixin extends ProsperMixin {
+trait SightlyTrait {
 
-    SightlyMixin(ProsperSpec spec) {
-        super(spec)
-    }
+    abstract BindingsBuilder getBindingsBuilder()
 
     /**
      * Instantiate and initialize the component class for the given type, using the provided closure to build the
@@ -23,7 +17,7 @@ class SightlyMixin extends ProsperMixin {
      * @return initialized component instance
      */
     public <T extends Use> T init(Class<T> type, @DelegatesTo(BindingsBuilder) Closure closure) {
-        def bindings = spec.bindingsBuilder.build(closure)
+        def bindings = bindingsBuilder.build(closure)
 
         def instance = type.newInstance()
 

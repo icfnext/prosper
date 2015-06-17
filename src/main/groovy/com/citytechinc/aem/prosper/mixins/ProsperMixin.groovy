@@ -1,6 +1,6 @@
 package com.citytechinc.aem.prosper.mixins
 
-import org.apache.sling.api.resource.ResourceResolver
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 
 /**
  * Base class for Prosper mixins.  Custom mixins may extend this class to provide additional functionality to specs.
@@ -9,9 +9,9 @@ import org.apache.sling.api.resource.ResourceResolver
  */
 abstract class ProsperMixin {
 
-    protected ResourceResolver resourceResolver
+    protected ProsperSpec spec
 
-    ProsperMixin(ResourceResolver resourceResolver) {
-        this.resourceResolver = resourceResolver
+    ProsperMixin(ProsperSpec spec) {
+        this.spec = spec
     }
 }

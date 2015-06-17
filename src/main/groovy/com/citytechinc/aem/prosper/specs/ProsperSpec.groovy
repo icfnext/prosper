@@ -3,16 +3,16 @@ package com.citytechinc.aem.prosper.specs
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
-import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
-import com.citytechinc.aem.prosper.annotations.ContentFilters
 import com.citytechinc.aem.prosper.annotations.NodeTypes
-import com.citytechinc.aem.prosper.annotations.SkipContentImport
+import com.citytechinc.aem.prosper.builders.BindingsBuilder
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
+import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
-import com.citytechinc.aem.prosper.mocks.adapter.TestAdaptable
+import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdaptable
+import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
-import com.citytechinc.aem.prosper.mocks.resource.TestResourceResolver
+import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolver
 import com.citytechinc.aem.prosper.traits.ProsperAsserts
 import com.day.cq.replication.Replicator
 import com.day.cq.tagging.TagManager
@@ -23,18 +23,14 @@ import com.day.cq.wcm.api.PageManager
 import com.day.cq.wcm.core.impl.PageImpl
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.Synchronized
-import org.apache.jackrabbit.vault.fs.api.PathFilterSet
-import org.apache.jackrabbit.vault.fs.api.WorkspaceFilter
-import org.apache.jackrabbit.vault.fs.config.DefaultWorkspaceFilter
-import org.apache.jackrabbit.vault.fs.filter.DefaultPathFilter
-import org.apache.jackrabbit.vault.fs.io.FileArchive
-import org.apache.jackrabbit.vault.fs.io.ImportOptions
-import org.apache.jackrabbit.vault.fs.io.Importer
+import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
+import org.apache.sling.testing.mock.osgi.MockOsgi
+import org.osgi.framework.BundleContext
 import org.osgi.service.event.EventAdmin
 import spock.lang.Shared
 import spock.lang.Specification
@@ -47,7 +43,7 @@ import java.lang.reflect.Field
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
  */
-abstract class ProsperSpec extends Specification implements TestAdaptable, ProsperAsserts {
+abstract class ProsperSpec extends Specification implements ProsperAdaptable, ProsperAsserts {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
@@ -59,7 +55,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
     private Session sessionInternal
 
     @Shared
-    private TestResourceResolver resourceResolverInternal
+    private ProsperResourceResolver resourceResolverInternal
 
     @Shared
     private PageManager pageManagerInternal
@@ -71,13 +67,10 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
     private PageBuilder pageBuilderInternal
 
     @Shared
-    private List<AdapterFactory> adapterFactories = []
+    private BundleContext bundleContextInternal = MockOsgi.newBundleContext()
 
     @Shared
-    private Map<Class, Closure> resourceResolverAdapters = [:]
-
-    @Shared
-    private Map<Class, Closure> resourceAdapters = [:]
+    private ProsperAdapterManager adapterManagerInternal
 
     // global fixtures
 
@@ -91,16 +84,18 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
         sessionInternal = repository.loginAdministrative(null)
         nodeBuilderInternal = new NodeBuilder(sessionInternal)
         pageBuilderInternal = new PageBuilder(sessionInternal)
+        adapterManagerInternal = new ProsperAdapterManager(bundleContextInternal)
 
         registerNodeTypes()
+
+        ContentImporter.importVaultContent(this)
+
         addAdapters()
 
-        resourceResolverInternal = new MockResourceResolver(sessionInternal, resourceResolverAdapters,
-            resourceAdapters, adapterFactories)
+        resourceResolverInternal = new MockResourceResolver(sessionInternal, adapterManagerInternal)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
 
         addMixins()
-        importVaultContent()
     }
 
     def cleanupSpec() {
@@ -163,6 +158,17 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
     }
 
     /**
+     * Add <code>SlingHttpServletRequest</code> adapters and their associated adapter functions. The mapped closure
+     * will be called with a single <code>SlingHttpServletRequest</code> argument.  Specs should override this method
+     * to add request adapters at runtime.
+     *
+     * @return map of adapter types to adapter functions
+     */
+    Map<Class, Closure> addRequestAdapters() {
+        Collections.emptyMap()
+    }
+
+    /**
      * Add a <code>Resource</code> adapter for the current specification.  This method can be called as many times as
      * necessary in a feature method to add adapters for the current test.
      *
@@ -171,7 +177,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
      */
     @Override
     void addResourceAdapter(Class adapterType, Closure closure) {
-        resourceResolverInternal.addResourceAdapter(adapterType, closure)
+        adapterManagerInternal.addAdapter(Resource.class, adapterType, closure)
     }
 
     /**
@@ -183,10 +189,27 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
      */
     @Override
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
-        resourceResolverInternal.addResourceResolverAdapter(adapterType, closure)
+        adapterManagerInternal.addAdapter(ResourceResolver.class, adapterType, closure)
+    }
+
+    @Override
+    void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
+        adapterManagerInternal.addAdapter(adaptableType, adapterType, closure)
+    }
+
+    @Override
+    void addAdapterFactory(AdapterFactory adapterFactory) {
+        adapterManagerInternal.addAdapterFactory(adapterFactory)
     }
 
     // accessors for shared instances
+
+    /**
+     * @return adapter manager
+     */
+    ProsperAdapterManager getAdapterManager() {
+        adapterManagerInternal
+    }
 
     /**
      * @return admin session
@@ -220,9 +243,16 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
     }
 
     /**
+     * @return Mock BundleContext
+     */
+    BundleContext getBundleContext() {
+        bundleContextInternal
+    }
+
+    /**
      * @return admin resource resolver
      */
-    TestResourceResolver getResourceResolver() {
+    ProsperResourceResolver getResourceResolver() {
         resourceResolverInternal
     }
 
@@ -264,7 +294,7 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
      * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder() {
-        new RequestBuilder(resourceResolverInternal)
+        new RequestBuilder(this)
     }
 
     /**
@@ -274,6 +304,15 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
      */
     ResponseBuilder getResponseBuilder() {
         new ResponseBuilder()
+    }
+
+    /**
+     * Get a bindings builder.
+     *
+     * @return builder
+     */
+    BindingsBuilder getBindingsBuilder() {
+        new BindingsBuilder(this)
     }
 
     // internals
@@ -324,51 +363,64 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
     }
 
     private void addAdapters() {
-        adapterFactories.addAll(addAdapterFactories())
+        addAdapterFactories().each { adapterFactory ->
+            adapterManagerInternal.addAdapterFactory(adapterFactory)
+        }
 
         addDefaultResourceAdapters()
         addDefaultResourceResolverAdapters()
 
-        resourceAdapters.putAll(addResourceAdapters())
-        resourceResolverAdapters.putAll(addResourceResolverAdapters())
+        addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
+            adapterManagerInternal.addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
+        }
+
+        addResourceResolverAdapters().each { Map.Entry<Class, Closure> resourceResolverAdapter ->
+            adapterManagerInternal.addAdapter(ResourceResolver, resourceResolverAdapter.key,
+                resourceResolverAdapter.value)
+        }
+
+        addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
+            adapterManagerInternal.addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
+        }
     }
 
     private void addDefaultResourceAdapters() {
-        resourceAdapters[Page.class] = { Resource resource ->
+        adapterManagerInternal.addAdapter(Resource, Page, { Resource resource ->
             NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
-        }
+        })
     }
 
     private void addDefaultResourceResolverAdapters() {
-        resourceResolverAdapters[PageManager.class] = { ResourceResolver resourceResolver ->
-            def factory = new PageManagerFactoryImpl()
+        adapterManagerInternal.addAdapter(ResourceResolver.class, PageManager.class, {
+            ResourceResolver resourceResolver ->
+                def factory = new PageManagerFactoryImpl()
 
-            def fields = [
-                replicator: [replicate: {}] as Replicator,
-                eventAdmin: [postEvent: {}, sendEvent: {}] as EventAdmin,
-                repository: this.repository
-            ]
+                def fields = [
+                    replicator: [replicate: {}] as Replicator,
+                    eventAdmin: [postEvent: {}, sendEvent: {}] as EventAdmin,
+                    repository: this.repository
+                ]
 
-            fields.each { name, instance ->
-                factory.class.getDeclaredField(name).with {
-                    accessible = true
-                    set(factory, instance)
+                fields.each { name, instance ->
+                    factory.class.getDeclaredField(name).with {
+                        accessible = true
+                        set(factory, instance)
+                    }
                 }
-            }
 
-            factory.getPageManager(resourceResolver)
-        }
+                factory.getPageManager(resourceResolver)
+            })
 
-        resourceResolverAdapters[TagManager.class] = { ResourceResolver resourceResolver ->
+        adapterManagerInternal.addAdapter(ResourceResolver, TagManager, { ResourceResolver resourceResolver ->
             new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
-        }
+        })
 
-        resourceResolverAdapters[Session.class] = { sessionInternal }
+        adapterManagerInternal.addAdapter(ResourceResolver, Session, { sessionInternal })
     }
 
     private void addMixins() {
         findAllMixins(this.class).each { mixin ->
-            def instance = mixin.type.getConstructor(ResourceResolver).newInstance(resourceResolver)
+            def instance = mixin.type.getConstructor(ProsperSpec).newInstance(this)
 
             mixin.with {
                 accessible = true
@@ -388,66 +440,5 @@ abstract class ProsperSpec extends Specification implements TestAdaptable, Prosp
         }
 
         mixins
-    }
-
-    private void importVaultContent() {
-        if (!this.class.isAnnotationPresent(SkipContentImport)) {
-            def contentRootUrl = this.class.getResource("/SLING-INF/content")
-
-            if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
-                def contentImporter = buildContentImporter()
-                def contentArchive = new FileArchive(new File(contentRootUrl.file))
-
-                try {
-                    contentArchive.open(false)
-                    contentImporter.run(contentArchive, session.rootNode)
-                } finally {
-                    contentArchive.close()
-                }
-            }
-        }
-    }
-
-    private Importer buildContentImporter() {
-        def contentImporter
-
-        if (this.class.isAnnotationPresent(ContentFilters)) {
-            def contentImportOptions = new ImportOptions()
-
-            contentImportOptions.filter = buildContentImportFilter(this.class.getAnnotation(ContentFilters))
-            contentImporter = new Importer(contentImportOptions)
-        } else {
-            contentImporter = new Importer()
-        }
-
-        contentImporter
-    }
-
-    private WorkspaceFilter buildContentImportFilter(ContentFilters filterDefinitions) {
-        def contentImportFilter = new DefaultWorkspaceFilter()
-
-        if (filterDefinitions.xml()) {
-            contentImportFilter.load(this.class.getResourceAsStream(filterDefinitions.xml()))
-        }
-
-        filterDefinitions.filters().each { filterDefinition ->
-            def pathFilterSet = new PathFilterSet(filterDefinition.root())
-
-            pathFilterSet.importMode = filterDefinition.mode()
-
-            filterDefinition.rules().each { rule ->
-                def pathFilter = new DefaultPathFilter(rule.pattern())
-
-                if (rule.type() == ContentFilterRuleType.INCLUDE) {
-                    pathFilterSet.addInclude(pathFilter)
-                } else if (rule.type() == ContentFilterRuleType.EXCLUDE) {
-                    pathFilterSet.addExclude(pathFilter)
-                }
-            }
-
-            contentImportFilter.add(pathFilterSet)
-        }
-
-        contentImportFilter
     }
 }

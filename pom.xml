@@ -5,14 +5,14 @@
     <parent>
         <groupId>com.citytechinc.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.0.0</version>
+        <version>6.1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
@@ -41,6 +41,14 @@
         <repository>
             <id>citytech-public</id>
             <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>adobe-public</id>
+            <url>https://repo.adobe.com/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>localinstance</id>
+            <url>http://localhost:4502/maven/repository</url>
         </repository>
     </repositories>
 
@@ -323,10 +331,6 @@
             <artifactId>com.adobe.granite.replication.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.adobe.granite</groupId>
-            <artifactId>com.adobe.granite.xssprotection</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
         </dependency>
@@ -347,16 +351,16 @@
             <artifactId>org.apache.sling.event</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.scripting.sightly</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.xss</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.adobe.cq.sightly</groupId>
             <artifactId>cq-wcm-sightly-extension</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.granite</groupId>
-            <artifactId>com.adobe.granite.sightly.engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
@@ -417,6 +421,22 @@
             <groupId>com.citytechinc.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
             <version>0.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.osgi-mock</artifactId>
+            <version>1.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.sling-mock</artifactId>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
 </project>
