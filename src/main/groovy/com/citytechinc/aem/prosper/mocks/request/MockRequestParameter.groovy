@@ -1,19 +1,16 @@
 package com.citytechinc.aem.prosper.mocks.request
 
+import groovy.transform.Immutable
 import groovy.transform.ToString
 import org.apache.sling.api.request.RequestParameter
 
+@Immutable
 @ToString(includes = "value")
 class MockRequestParameter implements RequestParameter {
 
-    private final String name
+    String name
 
-    private final String value
-
-    MockRequestParameter(String name, String value) {
-        this.name = name
-        this.value = value
-    }
+    String value
 
     @Override
     boolean isFormField() {
@@ -23,11 +20,6 @@ class MockRequestParameter implements RequestParameter {
     @Override
     String getContentType() {
         throw new UnsupportedOperationException()
-    }
-
-    @Override
-    String getName() {
-        name
     }
 
     @Override

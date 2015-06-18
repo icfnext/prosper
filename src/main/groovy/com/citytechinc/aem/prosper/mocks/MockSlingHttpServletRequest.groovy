@@ -4,6 +4,7 @@ import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
 import com.citytechinc.aem.prosper.mocks.request.MockRequestPathInfo
 import groovy.transform.ToString
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.api.request.RequestDispatcherOptions
 import org.apache.sling.api.request.RequestParameter
 import org.apache.sling.api.request.RequestParameterMap
@@ -24,6 +25,8 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     private final ResourceResolver resourceResolver
 
+    private final AdapterManager adapterManager
+
     private final Resource resource
 
     private final RequestParameterMap requestParameterMap
@@ -31,9 +34,10 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     private final RequestPathInfo requestPathInfo
 
     MockSlingHttpServletRequest(MockHttpServletRequest mockRequest, ResourceResolver resourceResolver, String path,
-        List<String> selectors, String extension, String suffix) {
+        List<String> selectors, String extension, String suffix, AdapterManager adapterManager) {
         this.mockRequest = mockRequest
         this.resourceResolver = resourceResolver
+        this.adapterManager = adapterManager
 
         resource = resourceResolver.resolve(path)
         requestParameterMap = MockRequestParameterMap.create(mockRequest)
@@ -128,7 +132,7 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     @Override
     def <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        throw new UnsupportedOperationException()
+        adapterManager.getAdapter(this, type)
     }
 
     @Override

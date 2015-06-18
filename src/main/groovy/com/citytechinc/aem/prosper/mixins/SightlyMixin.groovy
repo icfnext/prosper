@@ -1,17 +1,17 @@
 package com.citytechinc.aem.prosper.mixins
 
-import com.adobe.cq.sightly.WCMUse
+import com.adobe.cq.sightly.WCMUsePojo
 import com.citytechinc.aem.prosper.builders.BindingsBuilder
-import io.sightly.java.api.Use
-import org.apache.sling.api.resource.ResourceResolver
+import com.citytechinc.aem.prosper.specs.ProsperSpec
+import org.apache.sling.scripting.sightly.pojo.Use
 
 /**
  * Mixin providing methods for initializing Sightly component classes with mocked bindings.
  */
 class SightlyMixin extends ProsperMixin {
 
-    SightlyMixin(ResourceResolver resourceResolver) {
-        super(resourceResolver)
+    SightlyMixin(ProsperSpec spec) {
+        super(spec)
     }
 
     /**
@@ -23,7 +23,7 @@ class SightlyMixin extends ProsperMixin {
      * @return initialized component instance
      */
     public <T extends Use> T init(Class<T> type, @DelegatesTo(BindingsBuilder) Closure closure) {
-        def bindings = new BindingsBuilder(resourceResolver).build(closure)
+        def bindings = spec.bindingsBuilder.build(closure)
 
         def instance = type.newInstance()
 
@@ -40,7 +40,7 @@ class SightlyMixin extends ProsperMixin {
      * @param closure
      * @return activated component instance
      */
-    public <T extends WCMUse> T activate(Class<T> type, @DelegatesTo(BindingsBuilder) Closure closure) {
+    public <T extends WCMUsePojo> T activate(Class<T> type, @DelegatesTo(BindingsBuilder) Closure closure) {
         def instance = init(type, closure)
 
         instance.activate()

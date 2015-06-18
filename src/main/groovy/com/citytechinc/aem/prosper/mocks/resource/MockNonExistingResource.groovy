@@ -1,37 +1,26 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import org.apache.sling.api.adapter.AdapterFactory
+import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.SyntheticResource
 
 class MockNonExistingResource extends SyntheticResource {
 
-    private final Map<Class, Closure> adapters
+    private final AdapterManager adapterManager
 
-    private final List<AdapterFactory> adapterFactories
-
-    MockNonExistingResource(ResourceResolver resourceResolver, String path, Map<Class, Closure> adapters,
-        List<AdapterFactory> adapterFactories) {
+    MockNonExistingResource(ResourceResolver resourceResolver, String path, AdapterManager adapterManager) {
         super(resourceResolver, path, "sling:nonexisting")
 
-        this.adapters = adapters
-        this.adapterFactories = adapterFactories
+        this.adapterManager = adapterManager
     }
 
     @Override
     def <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        def result = (AdapterType) adapterFactories.findResult { adapterFactory ->
-            adapterFactory.getAdapter(this, type)
-        }
+        def result = adapterManager.getAdapter(this, type)
 
-        if (!result) {
-            def adapter = adapters.find { it.key == type }
-
-            if (adapter) {
-                result = (AdapterType) adapter.value.call(this)
-            } else {
-                result = super.adaptTo(type)
-            }
+        // specifically check for null so we don't incorrectly check empty collections
+        if (result == null) {
+            result = super.adaptTo(type)
         }
 
         result

@@ -1,7 +1,7 @@
 package com.citytechinc.aem.prosper.mixins
 
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.citytechinc.aem.prosper.tag.JspTagProxy
-import org.apache.sling.api.resource.ResourceResolver
 import org.springframework.mock.web.MockJspWriter
 import org.springframework.mock.web.MockPageContext
 
@@ -15,8 +15,8 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RES
  */
 class JspTagMixin extends ProsperMixin {
 
-    JspTagMixin(ResourceResolver resourceResolver) {
-        super(resourceResolver)
+    JspTagMixin(ProsperSpec spec) {
+        super(spec)
     }
 
     /**
@@ -46,7 +46,7 @@ class JspTagMixin extends ProsperMixin {
             }
         }
 
-        pageContext.setAttribute(DEFAULT_RESOURCE_RESOLVER_NAME, resourceResolver)
+        pageContext.setAttribute(DEFAULT_RESOURCE_RESOLVER_NAME, spec.resourceResolver)
 
         additionalPageContextAttributes.each { name, value ->
             pageContext.setAttribute(name, value)
@@ -56,6 +56,6 @@ class JspTagMixin extends ProsperMixin {
 
         tag.pageContext = pageContext
 
-        new JspTagProxy(tag, pageContext, writer)
+        new JspTagProxy<T>(tag, pageContext, writer)
     }
 }

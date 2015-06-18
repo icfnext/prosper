@@ -87,7 +87,7 @@ class MockResourceResolverSpec extends ProsperSpec {
         resourceResolver.setSearchPath("/content/prosper")
 
         expect:
-        resourceResolver.searchPath == ["/content/prosper"]
+        resourceResolver.searchPath == ["/content/prosper"] as String[]
     }
 
     def "find resources using XPath"() {
