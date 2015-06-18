@@ -56,6 +56,6 @@ class JspTagMixin extends ProsperMixin {
 
         tag.pageContext = pageContext
 
-        new JspTagProxy(tag, pageContext, writer)
+        new JspTagProxy<T>(tag, pageContext, writer)
     }
 }
