@@ -18,7 +18,8 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 
 ## Requirements
 
-* AEM6 (versions prior to 0.10.0 are compatible with CQ 5.6)
+* AEM 6.1 for versions 4.x.x
+* AEM 6.0 for versions 3.x.x, 2.x.x, and 1.x.x (versions prior to 0.10.0 are compatible with CQ 5.6)
 * Maven 3.x
 * Familiarity with Groovy language and the Spock specification syntax (or see included tests for examples).
 
@@ -30,7 +31,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>3.0.0</version>
+    <version>4.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -76,43 +77,30 @@ Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional co
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
     <plugins>
         <plugin>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-compiler</artifactId>
-            <version>2.8.0-01</version>
-            <extensions>true</extensions>
-            <dependencies>
-                <dependency>
-                    <groupId>org.codehaus.groovy</groupId>
-                    <artifactId>groovy-eclipse-batch</artifactId>
-                    <version>2.1.8-01</version>
-                </dependency>
-            </dependencies>
-        </plugin>
-        <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.1</version>
+            <version>3.3</version>
             <configuration>
                 <compilerId>groovy-eclipse-compiler</compilerId>
-                <source>1.6</source>
-                <target>1.6</target>
+                <source>1.7</source>
+                <target>1.7</target>
                 <encoding>utf-8</encoding>
             </configuration>
             <dependencies>
                 <dependency>
                     <groupId>org.codehaus.groovy</groupId>
                     <artifactId>groovy-eclipse-compiler</artifactId>
-                    <version>2.8.0-01</version>
+                    <version>2.9.2-01</version>
                 </dependency>
                 <dependency>
                     <groupId>org.codehaus.groovy</groupId>
                     <artifactId>groovy-eclipse-batch</artifactId>
-                    <version>2.1.8-01</version>
+                    <version>2.4.3-01</version>
                 </dependency>
             </dependencies>
         </plugin>
         <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.17</version>
+            <version>2.18.1</version>
             <configuration>
                 <includes>
                     <include>**/*Spec*</include>
@@ -126,7 +114,7 @@ Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional co
     <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>2.3.2</version>
+        <version>2.4.3</version>
     </dependency>
 </dependencies>
 ```
@@ -458,7 +446,7 @@ The mock request and response objects delegate to the [MockHttpServletRequest](h
 
 Specs can add adapters by adding `AdapterFactory` instances or by providing mappings from adapter instances to closures
  that instantiate these instances from a `Resource`, `ResourceResolver` or `SlingHttpRequestServlet`.  Adapters will be
- registered with the `BundleContext` and their adaptables and adapters properties will be respected when an adapter is
+ registered with the mocked `BundleContext` and their adaptables and adapters properties will be respected when an adapter is
  chosen.  Added `AdapterFactory` instances will pull these properties from the SCR XML metadata files located in the
  classpath at /OSGI-INF.  Added adapter closures will use the `Resource`, `ResourceResolver` or
  `SlingHttpRequestServlet` as the adaptables property and the adapter instance class as the adapters property.  The
@@ -742,9 +730,9 @@ class SimpleTagSpec extends ProsperSpec {
 [Sightly](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly.html) is the new templating language introduced in AEM6 to replace JSPs for component development.  Sightly includes a [Java API](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly/use-api-in-java.html) that defines an interface as well as an abstract class for implementing component supporting classes.  Prosper provides a mixin for initializing and testing these component classes using the transient JCR and mocking constructs outlined above.
 
 ```groovy
-import com.adobe.cq.sightly.WCMUse
+import com.adobe.cq.sightly.WCMUsePojo
 
-class SleepyComponent extends WCMUse {
+class SleepyComponent extends WCMUsePojo {
 
     @Override
     void activate() throws Exception {
