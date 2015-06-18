@@ -1,7 +1,6 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdapterManager
-import org.apache.sling.api.adapter.AdapterFactory
+import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.resource.JcrResourceUtil
@@ -19,37 +18,17 @@ class MockResourceResolver implements ProsperResourceResolver, GroovyInterceptab
 
     private final Session session
 
-    private final ProsperAdapterManager adapterManager
+    private final AdapterManager adapterManager
 
     private String[] searchPath
 
     private boolean closed
 
-    MockResourceResolver(Session session, ProsperAdapterManager adapterManager) {
+    MockResourceResolver(Session session, AdapterManager adapterManager) {
         resourceProvider = new JcrResourceProvider(session, null, null, new PathMapper())
 
         this.session = session
         this.adapterManager = adapterManager
-    }
-
-    @Override
-    void addResourceAdapter(Class adapterType, Closure closure) {
-        adapterManager.addAdapter(Resource, adapterType, closure)
-    }
-
-    @Override
-    void addResourceResolverAdapter(Class adapterType, Closure closure) {
-        adapterManager.addAdapter(ResourceResolver, adapterType, closure)
-    }
-
-    @Override
-    void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
-        adapterManager.addAdapter(adaptableType, adapterType, closure)
-    }
-
-    @Override
-    void addAdapterFactory(AdapterFactory adapterFactory) {
-        adapterManager.addAdapterFactory(adapterFactory)
     }
 
     @Override
@@ -162,7 +141,7 @@ class MockResourceResolver implements ProsperResourceResolver, GroovyInterceptab
 
     @Override
     <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        adapterManager.adapt(this, type)
+        adapterManager.getAdapter(this, type)
     }
 
     @Override

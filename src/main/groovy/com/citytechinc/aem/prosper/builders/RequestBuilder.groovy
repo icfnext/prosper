@@ -1,8 +1,8 @@
 package com.citytechinc.aem.prosper.builders
 
 import com.citytechinc.aem.prosper.mocks.MockSlingHttpServletRequest
-import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.specs.ProsperSpec
+import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.api.resource.ResourceResolver
 import org.springframework.mock.web.MockHttpServletRequest
 
@@ -19,7 +19,7 @@ class RequestBuilder {
 
     private final ResourceResolver resourceResolver
 
-    private final ProsperAdapterManager adapterManager
+    private final AdapterManager adapterManager
 
     private final List<String> selectors = []
 

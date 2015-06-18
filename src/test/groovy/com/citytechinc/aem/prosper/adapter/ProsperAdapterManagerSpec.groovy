@@ -1,4 +1,4 @@
-package com.citytechinc.aem.prosper.mocks.adapter
+package com.citytechinc.aem.prosper.adapter
 
 import com.citytechinc.aem.prosper.adapters.OSGiRegisteredAdapterFactory
 import com.citytechinc.aem.prosper.specs.ProsperSpec
@@ -16,7 +16,7 @@ class ProsperAdapterManagerSpec extends ProsperSpec {
         def adapterManager = new ProsperAdapterManager(emptyBundleContext)
 
         when: "an object is adapted using the adapter manager"
-        def adapted = adapterManager.adapt(resourceResolver, PageManager)
+        def adapted = adapterManager.getAdapter(resourceResolver, PageManager)
 
         then: "null is returned"
         adapted == null

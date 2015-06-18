@@ -9,8 +9,8 @@ import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
-import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdaptable
-import com.citytechinc.aem.prosper.mocks.adapter.ProsperAdapterManager
+import com.citytechinc.aem.prosper.adapter.ProsperAdaptable
+import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolver
 import com.citytechinc.aem.prosper.traits.ProsperAsserts
@@ -25,6 +25,7 @@ import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.Synchronized
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
+import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
@@ -207,7 +208,7 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
     /**
      * @return adapter manager
      */
-    ProsperAdapterManager getAdapterManager() {
+    AdapterManager getAdapterManager() {
         adapterManagerInternal
     }
 

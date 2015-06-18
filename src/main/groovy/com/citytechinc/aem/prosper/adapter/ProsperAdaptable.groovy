@@ -1,4 +1,4 @@
-package com.citytechinc.aem.prosper.mocks.adapter
+package com.citytechinc.aem.prosper.adapter
 
 import org.apache.sling.api.adapter.AdapterFactory
 
