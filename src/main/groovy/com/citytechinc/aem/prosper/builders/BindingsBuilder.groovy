@@ -65,7 +65,7 @@ class BindingsBuilder {
      */
     BindingsBuilder(ProsperSpec spec) {
         resourceResolver = spec.resourceResolver
-        bundleContext = spec.bundleContext
+        bundleContext = spec.osgiContext.bundleContext()
         requestBuilder = new RequestBuilder(spec)
         responseBuilder = new ResponseBuilder()
     }

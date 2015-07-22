@@ -3,17 +3,16 @@ package com.citytechinc.aem.prosper.specs
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
+import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.builders.BindingsBuilder
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
-import com.citytechinc.aem.prosper.adapter.ProsperAdaptable
-import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolver
-import com.citytechinc.aem.prosper.traits.ProsperAsserts
+import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
@@ -25,14 +24,13 @@ import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.Synchronized
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
-import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
-import org.apache.sling.testing.mock.osgi.MockOsgi
-import org.osgi.framework.BundleContext
+import org.apache.sling.testing.mock.osgi.context.OsgiContextImpl
 import org.osgi.service.event.EventAdmin
+import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -44,18 +42,20 @@ import java.lang.reflect.Field
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
  */
-abstract class ProsperSpec extends Specification implements ProsperAdaptable, ProsperAsserts {
+abstract class ProsperSpec extends Specification {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
     private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
-    private static SlingRepository repositoryInternal
+    private static SlingRepository slingRepository
 
     @Shared
+    @AutoCleanup("logout")
     private Session sessionInternal
 
     @Shared
+    @AutoCleanup
     private ProsperResourceResolver resourceResolverInternal
 
     @Shared
@@ -68,10 +68,10 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
     private PageBuilder pageBuilderInternal
 
     @Shared
-    private BundleContext bundleContextInternal = MockOsgi.newBundleContext()
+    private ProsperAdapterManager adapterManagerInternal
 
     @Shared
-    private ProsperAdapterManager adapterManagerInternal
+    private OsgiContextImpl osgiContextInternal = new OsgiContextImpl()
 
     // global fixtures
 
@@ -85,11 +85,12 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
         sessionInternal = repository.loginAdministrative(null)
         nodeBuilderInternal = new NodeBuilder(sessionInternal)
         pageBuilderInternal = new PageBuilder(sessionInternal)
-        adapterManagerInternal = new ProsperAdapterManager(bundleContextInternal)
 
         registerNodeTypes()
 
         ContentImporter.importVaultContent(this)
+
+        adapterManagerInternal = new ProsperAdapterManager(osgiContextInternal.bundleContext())
 
         addAdapters()
 
@@ -103,15 +104,13 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
 
         removeAllNodes()
-
-        sessionInternal.logout()
     }
 
     /**
      * Refresh the shared resource resolver before each test run.
      */
     def setup() {
-        resourceResolverInternal.refresh()
+        resourceResolverInternal = new MockResourceResolver(session, adapterManager)
     }
 
     /**
@@ -119,8 +118,8 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
      * method to cleanup content before the entire specification has been executed.
      */
     void removeAllNodes() {
-        sessionInternal.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
-        sessionInternal.save()
+        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.save()
     }
 
     // "overridable" instance methods returning default (empty) values
@@ -176,9 +175,9 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
      * @param adapterType adapter class
      * @param closure closure with a single <code>Resource</code> that returns an instance of the adapter class
      */
-    @Override
+    @Deprecated
     void addResourceAdapter(Class adapterType, Closure closure) {
-        adapterManagerInternal.addAdapter(Resource.class, adapterType, closure)
+        adapterManager.addAdapter(Resource, adapterType, closure)
     }
 
     /**
@@ -188,27 +187,44 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
      * @param adapterType adapter class
      * @param closure closure with a single <code>ResourceResolver</code> that returns an instance of the adapter class
      */
-    @Override
+    @Deprecated
     void addResourceResolverAdapter(Class adapterType, Closure closure) {
-        adapterManagerInternal.addAdapter(ResourceResolver.class, adapterType, closure)
+        adapterManager.addAdapter(ResourceResolver, adapterType, closure)
     }
 
-    @Override
+    /**
+     * Register an adapter for this spec.
+     *
+     * @param adaptableType
+     * @param adapterType target adapter type
+     * @param closure
+     */
     void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
-        adapterManagerInternal.addAdapter(adaptableType, adapterType, closure)
+        adapterManager.addAdapter(adaptableType, adapterType, closure)
     }
 
-    @Override
+    /**
+     * Register an adapter factory for this spec.
+     *
+     * @param adapterFactory adapter factory instance
+     */
     void addAdapterFactory(AdapterFactory adapterFactory) {
-        adapterManagerInternal.addAdapterFactory(adapterFactory)
+        adapterManager.addAdapterFactory(adapterFactory)
     }
 
     // accessors for shared instances
 
     /**
+     * @return OSGi context
+     */
+    OsgiContextImpl getOsgiContext() {
+        osgiContextInternal
+    }
+
+    /**
      * @return adapter manager
      */
-    AdapterManager getAdapterManager() {
+    ProsperAdapterManager getAdapterManager() {
         adapterManagerInternal
     }
 
@@ -217,16 +233,6 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
      */
     Session getSession() {
         sessionInternal
-    }
-
-    /**
-     * Get the Node for a path.
-     *
-     * @param path valid JCR Node path
-     * @return node for given path
-     */
-    Node getNode(String path) {
-        sessionInternal.getNode(path)
     }
 
     /**
@@ -241,13 +247,6 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
      */
     PageBuilder getPageBuilder() {
         pageBuilderInternal
-    }
-
-    /**
-     * @return Mock BundleContext
-     */
-    BundleContext getBundleContext() {
-        bundleContextInternal
     }
 
     /**
@@ -267,13 +266,23 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
     // convenience getters
 
     /**
+     * Get the Node for a path.
+     *
+     * @param path valid JCR Node path
+     * @return node for given path
+     */
+    Node getNode(String path) {
+        session.getNode(path)
+    }
+
+    /**
      * Get the Resource for a path.
      *
      * @param path valid Resource path
      * @return resource for given path or null
      */
     Resource getResource(String path) {
-        resourceResolverInternal.getResource(path)
+        resourceResolver.getResource(path)
     }
 
     /**
@@ -283,7 +292,7 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
      * @return Page for given path or null
      */
     Page getPage(String path) {
-        pageManagerInternal.getPage(path)
+        pageManager.getPage(path)
     }
 
     // builders
@@ -316,26 +325,116 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
         new BindingsBuilder(this)
     }
 
+    // assertions
+
+    /**
+     * Assert that a node exists for the given path.
+     *
+     * @param path node path
+     */
+    void assertNodeExists(String path) {
+        assert session.nodeExists(path)
+    }
+
+    /**
+     * Assert that a node exists for the given path and node type.
+     *
+     * @param path node path
+     * @param primaryNodeTypeName primary node type name
+     */
+    void assertNodeExists(String path, String primaryNodeTypeName) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        assert node.primaryNodeType.name == primaryNodeTypeName
+    }
+
+    /**
+     * Assert that a node exists for the given path and property map.
+     *
+     * @param path node path
+     * @param properties map of property names and values to verify for the node
+     */
+    void assertNodeExists(String path, Map<String, Object> properties) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        properties.each { name, value ->
+            assert node.get(name) == value
+        }
+    }
+
+    /**
+     * Assert that a node exists for the given path, node type, and property map.
+     *
+     * @param path node path
+     * @param primaryNodeTypeName primary node type name
+     * @param properties map of property names and values to verify for the node
+     */
+    void assertNodeExists(String path, String primaryNodeTypeName, Map<String, Object> properties) {
+        assert session.nodeExists(path)
+
+        def node = session.getNode(path)
+
+        assert node.primaryNodeType.name == primaryNodeTypeName
+
+        properties.each { name, value ->
+            assert node.get(name) == value
+        }
+    }
+
+    /**
+     * Assert that a page exists for the given path.
+     *
+     * @param path page path
+     */
+    void assertPageExists(String path) {
+        assert session.nodeExists(path)
+
+        def pageNode = session.getNode(path)
+
+        assert pageNode.primaryNodeType.name == NameConstants.NT_PAGE
+        assert pageNode.hasNode(JcrConstants.JCR_CONTENT)
+    }
+
+    /**
+     * Assert that a page exists for the given path and contains the given properties.
+     *
+     * @param path page path
+     * @param properties map of property names and values to verify for the page
+     */
+    void assertPageExists(String path, Map<String, Object> properties) {
+        assertPageExists(path)
+
+        def contentNode = session.getNode(path).getNode(JcrConstants.JCR_CONTENT)
+
+        properties.each { name, value ->
+            assert contentNode.get(name) == value
+        }
+    }
+
     // internals
 
     @Synchronized
     protected SlingRepository getRepository() {
-        if (!repositoryInternal) {
+        if (!slingRepository) {
             RepositoryUtil.startRepository()
 
-            repositoryInternal = RepositoryUtil.repository
+            slingRepository = RepositoryUtil.repository
 
-            registerCoreNodeTypes()
+            registerDefaultNodeTypes()
 
             addShutdownHook {
                 RepositoryUtil.stopRepository()
             }
         }
 
-        repositoryInternal
+        slingRepository
     }
 
-    private void registerCoreNodeTypes() {
+    private void registerDefaultNodeTypes() {
         def session = repository.loginAdministrative(null)
 
         try {
@@ -351,7 +450,7 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
         if (this.class.isAnnotationPresent(NodeTypes)) {
             def cndResourcePaths = this.class.getAnnotation(NodeTypes).value() as List
 
-            registerNodeTypes(sessionInternal, cndResourcePaths)
+            registerNodeTypes(session, cndResourcePaths)
         }
     }
 
@@ -365,58 +464,56 @@ abstract class ProsperSpec extends Specification implements ProsperAdaptable, Pr
 
     private void addAdapters() {
         addAdapterFactories().each { adapterFactory ->
-            adapterManagerInternal.addAdapterFactory(adapterFactory)
+            adapterManager.addAdapterFactory(adapterFactory)
         }
 
         addDefaultResourceAdapters()
         addDefaultResourceResolverAdapters()
 
         addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
-            adapterManagerInternal.addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
+            adapterManager.addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
         }
 
         addResourceResolverAdapters().each { Map.Entry<Class, Closure> resourceResolverAdapter ->
-            adapterManagerInternal.addAdapter(ResourceResolver, resourceResolverAdapter.key,
-                resourceResolverAdapter.value)
+            adapterManager.addAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
         }
 
         addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
-            adapterManagerInternal.addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
+            adapterManager.addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
         }
     }
 
     private void addDefaultResourceAdapters() {
-        adapterManagerInternal.addAdapter(Resource, Page, { Resource resource ->
+        adapterManager.addAdapter(Resource, Page, { Resource resource ->
             NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
         })
     }
 
     private void addDefaultResourceResolverAdapters() {
-        adapterManagerInternal.addAdapter(ResourceResolver.class, PageManager.class, {
-            ResourceResolver resourceResolver ->
-                def factory = new PageManagerFactoryImpl()
+        adapterManager.addAdapter(ResourceResolver, PageManager, { ResourceResolver resourceResolver ->
+            def factory = new PageManagerFactoryImpl()
 
-                def fields = [
-                    replicator: [replicate: {}] as Replicator,
-                    eventAdmin: [postEvent: {}, sendEvent: {}] as EventAdmin,
-                    repository: this.repository
-                ]
+            def fields = [
+                replicator: [replicate: {}] as Replicator,
+                eventAdmin: [postEvent: {}, sendEvent: {}] as EventAdmin,
+                repository: this.repository
+            ]
 
-                fields.each { name, instance ->
-                    factory.class.getDeclaredField(name).with {
-                        accessible = true
-                        set(factory, instance)
-                    }
+            fields.each { name, instance ->
+                factory.class.getDeclaredField(name).with {
+                    accessible = true
+                    set(factory, instance)
                 }
+            }
 
-                factory.getPageManager(resourceResolver)
-            })
+            factory.getPageManager(resourceResolver)
+        })
 
-        adapterManagerInternal.addAdapter(ResourceResolver, TagManager, { ResourceResolver resourceResolver ->
+        adapterManager.addAdapter(ResourceResolver, TagManager, { ResourceResolver resourceResolver ->
             new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
         })
 
-        adapterManagerInternal.addAdapter(ResourceResolver, Session, { sessionInternal })
+        adapterManager.addAdapter(ResourceResolver, Session, { session })
     }
 
     private void addMixins() {
