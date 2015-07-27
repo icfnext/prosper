@@ -1,9 +1,10 @@
 package com.citytechinc.aem.prosper.adapter
 
+import com.citytechinc.aem.prosper.context.ProsperSlingContext
+import groovy.transform.TupleConstructor
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.commons.osgi.PropertiesUtil
-import org.osgi.framework.BundleContext
 import org.osgi.framework.ServiceReference
 
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
@@ -12,32 +13,30 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES
 /**
  * Adapter manager for Prosper specs.
  */
+@TupleConstructor
 class ProsperAdapterManager implements AdapterManager {
 
-    private final BundleContext bundleContext
-
-    ProsperAdapterManager(BundleContext bundleContext) {
-        this.bundleContext = bundleContext
-    }
+    ProsperSlingContext slingContext
 
     void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
-        def adapterProperties = new Hashtable<String, Object>(2)
+        def adapterProperties = [:]
 
         adapterProperties.put(ADAPTABLE_CLASSES, [adaptableType.name] as String[])
         adapterProperties.put(ADAPTER_CLASSES, [adapterType.name] as String[])
 
-        bundleContext.registerService(AdapterFactory.name, new InternalAdapterFactory(closure), adapterProperties)
+        slingContext.registerService(AdapterFactory, new InternalAdapterFactory(closure), adapterProperties)
     }
 
     void addAdapterFactory(AdapterFactory adapterFactory) {
-        bundleContext.registerService(AdapterFactory.name, adapterFactory, new Hashtable<String, Object>())
+        slingContext.registerService(AdapterFactory, adapterFactory)
     }
 
     @Override
     public <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> adapterType) {
         // find all adapter factories
-        def adapterFactories = ((bundleContext.getServiceReferences(AdapterFactory.name, null) ?: []) as List)
-            .findResults { ServiceReference serviceReference ->
+        def serviceReferences = slingContext.bundleContext.getServiceReferences(AdapterFactory.name, null)
+
+        def adapterFactories = ((serviceReferences ?: []) as List).findResults { ServiceReference serviceReference ->
             def adapterFactory
 
             def adaptables = PropertiesUtil.toStringArray(serviceReference.getProperty(ADAPTABLE_CLASSES))
@@ -51,13 +50,13 @@ class ProsperAdapterManager implements AdapterManager {
                 }
 
                 if (isAdaptable && adapters.contains(adapterType.name)) {
-                    adapterFactory = bundleContext.getService(serviceReference)
+                    adapterFactory = slingContext.bundleContext.getService(serviceReference)
                 } else {
                     adapterFactory = null
                 }
             } else {
                 // adapter factory may have been specifically created in a spec without OSGi properties
-                adapterFactory = bundleContext.getService(serviceReference)
+                adapterFactory = slingContext.bundleContext.getService(serviceReference)
             }
 
             adapterFactory

@@ -8,6 +8,7 @@ import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.builders.BindingsBuilder
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
+import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
@@ -28,7 +29,6 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
-import org.apache.sling.testing.mock.osgi.context.OsgiContextImpl
 import org.osgi.service.event.EventAdmin
 import spock.lang.AutoCleanup
 import spock.lang.Shared
@@ -71,7 +71,7 @@ abstract class ProsperSpec extends Specification {
     private ProsperAdapterManager adapterManagerInternal
 
     @Shared
-    private OsgiContextImpl osgiContextInternal = new OsgiContextImpl()
+    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
 
     // global fixtures
 
@@ -90,9 +90,11 @@ abstract class ProsperSpec extends Specification {
 
         ContentImporter.importVaultContent(this)
 
-        adapterManagerInternal = new ProsperAdapterManager(osgiContextInternal.bundleContext())
+        adapterManagerInternal = new ProsperAdapterManager(slingContextInternal)
 
         addAdapters()
+
+        // SlingAdaptable.setAdapterManager(adapterManagerInternal)
 
         resourceResolverInternal = new MockResourceResolver(sessionInternal, adapterManagerInternal)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
@@ -215,10 +217,10 @@ abstract class ProsperSpec extends Specification {
     // accessors for shared instances
 
     /**
-     * @return OSGi context
+     * @return Sling context
      */
-    OsgiContextImpl getOsgiContext() {
-        osgiContextInternal
+    ProsperSlingContext getSlingContext() {
+        slingContextInternal
     }
 
     /**
@@ -464,33 +466,33 @@ abstract class ProsperSpec extends Specification {
 
     private void addAdapters() {
         addAdapterFactories().each { adapterFactory ->
-            adapterManager.addAdapterFactory(adapterFactory)
+            addAdapterFactory(adapterFactory)
         }
 
         addDefaultResourceAdapters()
         addDefaultResourceResolverAdapters()
 
         addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
-            adapterManager.addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
+            addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
         }
 
         addResourceResolverAdapters().each { Map.Entry<Class, Closure> resourceResolverAdapter ->
-            adapterManager.addAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
+            addAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
         }
 
         addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
-            adapterManager.addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
+            addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
         }
     }
 
     private void addDefaultResourceAdapters() {
-        adapterManager.addAdapter(Resource, Page, { Resource resource ->
+        addAdapter(Resource, Page, { Resource resource ->
             NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
         })
     }
 
     private void addDefaultResourceResolverAdapters() {
-        adapterManager.addAdapter(ResourceResolver, PageManager, { ResourceResolver resourceResolver ->
+        addAdapter(ResourceResolver, PageManager, { ResourceResolver resourceResolver ->
             def factory = new PageManagerFactoryImpl()
 
             def fields = [
@@ -509,11 +511,11 @@ abstract class ProsperSpec extends Specification {
             factory.getPageManager(resourceResolver)
         })
 
-        adapterManager.addAdapter(ResourceResolver, TagManager, { ResourceResolver resourceResolver ->
+        addAdapter(ResourceResolver, TagManager, { ResourceResolver resourceResolver ->
             new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
         })
 
-        adapterManager.addAdapter(ResourceResolver, Session, { session })
+        addAdapter(ResourceResolver, Session, { session })
     }
 
     private void addMixins() {

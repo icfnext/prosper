@@ -410,12 +410,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.2.8.RELEASE</version>
+            <version>4.1.7.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>3.2.8.RELEASE</version>
+            <version>4.1.7.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>com.citytechinc.aem.groovy.extension</groupId>
@@ -437,6 +437,16 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock</artifactId>
             <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.models.api</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.models.impl</artifactId>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
 </project>
