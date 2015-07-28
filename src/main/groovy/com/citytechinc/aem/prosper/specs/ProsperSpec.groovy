@@ -445,6 +445,7 @@ abstract class ProsperSpec extends Specification {
 
         addDefaultResourceAdapters()
         addDefaultResourceResolverAdapters()
+        addDefaultRequestAdapters()
 
         addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
             addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
@@ -490,6 +491,16 @@ abstract class ProsperSpec extends Specification {
         })
 
         addAdapter(ResourceResolver, Session, { session })
+    }
+
+    private void addDefaultRequestAdapters() {
+        addAdapter(SlingHttpServletRequest, Resource, { SlingHttpServletRequest request ->
+            request.resource
+        })
+
+        addAdapter(SlingHttpServletRequest, ResourceResolver, { SlingHttpServletRequest request ->
+            request.resourceResolver
+        })
     }
 
     private void addMixins() {

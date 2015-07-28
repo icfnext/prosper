@@ -132,7 +132,9 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
 
     @Override
     def <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        adapterManager.getAdapter(this, type)
+        def result = adapterManager.getAdapter(this, type)
+
+        result
     }
 
     @Override
