@@ -21,8 +21,13 @@ import org.osgi.service.component.ComponentContext
  */
 class ProsperSlingContext {
 
+    @Delegate(includes = ["registerService", "registerInjectActivateService", "getService", "getServices",
+        "addModelsForPackage"])
     private final SlingContextImpl slingContext = new SlingContextImpl()
 
+    /**
+     * Register default services and model injectors.
+     */
     ProsperSlingContext() {
         registerInjectActivateService(new MockEventAdmin())
         registerInjectActivateService(new ModelAdapterFactory())
@@ -37,43 +42,17 @@ class ProsperSlingContext {
         registerService(ImplementationPicker, new FirstImplementationPicker())
     }
 
+    /**
+     * @return mock OSGi component context
+     */
     ComponentContext getComponentContext() {
         slingContext.componentContext()
     }
 
+    /**
+     * @return mock OSGi bundle context
+     */
     BundleContext getBundleContext() {
         slingContext.bundleContext()
-    }
-
-    def <T> T registerService(T service) {
-        slingContext.registerService(service)
-    }
-
-    def <T> T registerService(Class<T> serviceClass, T service) {
-        slingContext.registerService(serviceClass, service)
-    }
-
-    def <T> T registerService(Class<T> serviceClass, T service, Map<String, Object> properties) {
-        slingContext.registerService(serviceClass, service, properties)
-    }
-
-    def <T> T registerInjectActivateService(T service) {
-        slingContext.registerInjectActivateService(service)
-    }
-
-    def <T> T registerInjectActivateService(T service, Map<String, Object> properties) {
-        slingContext.registerInjectActivateService(service, properties)
-    }
-
-    def <ServiceType> ServiceType getService(Class<ServiceType> serviceType) {
-        slingContext.getService(serviceType)
-    }
-
-    def <ServiceType> ServiceType[] getServices(Class<ServiceType> serviceType, String filter) {
-        slingContext.getServices(serviceType, filter)
-    }
-
-    void addModelsForPackage(String packageName) {
-        slingContext.addModelsForPackage(packageName)
     }
 }

@@ -94,8 +94,6 @@ abstract class ProsperSpec extends Specification {
 
         addAdapters()
 
-        // SlingAdaptable.setAdapterManager(adapterManagerInternal)
-
         resourceResolverInternal = new MockResourceResolver(sessionInternal, adapterManagerInternal)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
 
@@ -168,30 +166,6 @@ abstract class ProsperSpec extends Specification {
      */
     Map<Class, Closure> addRequestAdapters() {
         Collections.emptyMap()
-    }
-
-    /**
-     * Add a <code>Resource</code> adapter for the current specification.  This method can be called as many times as
-     * necessary in a feature method to add adapters for the current test.
-     *
-     * @param adapterType adapter class
-     * @param closure closure with a single <code>Resource</code> that returns an instance of the adapter class
-     */
-    @Deprecated
-    void addResourceAdapter(Class adapterType, Closure closure) {
-        adapterManager.addAdapter(Resource, adapterType, closure)
-    }
-
-    /**
-     * Add a <code>ResourceResolver</code> adapter for the current specification.  This method can be called as many
-     * times as necessary in a feature method to add adapters for the current test.
-     *
-     * @param adapterType adapter class
-     * @param closure closure with a single <code>ResourceResolver</code> that returns an instance of the adapter class
-     */
-    @Deprecated
-    void addResourceResolverAdapter(Class adapterType, Closure closure) {
-        adapterManager.addAdapter(ResourceResolver, adapterType, closure)
     }
 
     /**
