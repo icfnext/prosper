@@ -23,7 +23,7 @@ class ProsperSlingContext {
 
     @Delegate(includes = ["registerService", "registerInjectActivateService", "getService", "getServices",
         "addModelsForPackage"])
-    private final SlingContextImpl slingContext = new SlingContextImpl()
+    final SlingContextImpl slingContext = new SlingContextImpl()
 
     /**
      * Register default services and model injectors.
