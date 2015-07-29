@@ -1,5 +1,6 @@
 package com.citytechinc.aem.prosper.context
 
+import org.apache.sling.commons.mime.MimeTypeService
 import org.apache.sling.models.impl.FirstImplementationPicker
 import org.apache.sling.models.impl.ModelAdapterFactory
 import org.apache.sling.models.impl.injectors.BindingsInjector
@@ -11,8 +12,11 @@ import org.apache.sling.models.impl.injectors.SelfInjector
 import org.apache.sling.models.impl.injectors.SlingObjectInjector
 import org.apache.sling.models.impl.injectors.ValueMapInjector
 import org.apache.sling.models.spi.ImplementationPicker
+import org.apache.sling.settings.SlingSettingsService
 import org.apache.sling.testing.mock.osgi.MockEventAdmin
 import org.apache.sling.testing.mock.sling.context.SlingContextImpl
+import org.apache.sling.testing.mock.sling.services.MockMimeTypeService
+import org.apache.sling.testing.mock.sling.services.MockSlingSettingService
 import org.osgi.framework.BundleContext
 import org.osgi.service.component.ComponentContext
 
@@ -22,7 +26,7 @@ import org.osgi.service.component.ComponentContext
 class ProsperSlingContext {
 
     @Delegate(includes = ["registerService", "registerInjectActivateService", "getService", "getServices",
-        "addModelsForPackage"])
+        "addModelsForPackage", "runMode"])
     final SlingContextImpl slingContext = new SlingContextImpl()
 
     /**
@@ -40,6 +44,8 @@ class ProsperSlingContext {
         registerInjectActivateService(new SlingObjectInjector())
         registerInjectActivateService(new ValueMapInjector())
         registerService(ImplementationPicker, new FirstImplementationPicker())
+        registerService(SlingSettingsService, new MockSlingSettingService(["publish"] as Set))
+        registerService(MimeTypeService, new MockMimeTypeService())
     }
 
     /**
