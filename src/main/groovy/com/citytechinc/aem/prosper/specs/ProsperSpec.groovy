@@ -3,6 +3,7 @@ package com.citytechinc.aem.prosper.specs
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
+import com.citytechinc.aem.prosper.adapter.ProsperAdapterFactory
 import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.builders.BindingsBuilder
@@ -14,14 +15,9 @@ import com.citytechinc.aem.prosper.mixins.ProsperMixin
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolver
 import com.day.cq.commons.jcr.JcrConstants
-import com.day.cq.replication.Replicator
-import com.day.cq.tagging.TagManager
-import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
-import com.day.cq.wcm.core.impl.PageImpl
-import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.Synchronized
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
@@ -29,7 +25,6 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
-import org.osgi.service.event.EventAdmin
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -439,13 +434,11 @@ abstract class ProsperSpec extends Specification {
     }
 
     private void addAdapters() {
+        addAdapterFactory(new ProsperAdapterFactory(repository, session))
+
         addAdapterFactories().each { adapterFactory ->
             addAdapterFactory(adapterFactory)
         }
-
-        addDefaultResourceAdapters()
-        addDefaultResourceResolverAdapters()
-        addDefaultRequestAdapters()
 
         addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
             addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
@@ -458,49 +451,6 @@ abstract class ProsperSpec extends Specification {
         addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
             addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
         }
-    }
-
-    private void addDefaultResourceAdapters() {
-        addAdapter(Resource, Page, { Resource resource ->
-            NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
-        })
-    }
-
-    private void addDefaultResourceResolverAdapters() {
-        addAdapter(ResourceResolver, PageManager, { ResourceResolver resourceResolver ->
-            def factory = new PageManagerFactoryImpl()
-
-            def fields = [
-                replicator: [replicate: {}] as Replicator,
-                eventAdmin: [postEvent: {}, sendEvent: {}] as EventAdmin,
-                repository: this.repository
-            ]
-
-            fields.each { name, instance ->
-                factory.class.getDeclaredField(name).with {
-                    accessible = true
-                    set(factory, instance)
-                }
-            }
-
-            factory.getPageManager(resourceResolver)
-        })
-
-        addAdapter(ResourceResolver, TagManager, { ResourceResolver resourceResolver ->
-            new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
-        })
-
-        addAdapter(ResourceResolver, Session, { session })
-    }
-
-    private void addDefaultRequestAdapters() {
-        addAdapter(SlingHttpServletRequest, Resource, { SlingHttpServletRequest request ->
-            request.resource
-        })
-
-        addAdapter(SlingHttpServletRequest, ResourceResolver, { SlingHttpServletRequest request ->
-            request.resourceResolver
-        })
     }
 
     private void addMixins() {
