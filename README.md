@@ -11,10 +11,11 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 * Test AEM projects outside of an OSGi container in the standard Maven build lifecycle.
 * Write test specifications in [Groovy](http://groovy.codehaus.org) using [Spock](http://spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests more quickly and efficiently.
 * Extends and augments the transient JCR implementation provided by the [Apache Sling Testing Tools](http://sling.apache.org/documentation/development/sling-testing-tools.html) to eliminate the need to deploy tests in OSGi bundles for most testing scenarios.
-* While accepting the limitations of testing outside the container, provides minimal/mock implementations of Sling interfaces (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
+* Supplies mock OSGi bundle and component contexts for registering services and providing basic OSGi support. 
+* Basic implementations of Sling interfaces are provided (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
 * Utilizes Groovy builders from our [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for Sling requests and responses to simplify setup of test cases.
-* Bindings builder for initializing Sightly components with mocked attributes
+* Bindings builder for initializing Sightly components with mocked attributes.
 
 ## Requirements
 
@@ -69,7 +70,8 @@ class ExampleSpec extends ProsperSpec {
 }
 ```
 
-Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details can be found [here](http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven).
+Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details for projects with 
+mixed Java/Groovy sources can be found [here](http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven).
 
 ```xml
 <build>
@@ -447,7 +449,7 @@ The mock request and response objects delegate to the [MockHttpServletRequest](h
 The Prosper Sling Context supplies a mock OSGi bundle and component contexts.  This allows for registration of OSGi 
 services and testing of Sling Models.  
 
-## Adding Adapters
+#### Adding Adapters
 
 Specs can add adapters by adding `AdapterFactory` instances or by providing mappings from adapter instances to closures
  that instantiate these instances from a `Resource`, `ResourceResolver` or `SlingHttpRequestServlet`.  Adapters will be
@@ -544,7 +546,7 @@ class ExampleSpec extends ProsperSpec {
 }
 ```
 
-## Sling Models
+#### Sling Models
 
 Classes annotated with `@org.apache.sling.models.annotations.Model` require registration via the `addModelsForPackage` 
 method in order to support adapting a Sling resource or request to the model instance.
