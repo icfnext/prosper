@@ -118,7 +118,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add resource adapter for test"() {
         setup:
-        addResourceAdapter(Map, { [:] })
+        addAdapter(Resource, Map, { [:] })
 
         expect:
         resourceResolver.getResource("/").adaptTo(Map) == [:]
@@ -126,7 +126,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add resource resolver adapter for test"() {
         setup:
-        addResourceResolverAdapter(Map, { [:] })
+        addAdapter(ResourceResolver, Map, { [:] })
 
         expect:
         resourceResolver.adaptTo(Map) == [:]

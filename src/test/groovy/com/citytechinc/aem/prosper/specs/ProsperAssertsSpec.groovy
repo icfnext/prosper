@@ -1,6 +1,4 @@
-package com.citytechinc.aem.prosper.traits
-
-import com.citytechinc.aem.prosper.specs.ProsperSpec
+package com.citytechinc.aem.prosper.specs
 
 class ProsperAssertsSpec extends ProsperSpec {
 
