@@ -1,5 +1,6 @@
 com.citytechinc.aem.prosper.annotations
 com.citytechinc.aem.prosper.builders
+com.citytechinc.aem.prosper.context
 com.citytechinc.aem.prosper.mixins
 com.citytechinc.aem.prosper.specs
-com.citytechinc.aem.prosper.traits
+com.citytechinc.aem.prosper.tag
