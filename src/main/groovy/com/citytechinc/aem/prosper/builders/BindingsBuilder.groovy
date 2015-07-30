@@ -3,6 +3,7 @@ package com.citytechinc.aem.prosper.builders
 import com.adobe.cq.sightly.SightlyWCMMode
 import com.adobe.cq.sightly.WCMBindings
 import com.adobe.cq.sightly.internal.WCMInheritanceValueMap
+import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap
 import com.day.cq.wcm.api.PageManager
@@ -19,7 +20,6 @@ import org.apache.sling.api.resource.ValueMap
 import org.apache.sling.api.scripting.SlingBindings
 import org.apache.sling.testing.mock.sling.MockSling
 import org.apache.sling.xss.XSSAPI
-import org.osgi.framework.BundleContext
 
 import javax.script.Bindings
 import javax.script.SimpleBindings
@@ -31,7 +31,7 @@ class BindingsBuilder {
 
     private final ResourceResolver resourceResolver
 
-    private final BundleContext bundleContext
+    private final ProsperSlingContext slingContext
 
     @Delegate
     private final RequestBuilder requestBuilder
@@ -65,7 +65,7 @@ class BindingsBuilder {
      */
     BindingsBuilder(ProsperSpec spec) {
         resourceResolver = spec.resourceResolver
-        bundleContext = spec.bundleContext
+        slingContext = spec.slingContext
         requestBuilder = new RequestBuilder(spec)
         responseBuilder = new ResponseBuilder()
     }
@@ -80,7 +80,7 @@ class BindingsBuilder {
         assert serviceType, "service type must be non-null"
         assert instance, "service instance must be non-null"
 
-        bundleContext.registerService(serviceType.name, instance, null)
+        slingContext.registerService(serviceType, instance)
     }
 
     /**
@@ -141,6 +141,7 @@ class BindingsBuilder {
     private def buildBindings() {
         def slingRequest = requestBuilder.build()
         def slingResponse = responseBuilder.build()
+        def sling = MockSling.newSlingScriptHelper(slingRequest, slingResponse, slingContext.bundleContext)
 
         if (wcmMode) {
             wcmMode.toRequest(slingRequest)
@@ -149,7 +150,7 @@ class BindingsBuilder {
         def resource = slingRequest.resource
 
         def bindings = [
-            (SlingBindings.SLING)          : MockSling.newSlingScriptHelper(slingRequest, slingResponse, bundleContext),
+            (SlingBindings.SLING)          : sling,
             (SlingBindings.REQUEST)        : slingRequest,
             (SlingBindings.RESPONSE)       : slingResponse,
             (SlingBindings.RESOURCE)       : resource,

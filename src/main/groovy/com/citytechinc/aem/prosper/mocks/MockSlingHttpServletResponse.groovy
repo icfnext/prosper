@@ -14,7 +14,7 @@ class MockSlingHttpServletResponse implements SlingHttpServletResponse {
     }
 
     @Override
-    def <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+    <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
         throw new UnsupportedOperationException()
     }
 

@@ -1,19 +1,19 @@
 package com.citytechinc.aem.prosper.adapter
 
 import com.citytechinc.aem.prosper.adapters.OSGiRegisteredAdapterFactory
+import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.adapter.AdapterFactory
-import org.apache.sling.testing.mock.osgi.MockOsgi
 
 class ProsperAdapterManagerSpec extends ProsperSpec {
 
     def "empty bundleContext returns null for adapted objects"() {
-        given: "an empty bundle context"
-        def emptyBundleContext = MockOsgi.newBundleContext()
+        given: "a new sling context"
+        def slingContext = new ProsperSlingContext()
 
         and: "an adapter manager built off the empty bundle context"
-        def adapterManager = new ProsperAdapterManager(emptyBundleContext)
+        def adapterManager = new ProsperAdapterManager(slingContext)
 
         when: "an object is adapted using the adapter manager"
         def adapted = adapterManager.getAdapter(resourceResolver, PageManager)
@@ -43,7 +43,7 @@ class ProsperAdapterManagerSpec extends ProsperSpec {
         given: "an adapter factory without OSGi properties"
         addAdapterFactory(new AdapterFactory() {
             @Override
-            def <AdapterType> AdapterType getAdapter(Object o, Class<AdapterType> aClass) {
+            <AdapterType> AdapterType getAdapter(Object o, Class<AdapterType> aClass) {
                 (AdapterType) 157
             }
         })
