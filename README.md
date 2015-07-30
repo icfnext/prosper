@@ -607,7 +607,7 @@ class ExampleSpec extends ProsperSpec {
 
 ### Mocking Services
 
-OSGi services can be mocked (fully or partially) using Spock's [mocking API](http://docs.spockframework.org/en/latest/interaction_based_testing.html#creating-mock-objects).  Classes that inject services using the [Apache Felix SCR annotations](http://felix.apache.org/documentation/subprojects/apache-felix-maven-scr-plugin/scr-annotations.html) (as in the example servlet below) should use `protected` visibility to allow setting of service fields to mocked instances during testing.
+OSGi services can be mocked (fully or partially) using Spock's [mocking API](http://docs.spockframework.org/en/latest/interaction_based_testing.html#creating-mock-objects).  Classes that inject services using the [Apache Felix SCR annotations](http://felix.apache.org/documentation/subprojects/apache-felix-maven-scr-plugin/scr-annotations.html) (as in the example servlet below) should use `protected` or `public` visibility to allow setting of service fields to mocked instances during testing.
 
 ```groovy
 import com.day.cq.replication.ReplicationActionType
@@ -644,7 +644,7 @@ class CustomReplicationServlet extends SlingAllMethodsServlet {
 }
 ```
 
-The Prosper specification for this servlet can then set a mocked `Replicator` instance and verify the expected [interactions](http://docs.spockframework.org/en/latest/interaction_based_testing.html) using the Spock  syntax.
+The Prosper specification for this servlet can then set a mocked `Replicator` instance and verify the expected [interactions](http://docs.spockframework.org/en/latest/interaction_based_testing.html) using the Spock syntax.  Alternatively, services can inject other service references using the `slingContext.registerInjectActivateService` methods.
 
 ```groovy
 def "servlet with mock service"() {
