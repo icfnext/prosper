@@ -5,6 +5,7 @@ import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.adapter.AdapterFactory
+import spock.lang.IgnoreRest
 
 class ProsperAdapterManagerSpec extends ProsperSpec {
 
@@ -39,6 +40,7 @@ class ProsperAdapterManagerSpec extends ProsperSpec {
         resourceResolverResult == null
     }
 
+    @IgnoreRest
     def "test adapter factory without OSGi service properties is always called"() {
         given: "an adapter factory without OSGi properties"
         addAdapterFactory(new AdapterFactory() {

@@ -12,19 +12,20 @@ import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
-import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
-import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolver
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
-import groovy.transform.Synchronized
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
+import org.apache.sling.api.adapter.SlingAdaptable
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ResourceResolverFactory
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
+import org.apache.sling.testing.mock.sling.MockSling
+import org.apache.sling.testing.mock.sling.ResourceResolverType
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -43,15 +44,22 @@ abstract class ProsperSpec extends Specification {
 
     private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
-    private static SlingRepository slingRepository
+    @Shared
+    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
+
+    @Shared
+    private ProsperAdapterManager adapterManagerInternal = new ProsperAdapterManager(slingContextInternal)
+
+    @Shared
+    private ResourceResolverFactory resourceResolverFactoryInternal
+
+    @Shared
+    @AutoCleanup
+    private ResourceResolver resourceResolverInternal
 
     @Shared
     @AutoCleanup("logout")
     private Session sessionInternal
-
-    @Shared
-    @AutoCleanup
-    private ProsperResourceResolver resourceResolverInternal
 
     @Shared
     private PageManager pageManagerInternal
@@ -62,12 +70,6 @@ abstract class ProsperSpec extends Specification {
     @Shared
     private PageBuilder pageBuilderInternal
 
-    @Shared
-    private ProsperAdapterManager adapterManagerInternal
-
-    @Shared
-    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
-
     // global fixtures
 
     /**
@@ -77,7 +79,16 @@ abstract class ProsperSpec extends Specification {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        sessionInternal = repository.loginAdministrative(null)
+        SlingAdaptable.adapterManager = adapterManagerInternal
+        MockSling.setAdapterManagerBundleContext(slingContext.bundleContext)
+
+        resourceResolverFactoryInternal = MockSling.newResourceResolverFactory(ResourceResolverType.JCR_JACKRABBIT,
+            slingContext.bundleContext)
+        resourceResolverInternal = resourceResolverFactoryInternal.getAdministrativeResourceResolver(null)
+        sessionInternal = resourceResolverInternal.adaptTo(Session)
+
+
+
         nodeBuilderInternal = new NodeBuilder(sessionInternal)
         pageBuilderInternal = new PageBuilder(sessionInternal)
 
@@ -85,11 +96,9 @@ abstract class ProsperSpec extends Specification {
 
         ContentImporter.importVaultContent(this)
 
-        adapterManagerInternal = new ProsperAdapterManager(slingContextInternal)
-
         addAdapters()
 
-        resourceResolverInternal = new MockResourceResolver(sessionInternal, adapterManagerInternal)
+        // resourceResolverInternal = new MockResourceResolver(sessionInternal, adapterManager)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
 
         addMixins()
@@ -105,7 +114,8 @@ abstract class ProsperSpec extends Specification {
      * Refresh the shared resource resolver before each test run.
      */
     def setup() {
-        resourceResolverInternal = new MockResourceResolver(session, adapterManager)
+        //resourceResolverInternal = resourceResolverFactoryInternal.getAdministrativeResourceResolver(null)
+        resourceResolverInternal.refresh()
     }
 
     /**
@@ -113,7 +123,7 @@ abstract class ProsperSpec extends Specification {
      * method to cleanup content before the entire specification has been executed.
      */
     void removeAllNodes() {
-        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.rootNode.nodes.findAll { Node node -> !SYSTEM_NODE_NAMES.contains(node.name) }*.remove()
         session.save()
     }
 
@@ -223,7 +233,7 @@ abstract class ProsperSpec extends Specification {
     /**
      * @return admin resource resolver
      */
-    ProsperResourceResolver getResourceResolver() {
+    ResourceResolver getResourceResolver() {
         resourceResolverInternal
     }
 
@@ -388,44 +398,23 @@ abstract class ProsperSpec extends Specification {
 
     // internals
 
-    @Synchronized
-    protected SlingRepository getRepository() {
-        if (!slingRepository) {
-            RepositoryUtil.startRepository()
-
-            slingRepository = RepositoryUtil.repository
-
-            registerDefaultNodeTypes()
-
-            addShutdownHook {
-                RepositoryUtil.stopRepository()
-            }
-        }
-
-        slingRepository
-    }
-
-    private void registerDefaultNodeTypes() {
-        def session = repository.loginAdministrative(null)
-
-        try {
-            def cndResourcePaths = NODE_TYPES.collect { type -> "/SLING-INF/nodetypes/${type}.cnd" }
-
-            registerNodeTypes(session, cndResourcePaths)
-        } finally {
-            session.logout()
-        }
-    }
-
     private void registerNodeTypes() {
+        registerDefaultNodeTypes()
+
         if (this.class.isAnnotationPresent(NodeTypes)) {
             def cndResourcePaths = this.class.getAnnotation(NodeTypes).value() as List
 
-            registerNodeTypes(session, cndResourcePaths)
+            registerNodeTypes(cndResourcePaths)
         }
     }
 
-    private void registerNodeTypes(Session session, List<String> cndResourcePaths) {
+    private void registerDefaultNodeTypes() {
+        def cndResourcePaths = NODE_TYPES.collect { type -> "/SLING-INF/nodetypes/${type}.cnd" }
+
+        registerNodeTypes(cndResourcePaths)
+    }
+
+    private void registerNodeTypes(List<String> cndResourcePaths) {
         cndResourcePaths.each { cndResourcePath ->
             this.class.getResourceAsStream(cndResourcePath).withStream { stream ->
                 RepositoryUtil.registerNodeType(session, stream)
@@ -434,6 +423,8 @@ abstract class ProsperSpec extends Specification {
     }
 
     private void addAdapters() {
+        def repository = slingContext.getService(SlingRepository)
+
         addAdapterFactory(new ProsperAdapterFactory(repository, session))
 
         addAdapterFactories().each { adapterFactory ->

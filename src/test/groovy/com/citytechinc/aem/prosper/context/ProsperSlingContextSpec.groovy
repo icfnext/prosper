@@ -20,10 +20,6 @@ class ProsperSlingContextSpec extends ProsperSpec {
     }
 
     def setupSpec() {
-        pageBuilder.content {
-            prosper()
-        }
-
         slingContext.addModelsForPackage("com.citytechinc.aem.prosper.context")
     }
 

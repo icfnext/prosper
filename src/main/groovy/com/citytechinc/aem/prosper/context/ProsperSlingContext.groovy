@@ -1,6 +1,7 @@
 package com.citytechinc.aem.prosper.context
 
 import org.apache.sling.commons.mime.MimeTypeService
+import org.apache.sling.jcr.resource.internal.helper.jcr.PathMapper
 import org.apache.sling.models.impl.FirstImplementationPicker
 import org.apache.sling.models.impl.ModelAdapterFactory
 import org.apache.sling.models.impl.injectors.BindingsInjector
@@ -46,6 +47,7 @@ class ProsperSlingContext {
         registerService(ImplementationPicker, new FirstImplementationPicker())
         registerService(SlingSettingsService, new MockSlingSettingService(["publish"] as Set))
         registerService(MimeTypeService, new MockMimeTypeService())
+        registerService(new PathMapper())
     }
 
     /**
