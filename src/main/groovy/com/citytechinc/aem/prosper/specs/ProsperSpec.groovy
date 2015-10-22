@@ -14,6 +14,7 @@ import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.citytechinc.aem.prosper.mixins.ProsperMixin
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolver
+import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolverFactory
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
@@ -23,6 +24,7 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ResourceResolverFactory
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.jcr.api.SlingRepository
 import spock.lang.AutoCleanup
@@ -41,7 +43,15 @@ abstract class ProsperSpec extends Specification {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
-    private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
+    private static final def NODE_TYPES = [
+        "sling",
+        "replication",
+        "tagging",
+        "core",
+        "dam",
+        "vlt",
+        "widgets"
+    ]
 
     private static SlingRepository slingRepository
 
@@ -91,6 +101,9 @@ abstract class ProsperSpec extends Specification {
 
         resourceResolverInternal = new MockResourceResolver(sessionInternal, adapterManagerInternal)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
+
+        slingContext.registerService(ResourceResolverFactory,
+            new ProsperResourceResolverFactory(sessionInternal, adapterManagerInternal))
 
         addMixins()
     }
@@ -397,9 +410,7 @@ abstract class ProsperSpec extends Specification {
 
             registerDefaultNodeTypes()
 
-            addShutdownHook {
-                RepositoryUtil.stopRepository()
-            }
+            addShutdownHook { RepositoryUtil.stopRepository() }
         }
 
         slingRepository
@@ -436,9 +447,7 @@ abstract class ProsperSpec extends Specification {
     private void addAdapters() {
         addAdapterFactory(new ProsperAdapterFactory(repository, session))
 
-        addAdapterFactories().each { adapterFactory ->
-            addAdapterFactory(adapterFactory)
-        }
+        addAdapterFactories().each { adapterFactory -> addAdapterFactory(adapterFactory) }
 
         addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
             addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
