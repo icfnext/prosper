@@ -1,42 +1,36 @@
 package com.citytechinc.aem.prosper.mocks.resource
 
-import java.util.Map
-
-import javax.jcr.Session
-
-import org.apache.sling.api.resource.LoginException
+import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
+import groovy.transform.TupleConstructor
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ResourceResolverFactory
 
-import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
+import javax.jcr.Session
 
-public class ProsperResourceResolverFactory implements ResourceResolverFactory{
-	private ProsperAdapterManager adapterManager
-	private Session session
+@TupleConstructor
+class ProsperResourceResolverFactory implements ResourceResolverFactory {
 
-	ProsperResourceResolverFactory(Session session, ProsperAdapterManager adapterManager){
-		this.session = session
-		this.adapterManager = adapterManager
-	}
+    Session session
 
-	@Override
-	public ResourceResolver getResourceResolver(Map<String, Object> authenticationInfo) throws LoginException {
-		return new MockResourceResolver(session, adapterManager)
-	}
+    ProsperAdapterManager adapterManager
 
-	@Override
-	public ResourceResolver getAdministrativeResourceResolver(Map<String, Object> authenticationInfo)
-	throws LoginException {
-		return new MockResourceResolver(session, adapterManager)
-	}
+    @Override
+    ResourceResolver getResourceResolver(Map<String, Object> authenticationInfo) {
+        new MockResourceResolver(session, adapterManager)
+    }
 
-	@Override
-	public ResourceResolver getServiceResourceResolver(Map<String, Object> authenticationInfo) throws LoginException {
-		return new MockResourceResolver(session, adapterManager)
-	}
+    @Override
+    ResourceResolver getAdministrativeResourceResolver(Map<String, Object> authenticationInfo) {
+        new MockResourceResolver(session, adapterManager)
+    }
 
-	@Override
-	public ResourceResolver getThreadResourceResolver() {
-		return new MockResourceResolver(session, adapterManager)
-	}
+    @Override
+    ResourceResolver getServiceResourceResolver(Map<String, Object> authenticationInfo) {
+        new MockResourceResolver(session, adapterManager)
+    }
+
+    @Override
+    ResourceResolver getThreadResourceResolver() {
+        new MockResourceResolver(session, adapterManager)
+    }
 }
