@@ -5,14 +5,14 @@
     <parent>
         <groupId>com.citytechinc.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.1.1</version>
+        <version>6.1.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>5.2.0-SNAPSHOT</version>
+    <version>6.0.0-SNAPSHOT</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
@@ -363,10 +363,6 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.scripting.sightly</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.xss</artifactId>
         </dependency>
         <dependency>
             <groupId>com.adobe.cq.sightly</groupId>

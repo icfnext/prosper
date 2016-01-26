@@ -25,9 +25,7 @@ import org.osgi.service.component.ComponentContext
  */
 class ProsperSlingContext {
 
-    @Delegate(includes = ["registerService", "registerInjectActivateService", "getService", "getServices",
-        "addModelsForPackage", "runMode"])
-    final SlingContextImpl slingContext = new SlingContextImpl()
+    private final SlingContextImpl slingContext = new SlingContextImpl()
 
     /**
      * Register default services and model injectors.
@@ -49,6 +47,103 @@ class ProsperSlingContext {
     }
 
     /**
+     * Registers a service in the mocked OSGi environment.
+     *
+     * @param service Service instance
+     * @return Registered service instance
+     */
+    public <T> T registerService(T service) {
+        slingContext.registerService(service)
+    }
+
+    /**
+     * Registers a service in the mocked OSGi environment.
+     *
+     * @param serviceClass Service class
+     * @param service Service instance
+     * @return Registered service instance
+     */
+    public <T> T registerService(Class<T> serviceClass, T service) {
+        slingContext.registerService(serviceClass, service)
+    }
+
+    /**
+     * Registers a service in the mocked OSGi environment.
+     *
+     * @param serviceClass Service class
+     * @param service Service instance
+     * @param properties Service properties (optional)
+     * @return Registered service instance
+     */
+    public <T> T registerService(Class<T> serviceClass, T service, Map<String, Object> properties) {
+        slingContext.registerService(serviceClass, service, properties)
+    }
+
+    /**
+     * Injects dependencies, activates and registers a service in the mocked OSGi environment.
+     *
+     * @param service Service instance
+     * @return Registered service instance
+     */
+    public <T> T registerInjectActivateService(T service) {
+        slingContext.registerInjectActivateService(service)
+    }
+
+    /**
+     * Injects dependencies, activates and registers a service in the mocked OSGi environment.
+     *
+     * @param service Service instance
+     * @param properties Service properties (optional)
+     * @return Registered service instance
+     */
+    public <T> T registerInjectActivateService(T service, Map<String, Object> properties) {
+        slingContext.registerInjectActivateService(service, properties)
+    }
+
+    /**
+     * Lookup a single service.
+     *
+     * @param serviceType The type (interface) of the service.
+     * @return The service instance, or null if the service is not available.
+     */
+    public <ServiceType> ServiceType getService(Class<ServiceType> serviceType) {
+        slingContext.getService(serviceType)
+    }
+
+    /**
+     * Lookup one or several services.
+     *
+     * @param serviceType The type (interface) of the service.
+     * @param filter An optional filter (LDAP-like, see OSGi spec)
+     * @return The services instances or an empty array.
+     * @throws RuntimeException If the <code>filter</code> string is not a valid OSGi service filter string.
+     */
+    public <ServiceType> ServiceType[] getServices(Class<ServiceType> serviceType, String filter) {
+        slingContext.getServices(serviceType, filter)
+    }
+
+    /**
+     * Set current run mode(s).
+     *
+     * @param runModes Run mode(s).
+     */
+    void runMode(String... runModes) {
+        slingContext.runMode(runModes)
+    }
+
+    /**
+     * Scan classpaths for given package name (and sub packages) to scan for and register all classes with @Model
+     * annotation.
+     *
+     * @param packageName Java package name
+     */
+    void addModelsForPackage(String packageName) {
+        slingContext.addModelsForPackage(packageName)
+    }
+
+    /**
+     * Get the mocked OSGi component context.
+     *
      * @return mock OSGi component context
      */
     ComponentContext getComponentContext() {
@@ -56,6 +151,8 @@ class ProsperSlingContext {
     }
 
     /**
+     * Get the mocked OSGi bundle context.
+     *
      * @return mock OSGi bundle context
      */
     BundleContext getBundleContext() {

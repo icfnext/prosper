@@ -1,23 +1,19 @@
-package com.citytechinc.aem.prosper.mixins
+package com.citytechinc.aem.prosper.traits
 
-import com.citytechinc.aem.prosper.specs.ProsperSpec
+import com.citytechinc.aem.prosper.context.ProsperPageContext
 import com.citytechinc.aem.prosper.tag.JspTagProxy
-import org.springframework.mock.web.MockJspWriter
-import org.springframework.mock.web.MockPageContext
+import org.apache.sling.api.resource.ResourceResolver
 
-import javax.servlet.jsp.JspWriter
 import javax.servlet.jsp.tagext.TagSupport
 
 import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_RESOURCE_RESOLVER_NAME
 
 /**
- * Mixin providing methods for initializing JSP tag support classes with a mocked page context.
+ * Trait providing methods for initializing JSP tag support classes with a mocked page context.
  */
-class JspTagMixin extends ProsperMixin {
+trait JspTagTrait {
 
-    JspTagMixin(ProsperSpec spec) {
-        super(spec)
-    }
+    abstract ResourceResolver getResourceResolver()
 
     /**
      * Initialize the tag instance for the given class.
@@ -25,7 +21,7 @@ class JspTagMixin extends ProsperMixin {
      * @param tagClass tag class to initialize
      * @return proxy tag instance containing mocked page context and writer
      */
-    public <T extends TagSupport> JspTagProxy<T> init(Class<T> tagClass) {
+    public JspTagProxy init(Class<TagSupport> tagClass) {
         init(tagClass, [:])
     }
 
@@ -36,17 +32,11 @@ class JspTagMixin extends ProsperMixin {
      * @param additionalPageContextAttributes
      * @return proxy tag instance containing mocked page context and writer
      */
-    public <T extends TagSupport> JspTagProxy<T> init(Class<T> tagClass,
-        Map<String, Object> additionalPageContextAttributes) {
+    public JspTagProxy init(Class<TagSupport> tagClass, Map<String, Object> additionalPageContextAttributes) {
         def writer = new StringWriter()
-        def pageContext = new MockPageContext() {
-            @Override
-            JspWriter getOut() {
-                new MockJspWriter(writer)
-            }
-        }
+        def pageContext = new ProsperPageContext(writer)
 
-        pageContext.setAttribute(DEFAULT_RESOURCE_RESOLVER_NAME, spec.resourceResolver)
+        pageContext.setAttribute(DEFAULT_RESOURCE_RESOLVER_NAME, resourceResolver)
 
         additionalPageContextAttributes.each { name, value ->
             pageContext.setAttribute(name, value)
@@ -56,6 +46,6 @@ class JspTagMixin extends ProsperMixin {
 
         tag.pageContext = pageContext
 
-        new JspTagProxy<T>(tag, pageContext, writer)
+        new JspTagProxy(tag, pageContext, writer)
     }
 }

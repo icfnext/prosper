@@ -19,7 +19,6 @@ import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
 import org.apache.sling.api.scripting.SlingBindings
 import org.apache.sling.testing.mock.sling.MockSling
-import org.apache.sling.xss.XSSAPI
 
 import javax.script.Bindings
 import javax.script.SimpleBindings
@@ -54,8 +53,6 @@ class BindingsBuilder {
     private EditContext editContext
 
     private Design resourceDesign
-
-    private XSSAPI xssApi
 
     /**
      * Create a new builder for a test spec.
@@ -120,10 +117,6 @@ class BindingsBuilder {
         this.resourceDesign = resourceDesign
     }
 
-    void setXssApi(XSSAPI xssApi) {
-        this.xssApi = xssApi
-    }
-
     Bindings build() {
         build(null)
     }
@@ -150,20 +143,19 @@ class BindingsBuilder {
         def resource = slingRequest.resource
 
         def bindings = [
-            (SlingBindings.SLING)          : sling,
-            (SlingBindings.REQUEST)        : slingRequest,
-            (SlingBindings.RESPONSE)       : slingResponse,
-            (SlingBindings.RESOURCE)       : resource,
-            (WCMBindings.PROPERTIES)       : resource?.valueMap ?: ValueMap.EMPTY,
-            (WCMBindings.WCM_MODE)         : new SightlyWCMMode(slingRequest),
-            (WCMBindings.COMPONENT)        : component,
+            (SlingBindings.SLING): sling,
+            (SlingBindings.REQUEST): slingRequest,
+            (SlingBindings.RESPONSE): slingResponse,
+            (SlingBindings.RESOURCE): resource,
+            (WCMBindings.PROPERTIES): resource?.valueMap ?: ValueMap.EMPTY,
+            (WCMBindings.WCM_MODE): new SightlyWCMMode(slingRequest),
+            (WCMBindings.COMPONENT): component,
             (WCMBindings.COMPONENT_CONTEXT): componentContext,
-            (WCMBindings.CURRENT_DESIGN)   : currentDesign,
-            (WCMBindings.CURRENT_STYLE)    : currentStyle,
-            (WCMBindings.DESIGNER)         : designer,
-            (WCMBindings.EDIT_CONTEXT)     : editContext,
-            (WCMBindings.RESOURCE_DESIGN)  : resourceDesign,
-            (WCMBindings.XSSAPI)           : xssApi
+            (WCMBindings.CURRENT_DESIGN): currentDesign,
+            (WCMBindings.CURRENT_STYLE): currentStyle,
+            (WCMBindings.DESIGNER): designer,
+            (WCMBindings.EDIT_CONTEXT): editContext,
+            (WCMBindings.RESOURCE_DESIGN): resourceDesign
         ]
 
         bindings.putAll(buildPageBindings(resource))
