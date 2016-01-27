@@ -11,11 +11,11 @@ Prosper is an integration testing library for AEM (Adobe CQ) projects using [Spo
 * Test AEM projects outside of an OSGi container in the standard Maven build lifecycle.
 * Write test specifications in [Groovy](http://groovy.codehaus.org) using [Spock](http://spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests more quickly and efficiently.
 * Extends and augments the transient JCR implementation provided by the [Apache Sling Testing Tools](http://sling.apache.org/documentation/development/sling-testing-tools.html) to eliminate the need to deploy tests in OSGi bundles for most testing scenarios.
-* Supplies mock OSGi bundle and component contexts for registering services and providing basic OSGi support. 
+* Supplies mock OSGi bundle and component contexts for registering services and providing basic OSGi support.
 * Basic implementations of Sling interfaces are provided (e.g. `ResourceResolver`, `SlingHttpServletRequest`) to test common API usages.
 * Utilizes Groovy builders from our [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for Sling requests and responses to simplify setup of test cases.
-* Bindings builder for initializing Sightly components with mocked attributes.
+* Supplied Groovy traits provide support for testing Sling Model and JSP tag classes.
 
 ## Requirements
 
@@ -32,7 +32,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>5.0.0</version>
+    <version>6.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -70,7 +70,7 @@ class ExampleSpec extends ProsperSpec {
 }
 ```
 
-Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details for projects with 
+Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details for projects with
 mixed Java/Groovy sources can be found [here](http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven).
 
 ```xml
@@ -127,13 +127,13 @@ Finally, run `mvn test` from the command line to verify that specifications are 
 
 ### Specification Anatomy
 
-The [Spock documentation](https://code.google.com/p/spock/wiki/SpockBasics) outlines the features and methods that define a Spock specification (and their JUnit analogues, for those more familiar with Java-based testing), but the `setupSpec` fixture method is of critical importance when testing AEM classes.  This method, executed prior to the first feature method of the specification, is the conventional location for creating test content in the JCR.  Likewise, the `cleanup` and `cleanupSpec` fixture methods are the appropriate place to remove test content following the execution of a test (or set of tests).  However, the `cleanupSpec` method will be implemented less frequently, as the base `ProsperSpec` removes all test content from the JCR after every specification is executed to prevent cross-contamination of content between specifications.
+The [Spock documentation](http://spockframework.github.io/spock/docs/1.0/spock_primer.html) outlines the features and methods that define a Spock specification (and their JUnit analogues, for those more familiar with Java-based testing), but the `setupSpec` fixture method is of critical importance when testing AEM classes.  This method, executed prior to the first feature method of the specification, is the conventional location for creating test content in the JCR.  Likewise, the `cleanup` and `cleanupSpec` fixture methods are the appropriate place to remove test content following the execution of a test (or set of tests).  However, the `cleanupSpec` method will be implemented less frequently, as the base `ProsperSpec` removes all test content from the JCR after every specification is executed to prevent cross-contamination of content between specifications.
 
 ```groovy
 class ExampleSpec extends ProsperSpec {
 
     def setupSpec() {
-        // runs before first feature method, create test content here
+        // runs before first feature method, create test content and initialize shared resources here
     }
 
     def setup() {
@@ -145,7 +145,7 @@ class ExampleSpec extends ProsperSpec {
         // create test-specific content, instances and/or mocks
 
         expect:
-        // stimulus/response
+        // result
     }
 
     def "another feature method"() {
@@ -446,8 +446,8 @@ The mock request and response objects delegate to the [MockHttpServletRequest](h
 
 ### Sling Context
 
-The Prosper Sling Context supplies a mock OSGi bundle and component contexts.  This allows for registration of OSGi 
-services and testing of Sling Models.  
+The Prosper Sling Context supplies a mock OSGi bundle and component contexts.  This allows for registration of OSGi
+services and testing of Sling Models.
 
 #### Adding Adapters
 
@@ -548,7 +548,7 @@ class ExampleSpec extends ProsperSpec {
 
 #### Sling Models
 
-Classes annotated with `@org.apache.sling.models.annotations.Model` require registration via the `addModelsForPackage` 
+Classes annotated with `@org.apache.sling.models.annotations.Model` require registration via the `addModelsForPackage`
 method in order to support adapting a Sling resource or request to the model instance.
 
 ```groovy
@@ -579,7 +579,7 @@ class ProsperModelSpec extends ProsperSpec {
     def "adapt resource to model"() {
         setup:
         slingContext.addModelsForPackage("com.citytechinc.aem.prosper")
-        
+
         def resource = getResource("/content/prosper")
         def model = resource.adaptTo(ProsperModel)
 
@@ -669,41 +669,32 @@ def "servlet with mock service"() {
 }
 ```
 
-### Mixins
+### Traits
 
-Prosper mixins are classes that can be added to specifications to provide additional testing functionality.  Two mixins are available by default, but custom mixins can be defined by extending `com.citytechinc.aem.prosper.mixins.ProsperMixin`.
+Groovy traits are a language feature that is not specific to Prosper, but can nonetheless be utilized to "mix in" functionality to test specs.  Two traits are available by default and detailed below, but custom traits can be defined to support domain-specific features.
 
 ```groovy
 import com.citytechinc.aem.prosper.builders.RequestBuilder
-import com.citytechinc.aem.prosper.mixins.ProsperMixin
-import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.SlingHttpServletRequest
 
-class MobileRequestMixin extends ProsperMixin {
+trait MobileRequestTrait {
 
-    MobileRequestMixin(ResourceResolver resourceResolver) {
-        super(resourceResolver)
-    }
+    abstract RequestBuilder getRequestBuilder()
 
-    def buildMobileRequest(Map<String, Object> parameters) {
-        new RequestBuilder(resourceResolver, bundleContext).build {
-            selectors = ["mobile"]
-            setParameters(parameters)
-        }
+    SlingHttpServletRequest buildMobileRequest(Map<String, Object> parameters) {
+        requestBuilder.setSelectors(["mobile"]).setParameters(parameters).build()
     }
 }
 ```
 
-The mixin instance can then be added to Prosper specs by defining and annotating the mixin as a `@Shared` field.  Prosper will automatically inject an instance of any mixin that extends `ProsperMixin`.
+Specs can then implement the trait to add the new functionality.  Note that the `getRequestBuilder()` abstract method does not have to be implemented by the new spec, since this new spec (as seen below) extends `ProsperSpec`.  Traits can thus "borrow" functionality from the base `ProsperSpec` by defining abstract methods that match the corresponding method signatures in `ProsperSpec`.
 
 ```groovy
 import spock.lang.Shared
 
-class MobileRequestMixinSpec extends ProsperSpec {
+class MobileRequestTraitSpec extends ProsperSpec implements MobileRequestTrait {
 
-    @Shared
-    MobileRequestMixin mixin
-
-    def "mixin usage"() {
+    def "trait usage"() {
         setup:
         def request = buildMobileRequest([:])
 
@@ -713,9 +704,13 @@ class MobileRequestMixinSpec extends ProsperSpec {
 }
 ```
 
-## JSP Tag Mixin
+## Sling Models Trait
 
-The `init` methods in `com.citytechinc.aem.prosper.mixins.JspTagMixin` initialize `TagSupport` instances with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
+TODO
+
+## JSP Tag Trait
+
+The `init` methods in `com.citytechinc.aem.prosper.traits.JspTagTrait` initialize `TagSupport` instances with a mock `PageContext` containing a `StringWriter` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
 
 ```groovy
 import javax.servlet.jsp.JspException
@@ -743,14 +738,13 @@ class SimpleTag extends TagSupport {
 }
 ```
 ```groovy
-class SimpleTagSpec extends ProsperSpec {
+import com.citytechinc.aem.prosper.traits.JspTagTrait
 
-    @Shared
-    JspTagMixin jspTag
+class SimpleTagSpec extends ProsperSpec implements JspTagTrait {
 
     def "start tag writes 'hello'"() {
         setup:
-        def proxy = jspTag.init(SimpleTag)
+        def proxy = init(SimpleTag)
 
         when:
         proxy.tag.doStartTag()
@@ -761,71 +755,19 @@ class SimpleTagSpec extends ProsperSpec {
 
     def "end tag sets page context attribute"() {
         setup:
-        def proxy = jspTag.init(SimpleTag, ["prefix": "LiveLongAnd"])
+        def proxy = init(SimpleTag, ["prefix": "LiveLongAnd"])
+        def tag = proxy.tag as SimpleTag
 
-        proxy.tag.name = "Prosper"
+        tag.name = "Prosper"
 
         when:
-        proxy.tag.doEndTag()
+        tag.doEndTag()
 
         then:
         proxy.pageContext.getAttribute("name") == "LiveLongAndProsper"
     }
 }
 
-```
-
-## Sightly Mixin
-
-[Sightly](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly.html) is the new templating language introduced in AEM6 to replace JSPs for component development.  Sightly includes a [Java API](http://docs.adobe.com/content/docs/en/aem/6-0/develop/sightly/use-api-in-java.html) that defines an interface as well as an abstract class for implementing component supporting classes.  Prosper provides a mixin for initializing and testing these component classes using the transient JCR and mocking constructs outlined above.
-
-```groovy
-import com.adobe.cq.sightly.WCMUsePojo
-
-class SleepyComponent extends WCMUsePojo {
-
-    @Override
-    void activate() throws Exception {
-
-    }
-
-    boolean isBedtime() {
-        properties.get("isBedtime", true)
-    }
-}
-```
-```groovy
-class SleepyComponentSpec extends ProsperSpec {
-
-    @Shared
-    SightlyMixin sightly
-
-    def setupSpec() {
-        pageBuilder.content {
-            home {
-                "jcr:content"() {
-                    sleepy(isBedtime: false)
-                }
-            }
-        }
-    }
-
-    def "sleepy component test"() {
-        setup:
-        def component = sightly.activate(SleepyComponent) {
-            path = "/content/home/jcr:content/sleepy"
-            wcmMode = WCMMode.DISABLED
-        }
-
-        expect: "component has correct resource and page paths"
-        component.resource.path == "/content/home/jcr:content/sleepy"
-        component.currentPage.path == "/content/home"
-        component.wcmMode.disabled
-
-        and: "it's not bedtime"
-        !component.bedtime
-    }
-}
 ```
 
 ### References
