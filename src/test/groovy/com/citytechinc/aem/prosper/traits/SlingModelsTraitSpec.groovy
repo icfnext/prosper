@@ -19,6 +19,11 @@ class SlingModelsTraitSpec extends ProsperSpec implements SlingModelsTrait {
     }
 
     def "register injector"() {
+        setup:
+        addModelsForPackage(this.class.package.name)
+        registerInjector(new TestInjector(), 10000)
 
+        expect:
+        getResource("/content/test").adaptTo(ProsperModel).injectedValue == TestInjector.class.name
     }
 }

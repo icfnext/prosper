@@ -11,7 +11,6 @@ import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.importer.ContentImporter
-import com.citytechinc.aem.prosper.mixins.ProsperMixin
 import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolver
 import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolverFactory
@@ -33,7 +32,6 @@ import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
-import java.lang.reflect.Field
 
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
@@ -104,8 +102,6 @@ abstract class ProsperSpec extends Specification {
 
         slingContext.registerService(ResourceResolverFactory,
             new ProsperResourceResolverFactory(sessionInternal, adapterManagerInternal))
-
-        addMixins()
     }
 
     def cleanupSpec() {
@@ -460,29 +456,5 @@ abstract class ProsperSpec extends Specification {
         addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
             addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
         }
-    }
-
-    private void addMixins() {
-        findAllMixins(this.class).each { mixin ->
-            def instance = mixin.type.getConstructor(ProsperSpec).newInstance(this)
-
-            mixin.with {
-                accessible = true
-                set(this, instance)
-            }
-        }
-    }
-
-    private List<Field> findAllMixins(Class mixinClass) {
-        def mixins = []
-        def clazz = mixinClass
-
-        while (clazz && clazz != ProsperSpec) {
-            mixins.addAll(clazz.declaredFields.findAll { ProsperMixin.isAssignableFrom(it.type) })
-
-            clazz = clazz.superclass
-        }
-
-        mixins
     }
 }
