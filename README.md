@@ -70,8 +70,7 @@ class ExampleSpec extends ProsperSpec {
 }
 ```
 
-Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details for projects with
-mixed Java/Groovy sources can be found [here](http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven).
+Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional configurations details for projects with mixed Java/Groovy sources can be found [here](http://groovy.codehaus.org/Groovy-Eclipse+compiler+plugin+for+Maven).
 
 ```xml
 <build>
@@ -446,18 +445,11 @@ The mock request and response objects delegate to the [MockHttpServletRequest](h
 
 ### Sling Context
 
-The Prosper Sling Context supplies a mock OSGi bundle and component contexts.  This allows for registration of OSGi
-services and testing of Sling Models.
+The Prosper Sling Context supplies a mock OSGi bundle and component contexts.  This allows for registration of OSGi services and testing of Sling Models.
 
 #### Adding Adapters
 
-Specs can add adapters by adding `AdapterFactory` instances or by providing mappings from adapter instances to closures
- that instantiate these instances from a `Resource`, `ResourceResolver` or `SlingHttpRequestServlet`.  Adapters will be
- registered with the mock `BundleContext` and their adaptables and adapters properties will be respected when an adapter is
- chosen.  Added `AdapterFactory` instances will pull these properties from the SCR XML metadata files located in the
- classpath at /OSGI-INF.  Added adapter closures will use the `Resource`, `ResourceResolver` or
- `SlingHttpRequestServlet` as the adaptables property and the adapter instance class as the adapters property.  The
- methods for adding adapters are illustrated in the examples below.
+Specs can add adapters by adding `AdapterFactory` instances or by providing mappings from adapter instances to closures that instantiate these instances from a `Resource`, `ResourceResolver` or `SlingHttpRequestServlet`.  Adapters will be registered with the mock `BundleContext` and their adaptables and adapters properties will be respected when an adapter is chosen.  Added `AdapterFactory` instances will pull these properties from the SCR XML metadata files located in the classpath at /OSGI-INF.  Added adapter closures will use the `Resource`, `ResourceResolver` or `SlingHttpRequestServlet` as the adaptables property and the adapter instance class as the adapters property.  The methods for adding adapters are illustrated in the examples below.
 
 ```groovy
 class ExampleAdapterFactory implements AdapterFactory {
@@ -548,8 +540,7 @@ class ExampleSpec extends ProsperSpec {
 
 #### Sling Models
 
-Classes annotated with `@org.apache.sling.models.annotations.Model` require registration via the `addModelsForPackage`
-method in order to support adapting a Sling resource or request to the model instance.
+Classes annotated with `@org.apache.sling.models.annotations.Model` require registration via the `addModelsForPackage` method in order to support adapting a Sling resource or request to the model instance.
 
 ```groovy
 package com.citytechinc.aem.prosper
@@ -592,11 +583,7 @@ class ProsperModelSpec extends ProsperSpec {
 
 ### Adding JCR Namespaces and Node Types
 
-Many of the common AEM, JCR, and Sling namespaces and node types are registered when the Prosper test repository is
- created.  Additional namespaces and node types may be added at runtime by annotating a test spec with the
- `@NodeTypes` annotation and supplying an array containing paths to classpath .cnd file resources.  For more information
- on the CND node type notation, see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the
- Apache Jackrabbit documentation.  An example of the annotation usage is presented below.
+Many of the common AEM, JCR, and Sling namespaces and node types are registered when the Prosper test repository is created.  Additional namespaces and node types may be added at runtime by annotating a test spec with the `@NodeTypes` annotation and supplying an array containing paths to classpath .cnd file resources.  For more information on the CND node type notation, see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the Apache Jackrabbit documentation.  An example of the annotation usage is presented below.
 
 ```groovy
 import com.citytechinc.aem.prosper.annotations.NodeTypes
