@@ -6,7 +6,6 @@ import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRe
 import com.citytechinc.aem.prosper.adapter.ProsperAdapterFactory
 import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.annotations.NodeTypes
-import com.citytechinc.aem.prosper.builders.BindingsBuilder
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
@@ -294,15 +293,6 @@ abstract class ProsperSpec extends Specification {
      */
     ResponseBuilder getResponseBuilder() {
         new ResponseBuilder()
-    }
-
-    /**
-     * Get a bindings builder.
-     *
-     * @return builder
-     */
-    BindingsBuilder getBindingsBuilder() {
-        new BindingsBuilder(this)
     }
 
     // assertions
