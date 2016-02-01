@@ -2,7 +2,7 @@ package com.citytechinc.aem.prosper.traits
 
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 
-class SlingModelsTraitSpec extends ProsperSpec implements SlingModelsTrait {
+class SlingModelTraitSpec extends ProsperSpec implements SlingModelTrait {
 
     def setupSpec() {
         nodeBuilder.content {

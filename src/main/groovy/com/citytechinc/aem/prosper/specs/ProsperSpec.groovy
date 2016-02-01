@@ -90,7 +90,7 @@ abstract class ProsperSpec extends Specification {
 
         registerNodeTypes()
 
-        ContentImporter.importVaultContent(this)
+        new ContentImporter(this).importVaultContent()
 
         adapterManagerInternal = new ProsperAdapterManager(slingContextInternal)
 

@@ -68,13 +68,10 @@ class ProsperAdapterManager implements AdapterManager {
         } as AdapterType
     }
 
+    @TupleConstructor
     private static class InternalAdapterFactory implements AdapterFactory {
 
-        private final Closure closure
-
-        InternalAdapterFactory(Closure closure) {
-            this.closure = closure
-        }
+        Closure closure
 
         @Override
         <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {

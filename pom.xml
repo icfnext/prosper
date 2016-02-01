@@ -369,6 +369,10 @@
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
+            <artifactId>cq-wcm-taglib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-msm-api</artifactId>
         </dependency>
         <dependency>

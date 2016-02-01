@@ -8,7 +8,7 @@ import static org.osgi.framework.Constants.SERVICE_RANKING
 /**
  * Trait for "mixing in" Sling Models support for a spec.
  */
-trait SlingModelsTrait {
+trait SlingModelTrait {
 
     /**
      * This method will be implemented automatically when the test spec extends <code>ProsperSpec</code>.
