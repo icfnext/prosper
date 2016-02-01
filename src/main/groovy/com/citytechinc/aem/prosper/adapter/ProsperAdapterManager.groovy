@@ -18,6 +18,13 @@ class ProsperAdapterManager implements AdapterManager {
 
     ProsperSlingContext slingContext
 
+    /**
+     * Register an adapter for the current spec.
+     *
+     * @param adaptableType
+     * @param adapterType target adapter type
+     * @param closure
+     */
     void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
         def adapterProperties = [:]
 
@@ -27,6 +34,11 @@ class ProsperAdapterManager implements AdapterManager {
         slingContext.registerService(AdapterFactory, new InternalAdapterFactory(closure), adapterProperties)
     }
 
+    /**
+     * Register an adapter factory for the current spec.
+     *
+     * @param adapterFactory adapter factory instance
+     */
     void addAdapterFactory(AdapterFactory adapterFactory) {
         slingContext.registerService(AdapterFactory, adapterFactory)
     }

@@ -118,7 +118,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add resource adapter for test"() {
         setup:
-        addAdapter(Resource, Map, { [:] })
+        adapterManager.addAdapter(Resource, Map, { [:] })
 
         expect:
         resourceResolver.getResource("/").adaptTo(Map) == [:]
@@ -126,7 +126,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add resource resolver adapter for test"() {
         setup:
-        addAdapter(ResourceResolver, Map, { [:] })
+        adapterManager.addAdapter(ResourceResolver, Map, { [:] })
 
         expect:
         resourceResolver.adaptTo(Map) == [:]
@@ -134,7 +134,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add request adapter for test"() {
         setup:
-        addAdapter(SlingHttpServletRequest, Map, { [adapted: "request"] })
+        adapterManager.addAdapter(SlingHttpServletRequest, Map, { [adapted: "request"] })
 
         expect:
         requestBuilder.build().adaptTo(Map) == [adapted: "request"]
@@ -142,7 +142,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add OSGi registered adapter for test"() {
         setup:
-        addAdapterFactory(new OSGiRegisteredAdapterFactory())
+        adapterManager.addAdapterFactory(new OSGiRegisteredAdapterFactory())
 
         expect:
         requestBuilder.build().adaptTo(Long) == 1984l
