@@ -758,12 +758,11 @@ class SimpleTagSpec extends ProsperSpec implements JspTagTrait {
 
 ```
 
-### References
+## References
 
 * [Prosper GroovyDocs](http://code.citytechinc.com/prosper/groovydocs/index.html)
-* [Spock Documentation](http://docs.spockframework.org/en/latest/index.html)
-* [Spock Wiki](https://code.google.com/p/spock/w/list)
-* [Groovy Documentation](http://groovy.codehaus.org/Documentation)
+* [Spock Documentation](http://spockframework.github.io/spock/docs/1.0/index.html)
+* [Groovy Documentation](http://www.groovy-lang.org/documentation.html)
 
 ## Versioning
 
