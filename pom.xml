@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>com.citytechinc.aem</groupId>
@@ -106,17 +105,17 @@
                         </goals>
                         <configuration>
                             <target>
-                                <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="maven.compile.classpath"/>
+                                <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="maven.compile.classpath" />
                                 <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs" sourcepath="${basedir}/src/main/groovy" packagenames="com.citytechinc.aem.prosper.adapter.*,com.citytechinc.aem.prosper.annotations.*,com.citytechinc.aem.prosper.builders.*,com.citytechinc.aem.prosper.context.*,com.citytechinc.aem.prosper.specs.*,com.citytechinc.aem.prosper.tag.*,com.citytechinc.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
-                                    <link packages="java.,org.xml.,javax.,org.xml." href="http://download.oracle.com/javase/7/docs/api"/>
-                                    <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/api/"/>
-                                    <link packages="spock." href="http://spockframework.github.io/spock/javadoc/latest/"/>
-                                    <link packages="org.apache.jackrabbit.vault." href="http://jackrabbit.apache.org/filevault/apidocs/"/>
-                                    <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling7/"/>
-                                    <link packages="com.day.cq.wcm.api." href="http://docs.adobe.com/docs/en/aem/6-1/ref/javadoc/"/>
-                                    <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r4v43/cmpn/"/>
-                                    <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r4v43/core/"/>
-                                    <link packages="com.citytechinc.aem.groovy.extension." href="http://code.citytechinc.com/aem-groovy-extension/groovydocs/"/>
+                                    <link packages="java.,org.xml.,javax.,org.xml." href="http://download.oracle.com/javase/7/docs/api" />
+                                    <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/api/" />
+                                    <link packages="spock." href="http://spockframework.github.io/spock/javadoc/latest/" />
+                                    <link packages="org.apache.jackrabbit.vault." href="http://jackrabbit.apache.org/filevault/apidocs/" />
+                                    <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling7/" />
+                                    <link packages="com.day.cq.wcm.api." href="http://docs.adobe.com/docs/en/aem/6-1/ref/javadoc/" />
+                                    <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r4v43/cmpn/" />
+                                    <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r4v43/core/" />
+                                    <link packages="com.citytechinc.aem.groovy.extension." href="http://code.citytechinc.com/aem-groovy-extension/groovydocs/" />
                                 </groovydoc>
                             </target>
                         </configuration>
