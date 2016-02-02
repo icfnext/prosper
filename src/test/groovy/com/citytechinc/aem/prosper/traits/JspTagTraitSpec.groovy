@@ -2,7 +2,9 @@ package com.citytechinc.aem.prosper.traits
 
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.wcm.api.Page
+import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.resource.Resource
+import spock.lang.IgnoreRest
 import spock.lang.Unroll
 
 import javax.jcr.Node
@@ -87,5 +89,14 @@ class JspTagTraitSpec extends ProsperSpec implements JspTagTrait {
 
         then:
         proxy.output == "testValue"
+    }
+
+    @IgnoreRest
+    def "init request"() {
+        setup:
+        def proxy = init(TestTag, "/content/prosper/jcr:content")
+
+        expect:
+        proxy.pageContext.request instanceof SlingHttpServletRequest
     }
 }
