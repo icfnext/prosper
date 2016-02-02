@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>com.citytechinc.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.1.1</version>
+        <version>6.1.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.citytechinc.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>5.1.0</version>
+    <version>6.0.0</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
@@ -65,11 +64,11 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.5</version>
                 <configuration>
                     <compilerId>groovy-eclipse-compiler</compilerId>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>utf-8</encoding>
                 </configuration>
                 <dependencies>
@@ -87,7 +86,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
+                <version>2.19.1</version>
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
@@ -106,33 +105,17 @@
                         </goals>
                         <configuration>
                             <target>
-                                <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc"
-                                         classpathref="maven.compile.classpath" />
-                                <groovydoc
-                                    destdir="${project.reporting.outputDirectory}/groovydocs"
-                                    sourcepath="${basedir}/src/main/groovy"
-                                    packagenames="com.citytechinc.aem.prosper.annotations.*,com.citytechinc.aem.prosper.builders.*,com.citytechinc.aem.prosper.context.*,com.citytechinc.aem.prosper.mixins.*,com.citytechinc.aem.prosper.specs.*,com.citytechinc.aem.prosper.tag.*"
-                                    use="true"
-                                    windowtitle="${project.name}"
-                                    doctitle="${project.name}">
-                                    <link packages="java.,org.xml.,javax.,org.xml."
-                                          href="http://download.oracle.com/javase/7/docs/api" />
-                                    <link packages="groovy.,org.codehaus.groovy."
-                                          href="http://groovy.codehaus.org/api/" />
-                                    <link packages="spock."
-                                          href="http://spockframework.github.io/spock/javadoc/latest/" />
-                                    <link packages="org.apache.jackrabbit.vault."
-                                          href="http://jackrabbit.apache.org/filevault/apidocs/" />
-                                    <link packages="org.apache.sling."
-                                          href="http://sling.apache.org/apidocs/sling7/" />
-                                    <link packages="com.day.cq.wcm.api."
-                                          href="http://docs.adobe.com/docs/en/aem/6-1/ref/javadoc/" />
-                                    <link packages="org.osgi.service.component."
-                                          href="https://osgi.org/javadoc/r4v43/cmpn/" />
-                                    <link packages="org.osgi.framework."
-                                          href="https://osgi.org/javadoc/r4v43/core/" />
-                                    <link packages="com.citytechinc.aem.groovy.extension."
-                                          href="http://code.citytechinc.com/aem-groovy-extension/groovydocs/" />
+                                <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="maven.compile.classpath" />
+                                <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs" sourcepath="${basedir}/src/main/groovy" packagenames="com.citytechinc.aem.prosper.adapter.*,com.citytechinc.aem.prosper.annotations.*,com.citytechinc.aem.prosper.builders.*,com.citytechinc.aem.prosper.context.*,com.citytechinc.aem.prosper.mixins.*,com.citytechinc.aem.prosper.specs.*,com.citytechinc.aem.prosper.tag.*,com.citytechinc.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
+                                    <link packages="java.,org.xml.,javax.,org.xml." href="http://download.oracle.com/javase/7/docs/api" />
+                                    <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/api/" />
+                                    <link packages="spock." href="http://spockframework.github.io/spock/javadoc/latest/" />
+                                    <link packages="org.apache.jackrabbit.vault." href="http://jackrabbit.apache.org/filevault/apidocs/" />
+                                    <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling7/" />
+                                    <link packages="com.day.cq.wcm.api." href="http://docs.adobe.com/docs/en/aem/6-1/ref/javadoc/" />
+                                    <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r4v43/cmpn/" />
+                                    <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r4v43/core/" />
+                                    <link packages="com.citytechinc.aem.groovy.extension." href="http://code.citytechinc.com/aem-groovy-extension/groovydocs/" />
                                 </groovydoc>
                             </target>
                         </configuration>
@@ -218,7 +201,7 @@
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m4</version>
+                <version>1.0-m5.1</version>
                 <configuration>
                     <flowInitContext>
                         <featureBranchPrefix>feature-</featureBranchPrefix>
@@ -248,7 +231,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.18.1</version>
+                <version>2.19.1</version>
             </plugin>
         </plugins>
     </reporting>
@@ -266,7 +249,7 @@
                     <plugin>
                         <groupId>com.github.github</groupId>
                         <artifactId>site-maven-plugin</artifactId>
-                        <version>0.11</version>
+                        <version>0.12</version>
                         <configuration>
                             <message>site for ${project.version}</message>
                             <server>github</server>
@@ -283,6 +266,45 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>no-test-logging</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-nop</artifactId>
+                    <version>1.6.4</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>test-logging</id>
+            <activation>
+                <property>
+                    <name>test-logging</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                    <version>1.7.5</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.citytechinc.aem.groovy.extension</groupId>
+                    <artifactId>aem-groovy-extension-bundle</artifactId>
+                    <version>1.0.1</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-nop</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
@@ -330,6 +352,10 @@
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
+            <artifactId>cq-wcm-taglib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-msm-api</artifactId>
         </dependency>
         <dependency>
@@ -365,10 +391,6 @@
             <artifactId>org.apache.sling.scripting.sightly</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.xss</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.adobe.cq.sightly</groupId>
             <artifactId>cq-wcm-sightly-extension</artifactId>
         </dependency>
@@ -390,7 +412,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.4.3</version>
+            <version>2.4.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
@@ -411,11 +433,6 @@
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
             <version>1.0-groovy-2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>1.6.4</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

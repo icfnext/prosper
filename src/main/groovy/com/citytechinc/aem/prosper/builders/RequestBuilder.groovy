@@ -41,58 +41,6 @@ class RequestBuilder {
     }
 
     /**
-     * Set the request path.
-     *
-     * @param path JCR path
-     */
-    void setPath(String path) {
-        this.path = path
-    }
-
-    /**
-     * Set the request suffix.
-     *
-     * @param suffix suffix
-     */
-    void setSuffix(String suffix) {
-        this.suffix = suffix
-    }
-
-    /**
-     * Set the request extension
-     *
-     * @param extension extension
-     */
-    void setExtension(String extension) {
-        this.extension = extension
-    }
-
-    /**
-     * Add selectors to the request.
-     *
-     * @param selectors list of selectors
-     */
-    void setSelectors(List<String> selectors) {
-        this.selectors.addAll(selectors)
-    }
-
-    /**
-     * Add request parameters from a map.  Map values should either be strings or lists of strings (for multivalued
-     * parameters).
-     *
-     * @param parameters map of parameter names and values
-     */
-    void setParameters(Map<String, Object> parameters) {
-        parameters.each { name, value ->
-            if (value instanceof Collection) {
-                mockRequest.setParameter(name, value as String[])
-            } else {
-                mockRequest.setParameter(name, value as String)
-            }
-        }
-    }
-
-    /**
      * Build a Sling request with default values.
      *
      * @return request
@@ -132,177 +80,278 @@ class RequestBuilder {
             adapterManager)
     }
 
+    /**
+     * Set the request path.
+     *
+     * @param path JCR path
+     */
+    RequestBuilder setPath(String path) {
+        this.path = path
+        this
+    }
+
+    /**
+     * Set the request suffix.
+     *
+     * @param suffix suffix
+     */
+    RequestBuilder setSuffix(String suffix) {
+        this.suffix = suffix
+        this
+    }
+
+    /**
+     * Set the request extension
+     *
+     * @param extension extension
+     */
+    RequestBuilder setExtension(String extension) {
+        this.extension = extension
+        this
+    }
+
+    /**
+     * Add selectors to the request.
+     *
+     * @param selectors list of selectors
+     */
+    RequestBuilder setSelectors(List<String> selectors) {
+        this.selectors.addAll(selectors)
+        this
+    }
+
+    /**
+     * Add request parameters from a map.  Map values should either be strings or lists of strings (for multivalued
+     * parameters).
+     *
+     * @param parameters map of parameter names and values
+     */
+    RequestBuilder setParameters(Map<String, Object> parameters) {
+        parameters.each { name, value ->
+            if (value instanceof Collection) {
+                mockRequest.setParameter(name, value as String[])
+            } else {
+                mockRequest.setParameter(name, value as String)
+            }
+        }
+
+        this
+    }
+
     // delegate methods
 
-    void setCharacterEncoding(String characterEncoding) {
+    RequestBuilder setCharacterEncoding(String characterEncoding) {
         mockRequest.setCharacterEncoding(characterEncoding)
+        this
     }
 
-    void setContent(byte[] content) {
+    RequestBuilder setContent(byte[] content) {
         mockRequest.setContent(content)
+        this
     }
 
-    void setContentType(String contentType) {
+    RequestBuilder setContentType(String contentType) {
         mockRequest.setContentType(contentType)
+        this
     }
 
-    void setParameter(String name, String value) {
+    RequestBuilder setParameter(String name, String value) {
         mockRequest.setParameter(name, value)
+        this
     }
 
-    void setParameter(String name, String[] values) {
+    RequestBuilder setParameter(String name, String[] values) {
         mockRequest.setParameter(name, values)
+        this
     }
 
-    void addParameter(String name, String value) {
+    RequestBuilder addParameter(String name, String value) {
         mockRequest.addParameter(name, value)
+        this
     }
 
-    void addParameter(String name, String[] values) {
+    RequestBuilder addParameter(String name, String[] values) {
         mockRequest.addParameter(name, values)
+        this
     }
 
-    void addParameters(Map params) {
+    RequestBuilder addParameters(Map params) {
         mockRequest.addParameters(params)
+        this
     }
 
-    void removeParameter(String name) {
+    RequestBuilder removeParameter(String name) {
         mockRequest.removeParameter(name)
+        this
     }
 
-    void removeAllParameters() {
+    RequestBuilder removeAllParameters() {
         mockRequest.removeAllParameters()
+        this
     }
 
-    void setProtocol(String protocol) {
+    RequestBuilder setProtocol(String protocol) {
         mockRequest.setProtocol(protocol)
+        this
     }
 
-    void setScheme(String scheme) {
+    RequestBuilder setScheme(String scheme) {
         mockRequest.setScheme(scheme)
+        this
     }
 
-    void setServerName(String serverName) {
+    RequestBuilder setServerName(String serverName) {
         mockRequest.setServerName(serverName)
+        this
     }
 
-    void setServerPort(int serverPort) {
+    RequestBuilder setServerPort(int serverPort) {
         mockRequest.setServerPort(serverPort)
+        this
     }
 
-    void setRemoteAddr(String remoteAddr) {
+    RequestBuilder setRemoteAddr(String remoteAddr) {
         mockRequest.setRemoteAddr(remoteAddr)
+        this
     }
 
-    void setRemoteHost(String remoteHost) {
+    RequestBuilder setRemoteHost(String remoteHost) {
         mockRequest.setRemoteHost(remoteHost)
+        this
     }
 
-    void setAttribute(String name, Object value) {
+    RequestBuilder setAttribute(String name, Object value) {
         mockRequest.setAttribute(name, value)
+        this
     }
 
-    void removeAttribute(String name) {
+    RequestBuilder removeAttribute(String name) {
         mockRequest.removeAttribute(name)
+        this
     }
 
-    void clearAttributes() {
+    RequestBuilder clearAttributes() {
         mockRequest.clearAttributes()
+        this
     }
 
-    void addPreferredLocale(Locale locale) {
+    RequestBuilder addPreferredLocale(Locale locale) {
         mockRequest.addPreferredLocale(locale)
+        this
     }
 
-    void setPreferredLocales(List<Locale> locales) {
+    RequestBuilder setPreferredLocales(List<Locale> locales) {
         mockRequest.setPreferredLocales(locales)
+        this
     }
 
-    void setSecure(boolean secure) {
+    RequestBuilder setSecure(boolean secure) {
         mockRequest.setSecure(secure)
+        this
     }
 
-    void setRemotePort(int remotePort) {
+    RequestBuilder setRemotePort(int remotePort) {
         mockRequest.setRemotePort(remotePort)
+        this
     }
 
-    void setLocalName(String localName) {
+    RequestBuilder setLocalName(String localName) {
         mockRequest.setLocalName(localName)
+        this
     }
 
-    void setLocalAddr(String localAddr) {
+    RequestBuilder setLocalAddr(String localAddr) {
         mockRequest.setLocalAddr(localAddr)
+        this
     }
 
-    void setLocalPort(int localPort) {
+    RequestBuilder setLocalPort(int localPort) {
         mockRequest.setLocalPort(localPort)
+        this
     }
 
-    void setAuthType(String authType) {
+    RequestBuilder setAuthType(String authType) {
         mockRequest.setAuthType(authType)
+        this
     }
 
-    void setCookies(Cookie... cookies) {
+    RequestBuilder setCookies(Cookie... cookies) {
         mockRequest.setCookies(cookies)
+        this
     }
 
-    void addHeader(String name, Object value) {
+    RequestBuilder addHeader(String name, Object value) {
         mockRequest.addHeader(name, value)
+        this
     }
 
-    void setMethod(String method) {
+    RequestBuilder setMethod(String method) {
         mockRequest.setMethod(method)
+        this
     }
 
-    void setPathInfo(String pathInfo) {
+    RequestBuilder setPathInfo(String pathInfo) {
         mockRequest.setPathInfo(pathInfo)
+        this
     }
 
-    void setContextPath(String contextPath) {
+    RequestBuilder setContextPath(String contextPath) {
         mockRequest.setContextPath(contextPath)
+        this
     }
 
-    void setQueryString(String queryString) {
+    RequestBuilder setQueryString(String queryString) {
         mockRequest.setQueryString(queryString)
+        this
     }
 
-    void setRemoteUser(String remoteUser) {
+    RequestBuilder setRemoteUser(String remoteUser) {
         mockRequest.setRemoteAddr(remoteUser)
+        this
     }
 
-    void addUserRole(String role) {
+    RequestBuilder addUserRole(String role) {
         mockRequest.addUserRole(role)
+        this
     }
 
-    void setUserPrincipal(Principal userPrincipal) {
+    RequestBuilder setUserPrincipal(Principal userPrincipal) {
         mockRequest.setUserPrincipal(userPrincipal)
+        this
     }
 
-    void setRequestedSessionId(String requestedSessionId) {
+    RequestBuilder setRequestedSessionId(String requestedSessionId) {
         mockRequest.setRequestedSessionId(requestedSessionId)
+        this
     }
 
-    void setRequestURI(String requestURI) {
+    RequestBuilder setRequestURI(String requestURI) {
         mockRequest.setRequestURI(requestURI)
+        this
     }
 
-    void setServletPath(String servletPath) {
+    RequestBuilder setServletPath(String servletPath) {
         mockRequest.setServletPath(servletPath)
+        this
     }
 
-    void setSession(HttpSession session) {
+    RequestBuilder setSession(HttpSession session) {
         mockRequest.setSession(session)
+        this
     }
 
-    void setRequestedSessionIdValid(boolean requestedSessionIdValid) {
+    RequestBuilder setRequestedSessionIdValid(boolean requestedSessionIdValid) {
         mockRequest.setRequestedSessionIdValid(requestedSessionIdValid)
+        this
     }
 
-    void setRequestedSessionIdFromCookie(boolean requestedSessionIdFromCookie) {
+    RequestBuilder setRequestedSessionIdFromCookie(boolean requestedSessionIdFromCookie) {
         mockRequest.setRequestedSessionIdFromCookie(requestedSessionIdFromCookie)
+        this
     }
 
-    void setRequestedSessionIdFromURL(boolean requestedSessionIdFromURL) {
+    RequestBuilder setRequestedSessionIdFromURL(boolean requestedSessionIdFromURL) {
         mockRequest.setRequestedSessionIdFromURL(requestedSessionIdFromURL)
+        this
     }
 }

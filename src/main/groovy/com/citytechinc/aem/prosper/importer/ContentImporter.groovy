@@ -4,6 +4,7 @@ import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
 import com.citytechinc.aem.prosper.annotations.ContentFilters
 import com.citytechinc.aem.prosper.annotations.SkipContentImport
 import com.citytechinc.aem.prosper.specs.ProsperSpec
+import groovy.transform.TupleConstructor
 import org.apache.jackrabbit.vault.fs.api.PathFilterSet
 import org.apache.jackrabbit.vault.fs.api.WorkspaceFilter
 import org.apache.jackrabbit.vault.fs.config.DefaultWorkspaceFilter
@@ -12,19 +13,20 @@ import org.apache.jackrabbit.vault.fs.io.FileArchive
 import org.apache.jackrabbit.vault.fs.io.ImportOptions
 import org.apache.jackrabbit.vault.fs.io.Importer
 
+@TupleConstructor
 class ContentImporter {
+
+    ProsperSpec spec
 
     /**
      * Import content from a local filter definition.
-     *
-     * @param spec current test spec
      */
-    static void importVaultContent(ProsperSpec spec) {
+    void importVaultContent() {
         if (!spec.class.isAnnotationPresent(SkipContentImport)) {
             def contentRootUrl = this.class.getResource("/SLING-INF/content")
 
             if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
-                def contentImporter = buildContentImporter(spec)
+                def contentImporter = buildImporter()
                 def contentArchive = new FileArchive(new File(contentRootUrl.file))
 
                 try {
@@ -37,22 +39,22 @@ class ContentImporter {
         }
     }
 
-    private static Importer buildContentImporter(ProsperSpec spec) {
-        def contentImporter
+    private Importer buildImporter() {
+        def importer
 
         if (spec.class.isAnnotationPresent(ContentFilters)) {
             def contentImportOptions = new ImportOptions()
 
-            contentImportOptions.filter = buildContentImportFilter(spec)
-            contentImporter = new Importer(contentImportOptions)
+            contentImportOptions.filter = buildWorkspaceFilter()
+            importer = new Importer(contentImportOptions)
         } else {
-            contentImporter = new Importer()
+            importer = new Importer()
         }
 
-        contentImporter
+        importer
     }
 
-    private static WorkspaceFilter buildContentImportFilter(ProsperSpec spec) {
+    private WorkspaceFilter buildWorkspaceFilter() {
         def contentImportFilter = new DefaultWorkspaceFilter()
 
         def filterDefinitions = spec.class.getAnnotation(ContentFilters)
