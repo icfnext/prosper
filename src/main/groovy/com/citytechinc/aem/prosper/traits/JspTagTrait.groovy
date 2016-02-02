@@ -6,6 +6,8 @@ import com.citytechinc.aem.prosper.context.ProsperPageContext
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.tag.JspTagProxy
 import com.day.cq.wcm.api.PageManager
+import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
@@ -46,7 +48,7 @@ trait JspTagTrait {
      * @param resourcePath path to set <code>Resource</code> instance and related objects in page context
      * @return proxy tag instance containing mocked page context and writer
      */
-    public JspTagProxy init(Class<TagSupport> tagClass, String resourcePath) {
+    JspTagProxy init(Class<TagSupport> tagClass, String resourcePath) {
         init(tagClass, resourcePath, [:])
     }
 
@@ -58,14 +60,16 @@ trait JspTagTrait {
      * @param additionalPageContextAttributes additional attributes to set in the mocked page context
      * @return proxy tag instance containing mocked page context and writer
      */
-    public JspTagProxy init(Class<TagSupport> tagClass, String resourcePath,
+    JspTagProxy init(Class<TagSupport> tagClass, String resourcePath,
         Map<String, Object> additionalPageContextAttributes) {
-        def writer = new StringWriter()
-        def pageContext = new ProsperPageContext(writer)
-
         def resource = resourceResolver.resolve(resourcePath)
+        def request = requestBuilder.setPath(resource.path).build()
+        def response = responseBuilder.build()
 
-        setDefaultPageContextAttributes(pageContext, resource)
+        def writer = new StringWriter()
+        def pageContext = new ProsperPageContext(request, response, writer)
+
+        setDefaultPageContextAttributes(pageContext, request, response, resource)
 
         additionalPageContextAttributes.each { name, value ->
             pageContext.setAttribute(name, value)
@@ -78,23 +82,19 @@ trait JspTagTrait {
         new JspTagProxy(tag, pageContext, writer)
     }
 
-    private void setDefaultPageContextAttributes(PageContext pageContext, Resource resource) {
+    private void setDefaultPageContextAttributes(PageContext pageContext, SlingHttpServletRequest request,
+        SlingHttpServletResponse response, Resource resource) {
+        def pageManager = resourceResolver.adaptTo(PageManager)
+        def currentPage = pageManager.getContainingPage(resource)
+
         pageContext.setAttribute(DEFAULT_RESOURCE_RESOLVER_NAME, resourceResolver)
         pageContext.setAttribute(DEFAULT_RESOURCE_NAME, resource)
         pageContext.setAttribute(DEFAULT_PROPERTIES_NAME, resource.valueMap)
         pageContext.setAttribute(DEFAULT_NODE_NAME, resource.adaptTo(Node))
-
-        def request = requestBuilder.setPath(resource.path).build()
-        def response = responseBuilder.build()
-
         pageContext.setAttribute(DEFAULT_REQUEST_NAME, request)
         pageContext.setAttribute(DEFAULT_RESPONSE_NAME, response)
         pageContext.setAttribute(DEFAULT_SLING_NAME, MockSling.newSlingScriptHelper(request, response,
             slingContext.bundleContext))
-
-        def pageManager = resourceResolver.adaptTo(PageManager)
-        def currentPage = pageManager.getContainingPage(resource)
-
         pageContext.setAttribute(DEFAULT_PAGE_MANAGER_NAME, pageManager)
         pageContext.setAttribute(DEFAULT_CURRENT_PAGE_NAME, currentPage)
         pageContext.setAttribute(DEFAULT_PAGE_PROPERTIES_NAME, currentPage ? currentPage.properties : ValueMap.EMPTY)
