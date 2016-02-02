@@ -6,7 +6,7 @@ import org.apache.sling.models.spi.Injector
 import static org.osgi.framework.Constants.SERVICE_RANKING
 
 /**
- * Trait for "mixing in" Sling Models support for a spec.
+ * Trait for adding Sling Models support for a spec.
  */
 trait SlingModelTrait {
 

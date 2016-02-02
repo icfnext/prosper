@@ -171,26 +171,6 @@ abstract class ProsperSpec extends Specification {
         Collections.emptyMap()
     }
 
-    /**
-     * Register an adapter for this spec.
-     *
-     * @param adaptableType
-     * @param adapterType target adapter type
-     * @param closure
-     */
-    void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
-        adapterManager.addAdapter(adaptableType, adapterType, closure)
-    }
-
-    /**
-     * Register an adapter factory for this spec.
-     *
-     * @param adapterFactory adapter factory instance
-     */
-    void addAdapterFactory(AdapterFactory adapterFactory) {
-        adapterManager.addAdapterFactory(adapterFactory)
-    }
-
     // accessors for shared instances
 
     /**
@@ -431,20 +411,22 @@ abstract class ProsperSpec extends Specification {
     }
 
     private void addAdapters() {
-        addAdapterFactory(new ProsperAdapterFactory(repository, session))
+        adapterManager.addAdapterFactory(new ProsperAdapterFactory(repository, session))
 
-        addAdapterFactories().each { adapterFactory -> addAdapterFactory(adapterFactory) }
+        addAdapterFactories().each { adapterFactory ->
+            adapterManager.addAdapterFactory(adapterFactory)
+        }
 
         addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
-            addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
+            adapterManager.addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
         }
 
         addResourceResolverAdapters().each { Map.Entry<Class, Closure> resourceResolverAdapter ->
-            addAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
+            adapterManager.addAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
         }
 
         addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
-            addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
+            adapterManager.addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
         }
     }
 }
