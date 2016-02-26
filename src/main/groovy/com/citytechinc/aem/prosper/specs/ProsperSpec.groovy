@@ -6,12 +6,10 @@ import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRe
 import com.citytechinc.aem.prosper.adapter.ProsperAdapterFactory
 import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.annotations.NodeTypes
-import com.citytechinc.aem.prosper.builders.BindingsBuilder
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.importer.ContentImporter
-import com.citytechinc.aem.prosper.mixins.ProsperMixin
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
@@ -32,7 +30,6 @@ import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
-import java.lang.reflect.Field
 
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
@@ -42,7 +39,15 @@ abstract class ProsperSpec extends Specification {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
 
-    private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
+    private static final def NODE_TYPES = [
+        "sling",
+        "replication",
+        "tagging",
+        "core",
+        "dam",
+        "vlt",
+        "widgets"
+    ]
 
     @Shared
     private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
@@ -87,21 +92,17 @@ abstract class ProsperSpec extends Specification {
         resourceResolverInternal = resourceResolverFactoryInternal.getAdministrativeResourceResolver(null)
         sessionInternal = resourceResolverInternal.adaptTo(Session)
 
-
-
         nodeBuilderInternal = new NodeBuilder(sessionInternal)
         pageBuilderInternal = new PageBuilder(sessionInternal)
 
         registerNodeTypes()
 
-        ContentImporter.importVaultContent(this)
+        new ContentImporter(this).importVaultContent()
 
         addAdapters()
 
         // resourceResolverInternal = new MockResourceResolver(sessionInternal, adapterManager)
         pageManagerInternal = resourceResolver.adaptTo(PageManager)
-
-        addMixins()
     }
 
     def cleanupSpec() {
@@ -171,26 +172,6 @@ abstract class ProsperSpec extends Specification {
      */
     Map<Class, Closure> addRequestAdapters() {
         Collections.emptyMap()
-    }
-
-    /**
-     * Register an adapter for this spec.
-     *
-     * @param adaptableType
-     * @param adapterType target adapter type
-     * @param closure
-     */
-    void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
-        adapterManager.addAdapter(adaptableType, adapterType, closure)
-    }
-
-    /**
-     * Register an adapter factory for this spec.
-     *
-     * @param adapterFactory adapter factory instance
-     */
-    void addAdapterFactory(AdapterFactory adapterFactory) {
-        adapterManager.addAdapterFactory(adapterFactory)
     }
 
     // accessors for shared instances
@@ -295,15 +276,6 @@ abstract class ProsperSpec extends Specification {
      */
     ResponseBuilder getResponseBuilder() {
         new ResponseBuilder()
-    }
-
-    /**
-     * Get a bindings builder.
-     *
-     * @return builder
-     */
-    BindingsBuilder getBindingsBuilder() {
-        new BindingsBuilder(this)
     }
 
     // assertions
@@ -424,47 +396,23 @@ abstract class ProsperSpec extends Specification {
 
     private void addAdapters() {
         def repository = slingContext.getService(SlingRepository)
-
-        addAdapterFactory(new ProsperAdapterFactory(repository, session))
+        
+        adapterManager.addAdapterFactory(new ProsperAdapterFactory(repository, session))
 
         addAdapterFactories().each { adapterFactory ->
-            addAdapterFactory(adapterFactory)
+            adapterManager.addAdapterFactory(adapterFactory)
         }
 
         addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
-            addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
+            adapterManager.addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
         }
 
         addResourceResolverAdapters().each { Map.Entry<Class, Closure> resourceResolverAdapter ->
-            addAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
+            adapterManager.addAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
         }
 
         addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
-            addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
+            adapterManager.addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
         }
-    }
-
-    private void addMixins() {
-        findAllMixins(this.class).each { mixin ->
-            def instance = mixin.type.getConstructor(ProsperSpec).newInstance(this)
-
-            mixin.with {
-                accessible = true
-                set(this, instance)
-            }
-        }
-    }
-
-    private List<Field> findAllMixins(Class mixinClass) {
-        def mixins = []
-        def clazz = mixinClass
-
-        while (clazz && clazz != ProsperSpec) {
-            mixins.addAll(clazz.declaredFields.findAll { ProsperMixin.isAssignableFrom(it.type) })
-
-            clazz = clazz.superclass
-        }
-
-        mixins
     }
 }

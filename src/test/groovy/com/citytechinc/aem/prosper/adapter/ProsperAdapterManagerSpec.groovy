@@ -25,7 +25,7 @@ class ProsperAdapterManagerSpec extends ProsperSpec {
 
     def "test adapter manager respects OSGi service properties"() {
         given: "an OSGi registered adapter factory is added"
-        addAdapterFactory(new OSGiRegisteredAdapterFactory())
+        adapterManager.addAdapterFactory(new OSGiRegisteredAdapterFactory())
 
         when: "a request is adapted"
         def requestResult = requestBuilder.build().adaptTo(Long)
@@ -43,7 +43,7 @@ class ProsperAdapterManagerSpec extends ProsperSpec {
     @IgnoreRest
     def "test adapter factory without OSGi service properties is always called"() {
         given: "an adapter factory without OSGi properties"
-        addAdapterFactory(new AdapterFactory() {
+        adapterManager.addAdapterFactory(new AdapterFactory() {
             @Override
             <AdapterType> AdapterType getAdapter(Object o, Class<AdapterType> aClass) {
                 (AdapterType) 157

@@ -9,12 +9,12 @@ import javax.servlet.jsp.tagext.TagSupport
  * Composite class containing the JSP tag instance and mocked page context that exposes the tag writer output.
  */
 @TupleConstructor
-class JspTagProxy<T extends TagSupport> {
+class JspTagProxy {
 
     /**
      * Tag instance under test.
      */
-    T tag
+    TagSupport tag
 
     /**
      * Mock page context for tag under test.
