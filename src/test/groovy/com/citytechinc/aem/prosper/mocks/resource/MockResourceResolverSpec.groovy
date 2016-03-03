@@ -103,4 +103,13 @@ class MockResourceResolverSpec extends ProsperSpec {
         expect:
         !resourceResolver.live
     }
+
+    def "is resource type"() {
+        setup:
+        def resource = resourceResolver.getResource("/content/prosper/jcr:content")
+
+        expect:
+        resourceResolver.isResourceType(resource, "prosper/components/page/prosper")
+        resourceResolver.isResourceType(resource, "foundation/components/page")
+    }
 }

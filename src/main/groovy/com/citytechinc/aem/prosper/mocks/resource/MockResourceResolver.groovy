@@ -3,6 +3,7 @@ package com.citytechinc.aem.prosper.mocks.resource
 import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ResourceUtil
 import org.apache.sling.jcr.resource.JcrResourceUtil
 import org.apache.sling.jcr.resource.internal.helper.jcr.JcrResourceProvider
 import org.apache.sling.jcr.resource.internal.helper.jcr.PathMapper
@@ -196,17 +197,26 @@ class MockResourceResolver implements ProsperResourceResolver, GroovyInterceptab
 
     @Override
     String getParentResourceType(Resource resource) {
-        throw new UnsupportedOperationException()
+        resource.resourceSuperType ?: getParentResourceType(resource.resourceType)
     }
 
     @Override
     String getParentResourceType(String resourceType) {
-        throw new UnsupportedOperationException()
+        final Resource resourceTypeResource = getResource(ResourceUtil.resourceTypeToPath(resourceType))
+        resourceTypeResource != null ? resourceTypeResource.resourceSuperType : null
     }
 
     @Override
     boolean isResourceType(Resource resource, String resourceType) {
-        resourceType == resource.resourceType
+        def isResourceType = resourceType == resource.resourceType
+
+        def resourceSuperType = resource.resourceSuperType ?: getParentResourceType(resource.resourceType)
+        while (!isResourceType && resourceSuperType) {
+            isResourceType = resourceType == resourceSuperType
+            resourceSuperType = getParentResourceType(resourceSuperType)
+        }
+
+        isResourceType
     }
 
     @Override
