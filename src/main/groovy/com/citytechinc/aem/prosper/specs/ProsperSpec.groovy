@@ -93,7 +93,6 @@ abstract class ProsperSpec extends Specification {
      * Refresh the shared resource resolver before each test run.
      */
     def setup() {
-        // resourceResolverInternal = resourceResolverFactoryInternal.getAdministrativeResourceResolver(null)
         resourceResolverInternal.refresh()
     }
 

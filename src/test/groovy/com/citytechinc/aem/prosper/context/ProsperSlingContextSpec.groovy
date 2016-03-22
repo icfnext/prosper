@@ -8,7 +8,6 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.annotations.Model
 import org.apache.sling.models.annotations.injectorspecific.Self
-import spock.lang.Ignore
 
 class ProsperSlingContextSpec extends ProsperSpec {
 
@@ -47,8 +46,7 @@ class ProsperSlingContextSpec extends ProsperSpec {
         expect:
         model.path == "/content/prosper"
     }
-
-    @Ignore
+    
     def "test adapter manager respects OSGi service properties"() {
         given: "an OSGi registered adapter factory is added"
         slingContext.registerAdapterFactory(new OSGiRegisteredAdapterFactory(), null, null)
@@ -66,9 +64,8 @@ class ProsperSlingContextSpec extends ProsperSpec {
         resourceResolverResult == null
     }
 
-    @Ignore
     def "test adapter factory without OSGi service properties is always called"() {
-        given: "an adapter factory without OSGi properties"
+        setup: "an adapter factory without OSGi properties"
         def adapterFactory = new AdapterFactory() {
             @Override
             <AdapterType> AdapterType getAdapter(Object o, Class<AdapterType> aClass) {
@@ -79,16 +76,7 @@ class ProsperSlingContextSpec extends ProsperSpec {
         slingContext.registerAdapterFactory(adapterFactory, [ResourceResolver.name] as String[],
             [Integer.name] as String[])
 
-        when: "a request is adapted"
-        def requestResult = requestBuilder.build().adaptTo(Integer)
-
-        then: "a valid result is returned"
-        requestResult == 157
-
-        when: "a resource resolve is adapted"
-        def resourceResolverResult = resourceResolver.adaptTo(Integer)
-
-        then: "a valid result is returned"
-        resourceResolverResult == 157
+        expect: "a valid result is returned"
+        resourceResolver.adaptTo(Integer) == 157
     }
 }

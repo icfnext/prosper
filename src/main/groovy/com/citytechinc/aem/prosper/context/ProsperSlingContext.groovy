@@ -30,6 +30,10 @@ class ProsperSlingContext extends SlingContextImpl {
             ProsperAdapterFactory.ADAPTER_CLASSES)
     }
 
+    void refresh() {
+        MockSling.setAdapterManagerBundleContext(bundleContext())
+    }
+
     /**
      * Register an adapter for the current Prosper context.
      *
@@ -54,5 +58,7 @@ class ProsperSlingContext extends SlingContextImpl {
             (ADAPTABLE_CLASSES): adaptableClasses,
             (ADAPTER_CLASSES): adapterClasses
         ])
+
+        // MockSling.setAdapterManagerBundleContext(bundleContext())
     }
 }
