@@ -94,7 +94,7 @@ trait JspTagTrait {
         pageContext.setAttribute(DEFAULT_REQUEST_NAME, request)
         pageContext.setAttribute(DEFAULT_RESPONSE_NAME, response)
         pageContext.setAttribute(DEFAULT_SLING_NAME, MockSling.newSlingScriptHelper(request, response,
-            slingContext.bundleContext))
+            slingContext.bundleContext()))
         pageContext.setAttribute(DEFAULT_PAGE_MANAGER_NAME, pageManager)
         pageContext.setAttribute(DEFAULT_CURRENT_PAGE_NAME, currentPage)
         pageContext.setAttribute(DEFAULT_PAGE_PROPERTIES_NAME, currentPage ? currentPage.properties : ValueMap.EMPTY)

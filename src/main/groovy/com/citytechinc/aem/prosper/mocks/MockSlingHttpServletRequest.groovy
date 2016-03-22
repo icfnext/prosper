@@ -4,7 +4,7 @@ import com.citytechinc.aem.prosper.mocks.request.MockRequestParameterMap
 import com.citytechinc.aem.prosper.mocks.request.MockRequestPathInfo
 import groovy.transform.ToString
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.adapter.AdapterManager
+import org.apache.sling.api.adapter.SlingAdaptable
 import org.apache.sling.api.request.RequestDispatcherOptions
 import org.apache.sling.api.request.RequestParameter
 import org.apache.sling.api.request.RequestParameterMap
@@ -18,14 +18,12 @@ import javax.servlet.RequestDispatcher
 import javax.servlet.http.Cookie
 
 @ToString(includes = ["resource", "requestPathInfo", "requestParameterMap"])
-class MockSlingHttpServletRequest implements SlingHttpServletRequest {
+class MockSlingHttpServletRequest extends SlingAdaptable implements SlingHttpServletRequest {
 
     @Delegate
     private final MockHttpServletRequest mockRequest
 
     private final ResourceResolver resourceResolver
-
-    private final AdapterManager adapterManager
 
     private final Resource resource
 
@@ -34,10 +32,9 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     private final RequestPathInfo requestPathInfo
 
     MockSlingHttpServletRequest(MockHttpServletRequest mockRequest, ResourceResolver resourceResolver, String path,
-        List<String> selectors, String extension, String suffix, AdapterManager adapterManager) {
+        List<String> selectors, String extension, String suffix) {
         this.mockRequest = mockRequest
         this.resourceResolver = resourceResolver
-        this.adapterManager = adapterManager
 
         resource = resourceResolver.resolve(path)
         requestParameterMap = MockRequestParameterMap.create(mockRequest)
@@ -128,13 +125,6 @@ class MockSlingHttpServletRequest implements SlingHttpServletRequest {
     @Override
     RequestProgressTracker getRequestProgressTracker() {
         throw new UnsupportedOperationException()
-    }
-
-    @Override
-    def <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        def result = adapterManager.getAdapter(this, type)
-
-        result
     }
 
     @Override

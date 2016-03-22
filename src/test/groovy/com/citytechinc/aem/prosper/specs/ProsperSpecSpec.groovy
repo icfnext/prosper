@@ -14,6 +14,7 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
+import spock.lang.IgnoreRest
 import spock.lang.Unroll
 
 import javax.jcr.Node
@@ -56,17 +57,17 @@ class ProsperSpecSpec extends ProsperSpec {
 
     @Override
     Map<Class, Closure> addResourceAdapters() {
-        [(String.class): { "hello" }]
+        [(String): { "hello" }]
     }
 
     @Override
     Map<Class, Closure> addResourceResolverAdapters() {
-        [(String.class): { "world" }]
+        [(String): { "world" }]
     }
 
     @Override
     Map<Class, Closure> addRequestAdapters() {
-        [(String.class): { "!" }]
+        [(String): { "!" }]
     }
 
     def setupSpec() {

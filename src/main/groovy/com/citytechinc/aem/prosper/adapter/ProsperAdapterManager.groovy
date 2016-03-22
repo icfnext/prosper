@@ -39,14 +39,17 @@ class ProsperAdapterManager implements AdapterManager {
      *
      * @param adapterFactory adapter factory instance
      */
-    void addAdapterFactory(AdapterFactory adapterFactory) {
-        slingContext.registerService(AdapterFactory, adapterFactory)
+    void addAdapterFactory(AdapterFactory adapterFactory, String[] adaptableClasses, String[] adapterClasses) {
+        slingContext.registerService(AdapterFactory, adapterFactory, [
+            (ADAPTABLE_CLASSES): adaptableClasses,
+            (ADAPTER_CLASSES): adapterClasses
+        ])
     }
 
     @Override
     public <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> adapterType) {
         // find all adapter factories
-        def serviceReferences = slingContext.bundleContext.getServiceReferences(AdapterFactory.name, null)
+        def serviceReferences = slingContext.bundleContext().getServiceReferences(AdapterFactory.name, null)
 
         def adapterFactories = ((serviceReferences ?: []) as List).findResults { ServiceReference serviceReference ->
             def adapterFactory
@@ -62,13 +65,13 @@ class ProsperAdapterManager implements AdapterManager {
                 }
 
                 if (isAdaptable && adapters.contains(adapterType.name)) {
-                    adapterFactory = slingContext.bundleContext.getService(serviceReference)
+                    adapterFactory = slingContext.bundleContext().getService(serviceReference)
                 } else {
                     adapterFactory = null
                 }
             } else {
                 // adapter factory may have been specifically created in a spec without OSGi properties
-                adapterFactory = slingContext.bundleContext.getService(serviceReference)
+                adapterFactory = slingContext.bundleContext().getService(serviceReference)
             }
 
             adapterFactory

@@ -1,5 +1,6 @@
 package com.citytechinc.aem.prosper.adapter
 
+import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.day.cq.replication.Replicator
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
@@ -16,14 +17,24 @@ import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.jcr.api.SlingRepository
 import org.osgi.service.event.EventAdmin
 
-import javax.jcr.Session
-
 @TupleConstructor
 class ProsperAdapterFactory implements AdapterFactory {
 
-    SlingRepository repository
+    public static final String[] ADAPTER_CLASSES = [
+        "com.day.cq.wcm.api.Page",
+        "com.day.cq.wcm.api.PageManager",
+        "com.day.cq.tagging.TagManager",
+        "org.apache.sling.api.resource.Resource",
+        "org.apache.sling.api.resource.ResourceResolver"
+    ]
 
-    Session session
+    public static final String[] ADAPTABLE_CLASSES = [
+        "org.apache.sling.api.resource.Resource",
+        "org.apache.sling.api.resource.ResourceResolver",
+        "org.apache.sling.api.SlingHttpServletRequest"
+    ]
+
+    ProsperSlingContext slingContext
 
     @Override
     def <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
@@ -52,7 +63,7 @@ class ProsperAdapterFactory implements AdapterFactory {
             def fields = [
                 replicator: [replicate: {}] as Replicator,
                 eventAdmin: [postEvent: {}, sendEvent: {}] as EventAdmin,
-                repository: repository
+                repository: slingContext.getService(SlingRepository)
             ]
 
             fields.each { name, instance ->
@@ -65,8 +76,6 @@ class ProsperAdapterFactory implements AdapterFactory {
             result = factory.getPageManager(resourceResolver)
         } else if (type == TagManager) {
             result = new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
-        } else if (type == Session) {
-            result = session
         } else {
             result = null
         }
