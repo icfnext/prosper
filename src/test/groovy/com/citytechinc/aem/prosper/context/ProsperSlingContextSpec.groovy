@@ -24,10 +24,6 @@ class ProsperSlingContextSpec extends ProsperSpec {
     }
 
     def setupSpec() {
-        // slingContext.addModelsForPackage("com.citytechinc.aem.prosper.context")
-    }
-
-    def setup() {
         slingContext.addModelsForPackage("com.citytechinc.aem.prosper.context")
     }
 

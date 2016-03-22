@@ -4,6 +4,7 @@ import com.citytechinc.aem.prosper.adapter.ClosureAdapterFactory
 import com.citytechinc.aem.prosper.adapter.ProsperAdapterFactory
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.testing.mock.osgi.MockEventAdmin
+import org.apache.sling.testing.mock.sling.MockSling
 import org.apache.sling.testing.mock.sling.context.SlingContextImpl
 
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
@@ -18,6 +19,8 @@ class ProsperSlingContext extends SlingContextImpl {
      * Register default services and the Prosper adapter factory.
      */
     ProsperSlingContext() {
+        MockSling.setAdapterManagerBundleContext(bundleContext())
+
         // register default services
         registerInjectActivateService(new MockEventAdmin())
         registerDefaultServices()
