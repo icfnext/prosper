@@ -1,6 +1,5 @@
 package com.citytechinc.aem.prosper.specs
 
-import com.citytechinc.aem.prosper.adapter.AdapterFactoryHolder
 import com.citytechinc.aem.prosper.annotations.ContentFilter
 import com.citytechinc.aem.prosper.annotations.ContentFilterRule
 import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
@@ -9,7 +8,6 @@ import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.day.cq.tagging.TagManager
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
-import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -32,8 +30,23 @@ import javax.jcr.Session
 @NodeTypes("/SLING-INF/nodetypes/spock.cnd")
 class ProsperSpecSpec extends ProsperSpec {
 
-    @Override
-    Collection<AdapterFactoryHolder> addAdapterFactories() {
+    def setupSpec() {
+        nodeBuilder.etc {
+            spock("spock:TestType")
+        }
+
+        slingContext.registerResourceAdapter(String, {
+            "hello"
+        })
+
+        slingContext.registerResourceResolverAdapter(String, {
+            "world"
+        })
+
+        slingContext.registerRequestAdapter(String, {
+            "!"
+        })
+
         def adapterFactory = new AdapterFactory() {
             @Override
             def <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
@@ -51,31 +64,8 @@ class ProsperSpecSpec extends ProsperSpec {
             }
         }
 
-        def holder = new AdapterFactoryHolder(adapterFactory, [Resource.name, ResourceResolver.name] as String[],
+        slingContext.registerAdapterFactory(adapterFactory, [Resource.name, ResourceResolver.name] as String[],
             [Integer.name] as String[])
-
-        [holder]
-    }
-
-    @Override
-    Map<Class, Closure> addResourceAdapters() {
-        [(String): { "hello" }]
-    }
-
-    @Override
-    Map<Class, Closure> addResourceResolverAdapters() {
-        [(String): { "world" }]
-    }
-
-    @Override
-    Map<Class, Closure> addRequestAdapters() {
-        [(String): { "!" }]
-    }
-
-    def setupSpec() {
-        nodeBuilder.etc {
-            spock("spock:TestType")
-        }
     }
 
     def "registered adapter factory"() {
@@ -121,7 +111,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add resource resolver adapter for test"() {
         setup:
-        slingContext.registerAdapter(ResourceResolver, Map, { [:] })
+        slingContext.registerResourceResolverAdapter(Map, { [:] })
 
         expect:
         resourceResolver.adaptTo(Map) == [:]
@@ -129,7 +119,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add request adapter for test"() {
         setup:
-        slingContext.registerAdapter(SlingHttpServletRequest, Map, { [adapted: "request"] })
+        slingContext.registerRequestAdapter(Map, { [adapted: "request"] })
 
         expect:
         requestBuilder.build().adaptTo(Map) == [adapted: "request"]

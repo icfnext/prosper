@@ -3,7 +3,6 @@ package com.citytechinc.aem.prosper.specs
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
-import com.citytechinc.aem.prosper.adapter.AdapterFactoryHolder
 import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
@@ -13,7 +12,6 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
-import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
@@ -66,8 +64,6 @@ abstract class ProsperSpec extends Specification {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        addAdapters()
-
         resourceResolverInternal = MockSling.newResourceResolver(JCR_OAK, slingContext.bundleContext())
         sessionInternal = resourceResolver.adaptTo(Session)
         nodeBuilderInternal = new NodeBuilder(session)
@@ -100,52 +96,6 @@ abstract class ProsperSpec extends Specification {
     void removeAllNodes() {
         session.rootNode.nodes.findAll { Node node -> !SYSTEM_NODE_NAMES.contains(node.name) }*.remove()
         session.save()
-    }
-
-    // "overridable" instance methods returning default (empty) values
-
-    /**
-     * Add <code>AdapterFactory</code> instances for adapting <code>Resource</code> or <code>ResourceResolver</code>
-     * instances to different types at test runtime.  Specs should override this method to add testing adapter
-     * factories at runtime.
-     *
-     * @return collection of Sling adapter factory holders containing the adapter factory and required metadata
-     */
-    Collection<AdapterFactoryHolder> addAdapterFactories() {
-        Collections.emptyList()
-    }
-
-    /**
-     * Add <code>Resource</code> adapters and their associated adapter functions.  The mapped closure will be called
-     * with a single <code>Resource</code> argument.  Specs should override this method to add resource adapters at
-     * runtime.
-     *
-     * @return map of adapter types to adapter functions
-     */
-    Map<Class, Closure> addResourceAdapters() {
-        Collections.emptyMap()
-    }
-
-    /**
-     * Add <code>ResourceResolver</code> adapters and their associated adapter functions. The mapped closure will be
-     * called with a single <code>ResourceResolver</code> argument.  Specs should override this method to add
-     * resource resolver adapters at runtime.
-     *
-     * @return map of adapter types to adapter functions
-     */
-    Map<Class, Closure> addResourceResolverAdapters() {
-        Collections.emptyMap()
-    }
-
-    /**
-     * Add <code>SlingHttpServletRequest</code> adapters and their associated adapter functions. The mapped closure
-     * will be called with a single <code>SlingHttpServletRequest</code> argument.  Specs should override this method
-     * to add request adapters at runtime.
-     *
-     * @return map of adapter types to adapter functions
-     */
-    Map<Class, Closure> addRequestAdapters() {
-        Collections.emptyMap()
     }
 
     // accessors for shared instances
@@ -358,24 +308,6 @@ abstract class ProsperSpec extends Specification {
             this.class.getResourceAsStream(cndResourcePath).withStream { stream ->
                 RepositoryUtil.registerNodeType(session, stream)
             }
-        }
-    }
-
-    private void addAdapters() {
-        addAdapterFactories().each { adapterFactoryHolder ->
-            slingContext.registerAdapterFactory(adapterFactoryHolder)
-        }
-
-        addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
-            slingContext.registerAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
-        }
-
-        addResourceResolverAdapters().each { Map.Entry<Class, Closure> resourceResolverAdapter ->
-            slingContext.registerAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
-        }
-
-        addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
-            slingContext.registerAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
         }
     }
 }
