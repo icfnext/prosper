@@ -1,5 +1,6 @@
 package com.citytechinc.aem.prosper.context
 
+import com.citytechinc.aem.prosper.adapter.AdapterFactoryHolder
 import com.citytechinc.aem.prosper.adapter.ClosureAdapterFactory
 import com.citytechinc.aem.prosper.adapter.ProsperAdapterFactory
 import org.apache.sling.api.adapter.AdapterFactory
@@ -30,10 +31,6 @@ class ProsperSlingContext extends SlingContextImpl {
             ProsperAdapterFactory.ADAPTER_CLASSES)
     }
 
-    void refresh() {
-        MockSling.setAdapterManagerBundleContext(bundleContext())
-    }
-
     /**
      * Register an adapter for the current Prosper context.
      *
@@ -49,6 +46,18 @@ class ProsperSlingContext extends SlingContextImpl {
     /**
      * Register an adapter factory for the current Prosper context.
      *
+     * @param adapterFactoryHolder holder containing adapter factory instance and required metadata
+     */
+    void registerAdapterFactory(AdapterFactoryHolder adapterFactoryHolder) {
+        registerService(AdapterFactory, adapterFactoryHolder.adapterFactory, [
+            (ADAPTABLE_CLASSES): adapterFactoryHolder.adaptableClasses,
+            (ADAPTER_CLASSES): adapterFactoryHolder.adapterClasses
+        ])
+    }
+
+    /**
+     * Register an adapter factory for the current Prosper context.
+     *
      * @param adapterFactory adapter factory instance
      * @param adaptableClasses
      * @param adapterClasses
@@ -58,7 +67,5 @@ class ProsperSlingContext extends SlingContextImpl {
             (ADAPTABLE_CLASSES): adaptableClasses,
             (ADAPTER_CLASSES): adapterClasses
         ])
-
-        // MockSling.setAdapterManagerBundleContext(bundleContext())
     }
 }

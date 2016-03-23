@@ -1,6 +1,6 @@
 package com.citytechinc.aem.prosper.specs
 
-import com.citytechinc.aem.prosper.adapters.OSGiRegisteredAdapterFactory
+import com.citytechinc.aem.prosper.adapter.AdapterFactoryHolder
 import com.citytechinc.aem.prosper.annotations.ContentFilter
 import com.citytechinc.aem.prosper.annotations.ContentFilterRule
 import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
@@ -14,7 +14,6 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
-import spock.lang.IgnoreRest
 import spock.lang.Unroll
 
 import javax.jcr.Node
@@ -34,7 +33,7 @@ import javax.jcr.Session
 class ProsperSpecSpec extends ProsperSpec {
 
     @Override
-    Collection<AdapterFactory> addAdapterFactories() {
+    Collection<AdapterFactoryHolder> addAdapterFactories() {
         def adapterFactory = new AdapterFactory() {
             @Override
             def <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
@@ -52,7 +51,10 @@ class ProsperSpecSpec extends ProsperSpec {
             }
         }
 
-        [adapterFactory]
+        def holder = new AdapterFactoryHolder(adapterFactory, [Resource.name, ResourceResolver.name] as String[],
+            [Integer.name] as String[])
+
+        [holder]
     }
 
     @Override
@@ -117,17 +119,9 @@ class ProsperSpecSpec extends ProsperSpec {
         requestBuilder.build().adaptTo(String) == "!"
     }
 
-    def "add resource adapter for test"() {
-        setup:
-        adapterManager.addAdapter(Resource, Map, { [:] })
-
-        expect:
-        resourceResolver.getResource("/").adaptTo(Map) == [:]
-    }
-
     def "add resource resolver adapter for test"() {
         setup:
-        adapterManager.addAdapter(ResourceResolver, Map, { [:] })
+        slingContext.registerAdapter(ResourceResolver, Map, { [:] })
 
         expect:
         resourceResolver.adaptTo(Map) == [:]
@@ -135,19 +129,10 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add request adapter for test"() {
         setup:
-        adapterManager.addAdapter(SlingHttpServletRequest, Map, { [adapted: "request"] })
+        slingContext.registerAdapter(SlingHttpServletRequest, Map, { [adapted: "request"] })
 
         expect:
         requestBuilder.build().adaptTo(Map) == [adapted: "request"]
-    }
-
-    def "add OSGi registered adapter for test"() {
-        setup:
-        adapterManager.addAdapterFactory(new OSGiRegisteredAdapterFactory())
-
-        expect:
-        requestBuilder.build().adaptTo(Long) == 1984l
-        resourceResolver.adaptTo(Long) == null
     }
 
     def "adapt resource to page"() {

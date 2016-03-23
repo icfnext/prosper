@@ -3,6 +3,7 @@ package com.citytechinc.aem.prosper.specs
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
+import com.citytechinc.aem.prosper.adapter.AdapterFactoryHolder
 import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
@@ -13,7 +14,6 @@ import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
@@ -68,13 +68,10 @@ abstract class ProsperSpec extends Specification {
 
         addAdapters()
 
-        // MockSling.setAdapterManagerBundleContext(slingContext.bundleContext())
-
         resourceResolverInternal = MockSling.newResourceResolver(JCR_OAK, slingContext.bundleContext())
-        sessionInternal = resourceResolverInternal.adaptTo(Session)
-
-        nodeBuilderInternal = new NodeBuilder(sessionInternal)
-        pageBuilderInternal = new PageBuilder(sessionInternal)
+        sessionInternal = resourceResolver.adaptTo(Session)
+        nodeBuilderInternal = new NodeBuilder(session)
+        pageBuilderInternal = new PageBuilder(session)
 
         registerNodeTypes()
 
@@ -112,10 +109,9 @@ abstract class ProsperSpec extends Specification {
      * instances to different types at test runtime.  Specs should override this method to add testing adapter
      * factories at runtime.
      *
-     * @return collection of Sling adapter factories
+     * @return collection of Sling adapter factory holders containing the adapter factory and required metadata
      */
-    Collection<AdapterFactory> addAdapterFactories() {
-        // TODO: update to allow for required properties
+    Collection<AdapterFactoryHolder> addAdapterFactories() {
         Collections.emptyList()
     }
 
@@ -366,8 +362,8 @@ abstract class ProsperSpec extends Specification {
     }
 
     private void addAdapters() {
-        addAdapterFactories().each { adapterFactory ->
-            slingContext.registerAdapterFactory(adapterFactory, null, null)
+        addAdapterFactories().each { adapterFactoryHolder ->
+            slingContext.registerAdapterFactory(adapterFactoryHolder)
         }
 
         addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->

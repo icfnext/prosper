@@ -18,34 +18,6 @@ class ProsperAdapterManager implements AdapterManager {
 
     ProsperSlingContext slingContext
 
-    /**
-     * Register an adapter for the current spec.
-     *
-     * @param adaptableType
-     * @param adapterType target adapter type
-     * @param closure
-     */
-    void addAdapter(Class adaptableType, Class adapterType, Closure closure) {
-        def adapterProperties = [:]
-
-        adapterProperties.put(ADAPTABLE_CLASSES, [adaptableType.name] as String[])
-        adapterProperties.put(ADAPTER_CLASSES, [adapterType.name] as String[])
-
-        slingContext.registerService(AdapterFactory, new InternalAdapterFactory(closure), adapterProperties)
-    }
-
-    /**
-     * Register an adapter factory for the current spec.
-     *
-     * @param adapterFactory adapter factory instance
-     */
-    void addAdapterFactory(AdapterFactory adapterFactory, String[] adaptableClasses, String[] adapterClasses) {
-        slingContext.registerService(AdapterFactory, adapterFactory, [
-            (ADAPTABLE_CLASSES): adaptableClasses,
-            (ADAPTER_CLASSES): adapterClasses
-        ])
-    }
-
     @Override
     public <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> adapterType) {
         // find all adapter factories
@@ -81,16 +53,5 @@ class ProsperAdapterManager implements AdapterManager {
         adapterFactories.findResult {
             adapterFactory -> adapterFactory.getAdapter(adaptable, adapterType)
         } as AdapterType
-    }
-
-    @TupleConstructor
-    private static class InternalAdapterFactory implements AdapterFactory {
-
-        Closure closure
-
-        @Override
-        <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
-            closure.call(adaptable) as AdapterType
-        }
     }
 }
