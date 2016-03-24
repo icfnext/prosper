@@ -7,15 +7,18 @@ import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
+import com.citytechinc.aem.prosper.context.SlingContextProvider
 import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
+import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
-import org.apache.sling.testing.mock.sling.MockSling
+import org.apache.sling.models.spi.Injector
+import org.osgi.framework.BundleContext
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -23,20 +26,18 @@ import spock.lang.Specification
 import javax.jcr.Node
 import javax.jcr.Session
 
-import static org.apache.sling.testing.mock.sling.ResourceResolverType.JCR_OAK
-
 /**
  * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
  * adapter registration capabilities.
  */
-abstract class ProsperSpec extends Specification {
+abstract class ProsperSpec extends Specification implements SlingContextProvider {
 
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:security", "oak:index"]
 
     private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
     @Shared
-    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
+    private ProsperSlingContext slingContext = new ProsperSlingContext()
 
     @Shared
     @AutoCleanup
@@ -64,16 +65,15 @@ abstract class ProsperSpec extends Specification {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        resourceResolverInternal = MockSling.newResourceResolver(JCR_OAK, slingContext.bundleContext())
+        resourceResolverInternal = slingContext.resourceResolver
         sessionInternal = resourceResolver.adaptTo(Session)
         nodeBuilderInternal = new NodeBuilder(session)
         pageBuilderInternal = new PageBuilder(session)
+        pageManagerInternal = resourceResolver.adaptTo(PageManager)
 
         registerNodeTypes()
 
         new ContentImporter(this).importVaultContent()
-
-        pageManagerInternal = resourceResolver.adaptTo(PageManager)
     }
 
     def cleanupSpec() {
@@ -98,14 +98,89 @@ abstract class ProsperSpec extends Specification {
         session.save()
     }
 
-    // accessors for shared instances
+    // expose selected methods from sling/OSGi context
 
-    /**
-     * @return Sling context
-     */
-    ProsperSlingContext getSlingContext() {
-        slingContextInternal
+    @Override
+    BundleContext getBundleContext() {
+        slingContext.bundleContext()
     }
+
+    @Override
+    def <T> T registerService(T service) {
+        slingContext.registerService(service)
+    }
+
+    @Override
+    def <T> T registerService(Class<T> serviceClass, T service) {
+        slingContext.registerService(serviceClass, service)
+    }
+
+    @Override
+    def <T> T registerService(Class<T> serviceClass, T service, Map<String, Object> properties) {
+        slingContext.registerService(serviceClass, service, properties)
+    }
+
+    @Override
+    def <T> T registerInjectActivateService(T service) {
+        slingContext.registerInjectActivateService(service)
+    }
+
+    @Override
+    def <T> T registerInjectActivateService(T service, Map<String, Object> properties) {
+        slingContext.registerInjectActivateService(service, properties)
+    }
+
+    @Override
+    void registerResourceAdapter(Class adapterType, Closure closure) {
+        slingContext.registerResourceAdapter(adapterType, closure)
+    }
+
+    @Override
+    void registerResourceResolverAdapter(Class adapterType, Closure closure) {
+        slingContext.registerResourceResolverAdapter(adapterType, closure)
+    }
+
+    @Override
+    void registerRequestAdapter(Class adapterType, Closure closure) {
+        slingContext.registerRequestAdapter(adapterType, closure)
+    }
+
+    @Override
+    void registerAdapter(Class adaptableType, Class adapterType, Closure closure) {
+        slingContext.registerAdapter(adaptableType, adapterType, closure)
+    }
+
+    @Override
+    void registerAdapterFactory(AdapterFactory adapterFactory, String[] adaptableClasses, String[] adapterClasses) {
+        slingContext.registerAdapterFactory(adapterFactory, adaptableClasses, adapterClasses)
+    }
+
+    @Override
+    def <ServiceType> ServiceType getService(Class<ServiceType> serviceType) {
+        slingContext.getService(serviceType)
+    }
+
+    @Override
+    def <ServiceType> ServiceType[] getServices(Class<ServiceType> serviceType, String filter) {
+        slingContext.getServices(serviceType, filter)
+    }
+
+    @Override
+    void registerInjector(Injector injector, Integer serviceRanking) {
+        slingContext.registerInjector(injector, serviceRanking)
+    }
+
+    @Override
+    void addModelsForPackage(String packageName) {
+        slingContext.addModelsForPackage(packageName)
+    }
+
+    @Override
+    void runMode(String... runModes) {
+        slingContext.runMode(runModes)
+    }
+
+    // accessors for shared instances
 
     /**
      * @return admin session

@@ -31,19 +31,23 @@ import javax.jcr.Session
 class ProsperSpecSpec extends ProsperSpec {
 
     def setupSpec() {
+        nodeBuilder.content {
+            test()
+        }
+
         nodeBuilder.etc {
             spock("spock:TestType")
         }
 
-        slingContext.registerResourceAdapter(String, {
+        registerResourceAdapter(String, {
             "hello"
         })
 
-        slingContext.registerResourceResolverAdapter(String, {
+        registerResourceResolverAdapter(String, {
             "world"
         })
 
-        slingContext.registerRequestAdapter(String, {
+        registerRequestAdapter(String, {
             "!"
         })
 
@@ -64,7 +68,7 @@ class ProsperSpecSpec extends ProsperSpec {
             }
         }
 
-        slingContext.registerAdapterFactory(adapterFactory, [Resource.name, ResourceResolver.name] as String[],
+        registerAdapterFactory(adapterFactory, [Resource.name, ResourceResolver.name] as String[],
             [Integer.name] as String[])
     }
 
@@ -111,7 +115,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add resource resolver adapter for test"() {
         setup:
-        slingContext.registerResourceResolverAdapter(Map, { [:] })
+        registerResourceResolverAdapter(Map, { [:] })
 
         expect:
         resourceResolver.adaptTo(Map) == [:]
@@ -119,7 +123,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add request adapter for test"() {
         setup:
-        slingContext.registerRequestAdapter(Map, { [adapted: "request"] })
+        registerRequestAdapter(Map, { [adapted: "request"] })
 
         expect:
         requestBuilder.build().adaptTo(Map) == [adapted: "request"]
@@ -168,5 +172,22 @@ class ProsperSpecSpec extends ProsperSpec {
     def "verify excluded content was not imported"() {
         expect:
         !getResource("/content/dam")
+    }
+
+    def "add models for package"() {
+        setup:
+        addModelsForPackage(this.class.package.name)
+
+        expect:
+        getResource("/content/test").adaptTo(ProsperModel).name == "test"
+    }
+
+    def "register injector"() {
+        setup:
+        addModelsForPackage(this.class.package.name)
+        registerInjector(new TestInjector(), 10000)
+
+        expect:
+        getResource("/content/test").adaptTo(ProsperModel).injectedValue == TestInjector.class.name
     }
 }

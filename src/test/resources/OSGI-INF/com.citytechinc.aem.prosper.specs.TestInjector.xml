@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.0.0" name="com.citytechinc.aem.prosper.traits.TestInjector">
-    <implementation class="com.citytechinc.aem.prosper.traits.TestInjector"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.0.0" name="com.citytechinc.aem.prosper.specs.TestInjector">
+    <implementation class="com.citytechinc.aem.prosper.specs.TestInjector"/>
     <service servicefactory="false">
         <provide interface="org.apache.sling.models.spi.Injector"/>
     </service>
     <property name="service.ranking" type="Integer" value="10000"/>
     <property name="service.vendor" value="CITYTECH, Inc."/>
-    <property name="service.pid" value="com.citytechinc.aem.prosper.traits.TestInjector"/>
+    <property name="service.pid" value="com.citytechinc.aem.prosper.specs.TestInjector"/>
 </scr:component>

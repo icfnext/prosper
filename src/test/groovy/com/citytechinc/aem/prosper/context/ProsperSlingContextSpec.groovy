@@ -23,7 +23,7 @@ class ProsperSlingContextSpec extends ProsperSpec {
     }
 
     def setupSpec() {
-        slingContext.addModelsForPackage("com.citytechinc.aem.prosper.context")
+        addModelsForPackage("com.citytechinc.aem.prosper.context")
     }
 
     def "adapt resource to model"() {
@@ -49,7 +49,7 @@ class ProsperSlingContextSpec extends ProsperSpec {
 
     def "test adapter manager respects OSGi service properties"() {
         given: "an OSGi registered adapter factory is added"
-        slingContext.registerService(AdapterFactory, new OSGiRegisteredAdapterFactory())
+        registerService(AdapterFactory, new OSGiRegisteredAdapterFactory())
 
         when: "a request is adapted"
         def requestResult = requestBuilder.build().adaptTo(Long)
@@ -73,8 +73,7 @@ class ProsperSlingContextSpec extends ProsperSpec {
             }
         }
 
-        slingContext.registerAdapterFactory(adapterFactory, [ResourceResolver.name] as String[],
-            [Integer.name] as String[])
+        registerAdapterFactory(adapterFactory, [ResourceResolver.name] as String[], [Integer.name] as String[])
 
         expect: "a valid result is returned"
         resourceResolver.adaptTo(Integer) == 157

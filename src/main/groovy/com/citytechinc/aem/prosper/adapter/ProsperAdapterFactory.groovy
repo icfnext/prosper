@@ -1,21 +1,18 @@
 package com.citytechinc.aem.prosper.adapter
 
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
-import com.day.cq.replication.Replicator
 import com.day.cq.tagging.TagManager
 import com.day.cq.tagging.impl.JcrTagManagerImpl
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
+import com.day.cq.wcm.api.PageManagerFactory
 import com.day.cq.wcm.core.impl.PageImpl
-import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.jcr.api.SlingRepository
-import org.osgi.service.event.EventAdmin
 
 @TupleConstructor
 class ProsperAdapterFactory implements AdapterFactory {
@@ -58,20 +55,7 @@ class ProsperAdapterFactory implements AdapterFactory {
         def result
 
         if (type == PageManager) {
-            def factory = new PageManagerFactoryImpl()
-
-            def fields = [
-                replicator: [replicate: {}] as Replicator,
-                eventAdmin: [postEvent: {}, sendEvent: {}] as EventAdmin,
-                repository: slingContext.getService(SlingRepository)
-            ]
-
-            fields.each { name, instance ->
-                factory.class.getDeclaredField(name).with {
-                    accessible = true
-                    set(factory, instance)
-                }
-            }
+            def factory = slingContext.getService(PageManagerFactory)
 
             result = factory.getPageManager(resourceResolver)
         } else if (type == TagManager) {
