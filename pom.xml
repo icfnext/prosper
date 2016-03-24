@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.citytechinc.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.1.1</version>
+        <version>6.1.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -448,7 +448,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.osgi-mock</artifactId>
-            <version>2.0.2</version>
+            <version>1.7.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
