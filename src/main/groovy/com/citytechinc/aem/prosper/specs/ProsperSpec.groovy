@@ -32,9 +32,15 @@ import javax.jcr.Session
  */
 abstract class ProsperSpec extends Specification implements SlingContextProvider {
 
+    /**
+     * Jackrabbit Oak system node names.  Will be ignored when cleaning up test content.
+     */
     private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:security", "oak:index"]
 
-    private static final def NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
+    /**
+     * Default node types registered after repository creation.
+     */
+    private static final def DEFAULT_NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
     @Shared
     private ProsperSlingContext slingContext = new ProsperSlingContext()
@@ -67,15 +73,18 @@ abstract class ProsperSpec extends Specification implements SlingContextProvider
 
         resourceResolverInternal = slingContext.resourceResolver
         sessionInternal = resourceResolver.adaptTo(Session)
+        pageManagerInternal = resourceResolver.adaptTo(PageManager)
         nodeBuilderInternal = new NodeBuilder(session)
         pageBuilderInternal = new PageBuilder(session)
-        pageManagerInternal = resourceResolver.adaptTo(PageManager)
 
         registerNodeTypes()
 
         new ContentImporter(this).importVaultContent()
     }
 
+    /**
+     * Remove Groovy metaclasses and test content.
+     */
     def cleanupSpec() {
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
 
@@ -100,6 +109,11 @@ abstract class ProsperSpec extends Specification implements SlingContextProvider
 
     // expose selected methods from sling/OSGi context
 
+    /**
+     * Get the mock OSGi bundle context.
+     *
+     * @return bundle context
+     */
     @Override
     BundleContext getBundleContext() {
         slingContext.bundleContext()
@@ -130,29 +144,93 @@ abstract class ProsperSpec extends Specification implements SlingContextProvider
         slingContext.registerInjectActivateService(service, properties)
     }
 
+    /**
+     * Convenience method to register an adapter for <code>Resource</code> instances.
+     *
+     * @param adapterType type returned by the closure function
+     * @param closure closure accepting a single <code>Resource</code> instance as an argument
+     */
     @Override
     void registerResourceAdapter(Class adapterType, Closure closure) {
         slingContext.registerResourceAdapter(adapterType, closure)
     }
 
+    /**
+     * Convenience method to register an adapter for <code>ResourceResolver</code> instances.
+     *
+     * @param adapterType type returned by the closure function
+     * @param closure closure accepting a single <code>ResourceResolver</code> instance as an argument
+     */
     @Override
     void registerResourceResolverAdapter(Class adapterType, Closure closure) {
         slingContext.registerResourceResolverAdapter(adapterType, closure)
     }
 
+    /**
+     * Convenience method to register an adapter for <code>SlingHttpServletRequest</code> instances.
+     *
+     * @param adapterType type returned by the closure function
+     * @param closure closure accepting a single <code>SlingHttpServletRequest</code> instance as an argument
+     */
     @Override
     void registerRequestAdapter(Class adapterType, Closure closure) {
         slingContext.registerRequestAdapter(adapterType, closure)
     }
 
+    /**
+     * Register an adapter for the current Prosper context.
+     *
+     * @param adaptableType type to adapt from
+     * @param adapterType type returned by the closure function
+     * @param closure closure accepting an instance of the adaptable type as an argument and returning an instance of
+     * the adapter type
+     */
     @Override
     void registerAdapter(Class adaptableType, Class adapterType, Closure closure) {
         slingContext.registerAdapter(adaptableType, adapterType, closure)
     }
 
+    /**
+     * Register an adapter factory for the current Prosper context.
+     *
+     * @param adapterFactory adapter factory instance
+     * @param adaptableClasses array of class names that can be adapted from by this factory
+     * @param adapterClasses array of class names that can be adapted to by this factory
+     */
     @Override
     void registerAdapterFactory(AdapterFactory adapterFactory, String[] adaptableClasses, String[] adapterClasses) {
         slingContext.registerAdapterFactory(adapterFactory, adaptableClasses, adapterClasses)
+    }
+
+    /**
+     * Register a Sling Injector for use in a test.
+     *
+     * @param injector injector to register
+     * @param serviceRanking OSGi service ranking
+     */
+    @Override
+    void registerInjector(Injector injector, Integer serviceRanking) {
+        slingContext.registerInjector(injector, serviceRanking)
+    }
+
+    /**
+     * Add <code>@Model</code>-annotated classes for the specified package for use in a test.
+     *
+     * @param packageName package name to scan for annotated classes
+     */
+    @Override
+    void addModelsForPackage(String packageName) {
+        slingContext.addModelsForPackage(packageName)
+    }
+
+    /**
+     * Set the Sling run mode(s) for the current spec.
+     *
+     * @param runModes run modes
+     */
+    @Override
+    void runMode(String... runModes) {
+        slingContext.runMode(runModes)
     }
 
     @Override
@@ -163,21 +241,6 @@ abstract class ProsperSpec extends Specification implements SlingContextProvider
     @Override
     def <ServiceType> ServiceType[] getServices(Class<ServiceType> serviceType, String filter) {
         slingContext.getServices(serviceType, filter)
-    }
-
-    @Override
-    void registerInjector(Injector injector, Integer serviceRanking) {
-        slingContext.registerInjector(injector, serviceRanking)
-    }
-
-    @Override
-    void addModelsForPackage(String packageName) {
-        slingContext.addModelsForPackage(packageName)
-    }
-
-    @Override
-    void runMode(String... runModes) {
-        slingContext.runMode(runModes)
     }
 
     // accessors for shared instances
@@ -373,7 +436,7 @@ abstract class ProsperSpec extends Specification implements SlingContextProvider
     }
 
     private void registerDefaultNodeTypes() {
-        def cndResourcePaths = NODE_TYPES.collect { type -> "/SLING-INF/nodetypes/${type}.cnd" }
+        def cndResourcePaths = DEFAULT_NODE_TYPES.collect { type -> "/SLING-INF/nodetypes/${type}.cnd" }
 
         registerNodeTypes(cndResourcePaths)
     }
