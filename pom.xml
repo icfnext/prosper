@@ -352,10 +352,6 @@
             <artifactId>cq-msm-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-search</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.adobe.granite</groupId>
             <artifactId>com.adobe.granite.replication.core</artifactId>
         </dependency>
@@ -373,31 +369,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.commons.json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.event</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.scripting.sightly</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.cq.sightly</groupId>
-            <artifactId>cq-wcm-sightly-extension</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parsers</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
@@ -407,11 +379,6 @@
             <groupId>org.apache.jackrabbit.vault</groupId>
             <artifactId>org.apache.jackrabbit.vault</artifactId>
             <version>3.1.18</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>el-api</artifactId>
-            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
