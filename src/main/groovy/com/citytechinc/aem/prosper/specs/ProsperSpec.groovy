@@ -16,8 +16,9 @@ import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import org.apache.sling.models.spi.Injector
+import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
+import org.apache.sling.testing.mock.sling.ResourceResolverType
 import org.osgi.framework.BundleContext
 import spock.lang.AutoCleanup
 import spock.lang.Shared
@@ -429,23 +430,21 @@ abstract class ProsperSpec extends Specification implements SlingContextProvider
         registerDefaultNodeTypes()
 
         if (this.class.isAnnotationPresent(NodeTypes)) {
-            def cndResourcePaths = this.class.getAnnotation(NodeTypes).value() as List
+            def cndResourcePaths = (this.class.getAnnotation(NodeTypes).value() as List).collect { path ->
+                path.startsWith("/") ? path.substring(1) : path
+            }
 
             registerNodeTypes(cndResourcePaths)
         }
     }
 
     private void registerDefaultNodeTypes() {
-        def cndResourcePaths = DEFAULT_NODE_TYPES.collect { type -> "/SLING-INF/nodetypes/${type}.cnd" }
+        def cndResourcePaths = DEFAULT_NODE_TYPES.collect { type -> "SLING-INF/nodetypes/${type}.cnd" as String }
 
         registerNodeTypes(cndResourcePaths)
     }
 
     private void registerNodeTypes(List<String> cndResourcePaths) {
-        cndResourcePaths.each { cndResourcePath ->
-            this.class.getResourceAsStream(cndResourcePath).withStream { stream ->
-                RepositoryUtil.registerNodeType(session, stream)
-            }
-        }
+        NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, ResourceResolverType.JCR_OAK.nodeTypeMode)
     }
 }

@@ -27,7 +27,10 @@ import javax.jcr.Session
         @ContentFilter(root = "/etc")
     ]
 )
-@NodeTypes("/SLING-INF/nodetypes/spock.cnd")
+@NodeTypes([
+    "SLING-INF/nodetypes/spock.cnd",
+    "/SLING-INF/nodetypes/prosper.cnd"
+])
 class ProsperSpecSpec extends ProsperSpec {
 
     def setupSpec() {
@@ -36,6 +39,7 @@ class ProsperSpecSpec extends ProsperSpec {
         }
 
         nodeBuilder.etc {
+            prosper("prosper:TestType")
             spock("spock:TestType")
         }
 
@@ -155,7 +159,12 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "check node type for node with custom type"() {
         expect:
-        getNode("/etc/spock").isNodeType("spock:TestType")
+        getNode(path).isNodeType(nodeType)
+
+        where:
+        path           | nodeType
+        "/etc/prosper" | "prosper:TestType"
+        "/etc/spock"   | "spock:TestType"
     }
 
     def "verify test content was imported successfully"() {
