@@ -43,15 +43,15 @@ class ProsperSpecSpec extends ProsperSpec {
             spock("spock:TestType")
         }
 
-        registerResourceAdapter(String, {
+        slingContext.registerResourceAdapter(String, {
             "hello"
         })
 
-        registerResourceResolverAdapter(String, {
+        slingContext.registerResourceResolverAdapter(String, {
             "world"
         })
 
-        registerRequestAdapter(String, {
+        slingContext.registerRequestAdapter(String, {
             "!"
         })
 
@@ -72,7 +72,7 @@ class ProsperSpecSpec extends ProsperSpec {
             }
         }
 
-        registerAdapterFactory(adapterFactory, [Resource.name, ResourceResolver.name] as String[],
+        slingContext.registerAdapterFactory(adapterFactory, [Resource.name, ResourceResolver.name] as String[],
             [Integer.name] as String[])
     }
 
@@ -119,7 +119,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add resource resolver adapter for test"() {
         setup:
-        registerResourceResolverAdapter(Map, { [:] })
+        slingContext.registerResourceResolverAdapter(Map, { [:] })
 
         expect:
         resourceResolver.adaptTo(Map) == [:]
@@ -127,7 +127,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add request adapter for test"() {
         setup:
-        registerRequestAdapter(Map, { [adapted: "request"] })
+        slingContext.registerRequestAdapter(Map, { [adapted: "request"] })
 
         expect:
         requestBuilder.build().adaptTo(Map) == [adapted: "request"]
@@ -185,7 +185,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "add models for package"() {
         setup:
-        addModelsForPackage(this.class.package.name)
+        slingContext.addModelsForPackage(this.class.package.name)
 
         expect:
         getResource("/content/test").adaptTo(ProsperModel).name == "test"
@@ -193,8 +193,8 @@ class ProsperSpecSpec extends ProsperSpec {
 
     def "register injector"() {
         setup:
-        addModelsForPackage(this.class.package.name)
-        registerInjector(new TestInjector(), 10000)
+        slingContext.addModelsForPackage(this.class.package.name)
+        slingContext.registerInjector(new TestInjector(), 10000)
 
         expect:
         getResource("/content/test").adaptTo(ProsperModel).injectedValue == TestInjector.class.name

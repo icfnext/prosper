@@ -3,7 +3,7 @@ package com.citytechinc.aem.prosper.traits
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperPageContext
-import com.citytechinc.aem.prosper.context.SlingContextProvider
+import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.tag.JspTagProxy
 import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.SlingHttpServletRequest
@@ -31,7 +31,9 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_SLI
 /**
  * Trait providing methods for initializing JSP tag support classes with a mocked page context.
  */
-trait JspTagTrait implements SlingContextProvider {
+trait JspTagTrait {
+
+    abstract ProsperSlingContext getSlingContext()
 
     abstract ResourceResolver getResourceResolver()
 
@@ -91,7 +93,8 @@ trait JspTagTrait implements SlingContextProvider {
         pageContext.setAttribute(DEFAULT_NODE_NAME, resource.adaptTo(Node))
         pageContext.setAttribute(DEFAULT_REQUEST_NAME, request)
         pageContext.setAttribute(DEFAULT_RESPONSE_NAME, response)
-        pageContext.setAttribute(DEFAULT_SLING_NAME, MockSling.newSlingScriptHelper(request, response, bundleContext))
+        pageContext.setAttribute(DEFAULT_SLING_NAME, MockSling.newSlingScriptHelper(request, response,
+            slingContext.bundleContext))
         pageContext.setAttribute(DEFAULT_PAGE_MANAGER_NAME, pageManager)
         pageContext.setAttribute(DEFAULT_CURRENT_PAGE_NAME, currentPage)
         pageContext.setAttribute(DEFAULT_PAGE_PROPERTIES_NAME, currentPage ? currentPage.properties : ValueMap.EMPTY)

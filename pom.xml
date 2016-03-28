@@ -108,7 +108,7 @@
                                 <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="maven.compile.classpath" />
                                 <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs"
                                            sourcepath="${basedir}/src/main/groovy"
-                                           packagenames="com.citytechinc.aem.prosper.annotations.*,com.citytechinc.aem.prosper.builders.*,com.citytechinc.aem.prosper.specs.*,com.citytechinc.aem.prosper.tag.*,com.citytechinc.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
+                                           packagenames="com.citytechinc.aem.prosper.annotations.*,com.citytechinc.aem.prosper.builders.*,com.citytechinc.aem.prosper.context.*,com.citytechinc.aem.prosper.specs.*,com.citytechinc.aem.prosper.tag.*,com.citytechinc.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
                                     <link packages="java.,org.xml.,javax.,org.xml." href="http://download.oracle.com/javase/7/docs/api" />
                                     <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/api/" />
                                     <link packages="spock." href="http://spockframework.github.io/spock/javadoc/latest/" />
@@ -383,7 +383,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.4.5</version>
+            <version>2.4.6</version>
         </dependency>
         <dependency>
             <groupId>com.citytechinc.aem.groovy.extension</groupId>

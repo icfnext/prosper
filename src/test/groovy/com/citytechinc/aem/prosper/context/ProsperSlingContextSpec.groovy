@@ -8,6 +8,7 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.annotations.Model
 import org.apache.sling.models.annotations.injectorspecific.Self
+import org.apache.sling.settings.SlingSettingsService
 
 class ProsperSlingContextSpec extends ProsperSpec {
 
@@ -23,7 +24,15 @@ class ProsperSlingContextSpec extends ProsperSpec {
     }
 
     def setupSpec() {
-        addModelsForPackage("com.citytechinc.aem.prosper.context")
+        slingContext.addModelsForPackage("com.citytechinc.aem.prosper.context")
+    }
+
+    def "set run mode"() {
+        setup:
+        slingContext.runMode("author")
+
+        expect:
+        slingContext.getService(SlingSettingsService).runModes.contains("author")
     }
 
     def "adapt resource to model"() {
@@ -49,7 +58,7 @@ class ProsperSlingContextSpec extends ProsperSpec {
 
     def "test adapter manager respects OSGi service properties"() {
         given: "an OSGi registered adapter factory is added"
-        registerService(AdapterFactory, new OSGiRegisteredAdapterFactory())
+        slingContext.registerService(AdapterFactory, new OSGiRegisteredAdapterFactory())
 
         when: "a request is adapted"
         def requestResult = requestBuilder.build().adaptTo(Long)
@@ -73,7 +82,8 @@ class ProsperSlingContextSpec extends ProsperSpec {
             }
         }
 
-        registerAdapterFactory(adapterFactory, [ResourceResolver.name] as String[], [Integer.name] as String[])
+        slingContext.registerAdapterFactory(adapterFactory, [ResourceResolver.name] as String[],
+            [Integer.name] as String[])
 
         expect: "a valid result is returned"
         resourceResolver.adaptTo(Integer) == 157

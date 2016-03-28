@@ -35,7 +35,7 @@ class ProsperAdapterFactory implements AdapterFactory {
 
     @Override
     def <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
-        def result
+        def result = null
 
         if (adaptable instanceof ResourceResolver) {
             result = getResourceResolverAdapter(adaptable as ResourceResolver, type)
@@ -43,8 +43,6 @@ class ProsperAdapterFactory implements AdapterFactory {
             result = getResourceAdapter(adaptable as Resource, type)
         } else if (adaptable instanceof SlingHttpServletRequest) {
             result = getRequestAdapter(adaptable as SlingHttpServletRequest, type)
-        } else {
-            result = null
         }
 
         result
@@ -52,7 +50,7 @@ class ProsperAdapterFactory implements AdapterFactory {
 
     private <AdapterType> AdapterType getResourceResolverAdapter(ResourceResolver resourceResolver,
         Class<AdapterType> type) {
-        def result
+        def result = null
 
         if (type == PageManager) {
             def factory = slingContext.getService(PageManagerFactory)
@@ -60,34 +58,28 @@ class ProsperAdapterFactory implements AdapterFactory {
             result = factory.getPageManager(resourceResolver)
         } else if (type == TagManager) {
             result = new JcrTagManagerImpl(resourceResolver, null, null, "/etc/tags")
-        } else {
-            result = null
         }
 
         result as AdapterType
     }
 
     private <AdapterType> AdapterType getResourceAdapter(Resource resource, Class<AdapterType> type) {
-        def result
+        def result = null
 
         if (type == Page) {
             result = NameConstants.NT_PAGE == resource.resourceType ? new PageImpl(resource) : null
-        } else {
-            result = null
         }
 
         result as AdapterType
     }
 
     private <AdapterType> AdapterType getRequestAdapter(SlingHttpServletRequest request, Class<AdapterType> type) {
-        def result
+        def result = null
 
         if (type == Resource) {
             result = request.resource
         } else if (type == ResourceResolver) {
             result = request.resourceResolver
-        } else {
-            result = null
         }
 
         result as AdapterType

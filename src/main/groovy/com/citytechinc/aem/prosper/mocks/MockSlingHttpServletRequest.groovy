@@ -99,7 +99,7 @@ class MockSlingHttpServletRequest extends SlingAdaptable implements SlingHttpSer
 
     @Override
     Cookie getCookie(String name) {
-        getCookies().find { it.name == name }
+        cookies.find { it.name == name }
     }
 
     @Override
