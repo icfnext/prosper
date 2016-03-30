@@ -1,8 +1,6 @@
 package com.citytechinc.aem.prosper.builders
 
 import com.citytechinc.aem.prosper.mocks.MockSlingHttpServletRequest
-import com.citytechinc.aem.prosper.specs.ProsperSpec
-import org.apache.sling.api.adapter.AdapterManager
 import org.apache.sling.api.resource.ResourceResolver
 import org.springframework.mock.web.MockHttpServletRequest
 
@@ -19,8 +17,6 @@ class RequestBuilder {
 
     private final ResourceResolver resourceResolver
 
-    private final AdapterManager adapterManager
-
     private final List<String> selectors = []
 
     private String path = "/"
@@ -33,11 +29,9 @@ class RequestBuilder {
      * Create a request builder for a test spec.
      *
      * @param resourceResolver Sling resource resolver
-     * @param adapterManager adapter manager for the current specification
      */
-    RequestBuilder(ProsperSpec spec) {
-        resourceResolver = spec.resourceResolver
-        adapterManager = spec.adapterManager
+    RequestBuilder(ResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver
     }
 
     /**
@@ -76,8 +70,7 @@ class RequestBuilder {
             closure()
         }
 
-        new MockSlingHttpServletRequest(mockRequest, resourceResolver, path, selectors, extension, suffix,
-            adapterManager)
+        new MockSlingHttpServletRequest(mockRequest, resourceResolver, path, selectors, extension, suffix)
     }
 
     /**

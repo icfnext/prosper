@@ -6,7 +6,7 @@ import javax.servlet.jsp.PageContext
 import javax.servlet.jsp.tagext.TagSupport
 
 /**
- * Composite class containing the JSP tag instance and mocked page context that exposes the tag writer output.
+ * Composite class containing a JSP tag instance and mock page context that exposes the tag writer output.
  */
 @TupleConstructor
 class JspTagProxy {

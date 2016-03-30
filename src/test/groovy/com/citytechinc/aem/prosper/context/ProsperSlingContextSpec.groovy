@@ -1,10 +1,14 @@
 package com.citytechinc.aem.prosper.context
 
+import com.citytechinc.aem.prosper.adapters.OSGiRegisteredAdapterFactory
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
+import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.annotations.Model
 import org.apache.sling.models.annotations.injectorspecific.Self
+import org.apache.sling.settings.SlingSettingsService
 
 class ProsperSlingContextSpec extends ProsperSpec {
 
@@ -20,11 +24,15 @@ class ProsperSlingContextSpec extends ProsperSpec {
     }
 
     def setupSpec() {
-        pageBuilder.content {
-            prosper()
-        }
-
         slingContext.addModelsForPackage("com.citytechinc.aem.prosper.context")
+    }
+
+    def "set run mode"() {
+        setup:
+        slingContext.runMode("author")
+
+        expect:
+        slingContext.getService(SlingSettingsService).runModes.contains("author")
     }
 
     def "adapt resource to model"() {
@@ -46,5 +54,38 @@ class ProsperSlingContextSpec extends ProsperSpec {
 
         expect:
         model.path == "/content/prosper"
+    }
+
+    def "test adapter manager respects OSGi service properties"() {
+        given: "an OSGi registered adapter factory is added"
+        slingContext.registerAdapterFactory(new OSGiRegisteredAdapterFactory())
+
+        when: "a request is adapted"
+        def requestResult = requestBuilder.build().adaptTo(Long)
+
+        then: "a valid result is returned"
+        requestResult == 1984l
+
+        when: "a resource resolve is adapted"
+        def resourceResolverResult = resourceResolver.adaptTo(Long)
+
+        then: "a result is not returned"
+        resourceResolverResult == null
+    }
+
+    def "test adapter factory without OSGi service properties is always called"() {
+        setup: "an adapter factory without OSGi properties"
+        def adapterFactory = new AdapterFactory() {
+            @Override
+            <AdapterType> AdapterType getAdapter(Object o, Class<AdapterType> aClass) {
+                (AdapterType) 157
+            }
+        }
+
+        slingContext.registerAdapterFactory(adapterFactory, [ResourceResolver.name] as String[],
+            [Integer.name] as String[])
+
+        expect: "a valid result is returned"
+        resourceResolver.adaptTo(Integer) == 157
     }
 }

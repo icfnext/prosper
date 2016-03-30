@@ -3,28 +3,20 @@ package com.citytechinc.aem.prosper.specs
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
-import com.citytechinc.aem.prosper.adapter.ProsperAdapterFactory
-import com.citytechinc.aem.prosper.adapter.ProsperAdapterManager
 import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
+import com.citytechinc.aem.prosper.context.SlingContextProvider
 import com.citytechinc.aem.prosper.importer.ContentImporter
-import com.citytechinc.aem.prosper.mocks.resource.MockResourceResolver
-import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolver
-import com.citytechinc.aem.prosper.mocks.resource.ProsperResourceResolverFactory
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
-import groovy.transform.Synchronized
-import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.api.resource.ResourceResolverFactory
-import org.apache.sling.commons.testing.jcr.RepositoryUtil
-import org.apache.sling.jcr.api.SlingRepository
+import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
+import org.apache.sling.testing.mock.sling.ResourceResolverType
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -33,47 +25,31 @@ import javax.jcr.Node
 import javax.jcr.Session
 
 /**
- * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
- * adapter registration capabilities.
+ * Spock specification for AEM testing that includes a Sling context for mock repository operations and a simulated
+ * OSGi environment for registering services and adapters.
  */
 abstract class ProsperSpec extends Specification {
 
-    private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:policy"]
+    /**
+     * Jackrabbit Oak system node names.  Will be ignored when cleaning up test content.
+     */
+    private static final def SYSTEM_NODE_NAMES = ["jcr:system", "rep:security", "oak:index"]
 
-    private static final def NODE_TYPES = [
-        "sling",
-        "replication",
-        "tagging",
-        "core",
-        "dam",
-        "vlt",
-        "widgets"
-    ]
+    /**
+     * Default node types registered after repository creation.
+     */
+    private static final def DEFAULT_NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
-    private static SlingRepository slingRepository
+    @Shared
+    private SlingContextProvider slingContextInternal = new ProsperSlingContext()
+
+    @Shared
+    @AutoCleanup
+    private ResourceResolver resourceResolverInternal
 
     @Shared
     @AutoCleanup("logout")
     private Session sessionInternal
-
-    @Shared
-    @AutoCleanup
-    private ProsperResourceResolver resourceResolverInternal
-
-    @Shared
-    private PageManager pageManagerInternal
-
-    @Shared
-    private NodeBuilder nodeBuilderInternal
-
-    @Shared
-    private PageBuilder pageBuilderInternal
-
-    @Shared
-    private ProsperAdapterManager adapterManagerInternal
-
-    @Shared
-    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
 
     // global fixtures
 
@@ -84,25 +60,17 @@ abstract class ProsperSpec extends Specification {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        sessionInternal = repository.loginAdministrative(null)
-        nodeBuilderInternal = new NodeBuilder(sessionInternal)
-        pageBuilderInternal = new PageBuilder(sessionInternal)
+        resourceResolverInternal = slingContext.resourceResolver
+        sessionInternal = resourceResolver.adaptTo(Session)
 
         registerNodeTypes()
 
         new ContentImporter(this).importVaultContent()
-
-        adapterManagerInternal = new ProsperAdapterManager(slingContextInternal)
-
-        addAdapters()
-
-        resourceResolverInternal = new MockResourceResolver(sessionInternal, adapterManagerInternal)
-        pageManagerInternal = resourceResolver.adaptTo(PageManager)
-
-        slingContext.registerService(ResourceResolverFactory,
-            new ProsperResourceResolverFactory(sessionInternal, adapterManagerInternal))
     }
 
+    /**
+     * Remove Groovy metaclasses and test content.
+     */
     def cleanupSpec() {
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
 
@@ -113,7 +81,7 @@ abstract class ProsperSpec extends Specification {
      * Refresh the shared resource resolver before each test run.
      */
     def setup() {
-        resourceResolverInternal = new MockResourceResolver(session, adapterManager)
+        resourceResolverInternal.refresh()
     }
 
     /**
@@ -121,70 +89,14 @@ abstract class ProsperSpec extends Specification {
      * method to cleanup content before the entire specification has been executed.
      */
     void removeAllNodes() {
-        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.rootNode.nodes.findAll { Node node -> !SYSTEM_NODE_NAMES.contains(node.name) }*.remove()
         session.save()
-    }
-
-    // "overridable" instance methods returning default (empty) values
-
-    /**
-     * Add <code>AdapterFactory</code> instances for adapting <code>Resource</code> or <code>ResourceResolver</code>
-     * instances to different types at test runtime.  Specs should override this method to add testing adapter
-     * factories at runtime.
-     *
-     * @return collection of Sling adapter factories
-     */
-    Collection<AdapterFactory> addAdapterFactories() {
-        Collections.emptyList()
-    }
-
-    /**
-     * Add <code>Resource</code> adapters and their associated adapter functions.  The mapped closure will be called
-     * with a single <code>Resource</code> argument.  Specs should override this method to add resource adapters at
-     * runtime.
-     *
-     * @return map of adapter types to adapter functions
-     */
-    Map<Class, Closure> addResourceAdapters() {
-        Collections.emptyMap()
-    }
-
-    /**
-     * Add <code>ResourceResolver</code> adapters and their associated adapter functions. The mapped closure will be
-     * called with a single <code>ResourceResolver</code> argument.  Specs should override this method to add
-     * resource resolver adapters at runtime.
-     *
-     * @return map of adapter types to adapter functions
-     */
-    Map<Class, Closure> addResourceResolverAdapters() {
-        Collections.emptyMap()
-    }
-
-    /**
-     * Add <code>SlingHttpServletRequest</code> adapters and their associated adapter functions. The mapped closure
-     * will be called with a single <code>SlingHttpServletRequest</code> argument.  Specs should override this method
-     * to add request adapters at runtime.
-     *
-     * @return map of adapter types to adapter functions
-     */
-    Map<Class, Closure> addRequestAdapters() {
-        Collections.emptyMap()
     }
 
     // accessors for shared instances
 
-    /**
-     * @return Sling context
-     */
-    ProsperSlingContext getSlingContext() {
+    SlingContextProvider getSlingContext() {
         slingContextInternal
-    }
-
-    /**
-     * @return adapter manager
-     */
-    ProsperAdapterManager getAdapterManager() {
-        adapterManagerInternal
     }
 
     /**
@@ -198,20 +110,20 @@ abstract class ProsperSpec extends Specification {
      * @return JCR node builder
      */
     NodeBuilder getNodeBuilder() {
-        nodeBuilderInternal
+        new NodeBuilder(session)
     }
 
     /**
      * @return CQ page builder
      */
     PageBuilder getPageBuilder() {
-        pageBuilderInternal
+        new PageBuilder(session)
     }
 
     /**
      * @return admin resource resolver
      */
-    ProsperResourceResolver getResourceResolver() {
+    ResourceResolver getResourceResolver() {
         resourceResolverInternal
     }
 
@@ -219,7 +131,7 @@ abstract class ProsperSpec extends Specification {
      * @return CQ page manager
      */
     PageManager getPageManager() {
-        pageManagerInternal
+        resourceResolver.adaptTo(PageManager)
     }
 
     // convenience getters
@@ -263,7 +175,7 @@ abstract class ProsperSpec extends Specification {
      * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder() {
-        new RequestBuilder(this)
+        new RequestBuilder(resourceResolver)
     }
 
     /**
@@ -367,66 +279,25 @@ abstract class ProsperSpec extends Specification {
 
     // internals
 
-    @Synchronized
-    protected SlingRepository getRepository() {
-        if (!slingRepository) {
-            RepositoryUtil.startRepository()
+    private void registerNodeTypes() {
+        registerDefaultNodeTypes()
 
-            slingRepository = RepositoryUtil.repository
+        if (this.class.isAnnotationPresent(NodeTypes)) {
+            def cndResourcePaths = (this.class.getAnnotation(NodeTypes).value() as List).collect { path ->
+                path.startsWith("/") ? path.substring(1) : path
+            }
 
-            registerDefaultNodeTypes()
-
-            addShutdownHook { RepositoryUtil.stopRepository() }
+            registerNodeTypes(cndResourcePaths)
         }
-
-        slingRepository
     }
 
     private void registerDefaultNodeTypes() {
-        def session = repository.loginAdministrative(null)
+        def cndResourcePaths = DEFAULT_NODE_TYPES.collect { type -> "SLING-INF/nodetypes/${type}.cnd" as String }
 
-        try {
-            def cndResourcePaths = NODE_TYPES.collect { type -> "/SLING-INF/nodetypes/${type}.cnd" }
-
-            registerNodeTypes(session, cndResourcePaths)
-        } finally {
-            session.logout()
-        }
+        registerNodeTypes(cndResourcePaths)
     }
 
-    private void registerNodeTypes() {
-        if (this.class.isAnnotationPresent(NodeTypes)) {
-            def cndResourcePaths = this.class.getAnnotation(NodeTypes).value() as List
-
-            registerNodeTypes(session, cndResourcePaths)
-        }
-    }
-
-    private void registerNodeTypes(Session session, List<String> cndResourcePaths) {
-        cndResourcePaths.each { cndResourcePath ->
-            this.class.getResourceAsStream(cndResourcePath).withStream { stream ->
-                RepositoryUtil.registerNodeType(session, stream)
-            }
-        }
-    }
-
-    private void addAdapters() {
-        adapterManager.addAdapterFactory(new ProsperAdapterFactory(repository, session))
-
-        addAdapterFactories().each { adapterFactory ->
-            adapterManager.addAdapterFactory(adapterFactory)
-        }
-
-        addResourceAdapters().each { Map.Entry<Class, Closure> resourceAdapter ->
-            adapterManager.addAdapter(Resource, resourceAdapter.key, resourceAdapter.value)
-        }
-
-        addResourceResolverAdapters().each { Map.Entry<Class, Closure> resourceResolverAdapter ->
-            adapterManager.addAdapter(ResourceResolver, resourceResolverAdapter.key, resourceResolverAdapter.value)
-        }
-
-        addRequestAdapters().each { Map.Entry<Class, Closure> requestAdapter ->
-            adapterManager.addAdapter(SlingHttpServletRequest, requestAdapter.key, requestAdapter.value)
-        }
+    private void registerNodeTypes(List<String> cndResourcePaths) {
+        NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, ResourceResolverType.JCR_OAK.nodeTypeMode)
     }
 }

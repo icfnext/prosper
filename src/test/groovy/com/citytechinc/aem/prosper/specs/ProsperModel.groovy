@@ -1,4 +1,4 @@
-package com.citytechinc.aem.prosper.traits
+package com.citytechinc.aem.prosper.specs
 
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.models.annotations.Model
