@@ -7,6 +7,7 @@ import com.citytechinc.aem.prosper.annotations.NodeTypes
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
+import com.citytechinc.aem.prosper.context.SlingContextProvider
 import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
@@ -24,8 +25,8 @@ import javax.jcr.Node
 import javax.jcr.Session
 
 /**
- * Spock specification for AEM testing that includes a Sling <code>ResourceResolver</code>, content builders, and
- * adapter registration capabilities.
+ * Spock specification for AEM testing that includes a Sling context for mock repository operations and a simulated
+ * OSGi environment for registering services and adapters.
  */
 abstract class ProsperSpec extends Specification {
 
@@ -40,7 +41,7 @@ abstract class ProsperSpec extends Specification {
     private static final def DEFAULT_NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
     @Shared
-    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
+    private SlingContextProvider slingContextInternal = new ProsperSlingContext()
 
     @Shared
     @AutoCleanup
@@ -49,15 +50,6 @@ abstract class ProsperSpec extends Specification {
     @Shared
     @AutoCleanup("logout")
     private Session sessionInternal
-
-    @Shared
-    private PageManager pageManagerInternal
-
-    @Shared
-    private NodeBuilder nodeBuilderInternal
-
-    @Shared
-    private PageBuilder pageBuilderInternal
 
     // global fixtures
 
@@ -70,9 +62,6 @@ abstract class ProsperSpec extends Specification {
 
         resourceResolverInternal = slingContext.resourceResolver
         sessionInternal = resourceResolver.adaptTo(Session)
-        pageManagerInternal = resourceResolver.adaptTo(PageManager)
-        nodeBuilderInternal = new NodeBuilder(session)
-        pageBuilderInternal = new PageBuilder(session)
 
         registerNodeTypes()
 
@@ -106,7 +95,7 @@ abstract class ProsperSpec extends Specification {
 
     // accessors for shared instances
 
-    ProsperSlingContext getSlingContext() {
+    SlingContextProvider getSlingContext() {
         slingContextInternal
     }
 
@@ -121,14 +110,14 @@ abstract class ProsperSpec extends Specification {
      * @return JCR node builder
      */
     NodeBuilder getNodeBuilder() {
-        nodeBuilderInternal
+        new NodeBuilder(session)
     }
 
     /**
      * @return CQ page builder
      */
     PageBuilder getPageBuilder() {
-        pageBuilderInternal
+        new PageBuilder(session)
     }
 
     /**
@@ -142,7 +131,7 @@ abstract class ProsperSpec extends Specification {
      * @return CQ page manager
      */
     PageManager getPageManager() {
-        pageManagerInternal
+        resourceResolver.adaptTo(PageManager)
     }
 
     // convenience getters

@@ -5,6 +5,10 @@ import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.adapter.SlingAdaptable
 import org.springframework.mock.web.MockHttpServletResponse
 
+/**
+ * Mock Sling response that delegates to a Spring <code>MockHttpServletResponse</code>.  This class should not be used
+ * directly; rather, use a <code>ResponseBuilder</code> instance from test specs to instantiate mock requests.
+ */
 class MockSlingHttpServletResponse extends SlingAdaptable implements SlingHttpServletResponse {
 
     @Delegate
