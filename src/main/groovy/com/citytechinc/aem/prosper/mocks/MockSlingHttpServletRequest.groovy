@@ -17,6 +17,10 @@ import org.springframework.mock.web.MockHttpServletRequest
 import javax.servlet.RequestDispatcher
 import javax.servlet.http.Cookie
 
+/**
+ * Mock Sling request that delegates to a Spring <code>MockHttpServletRequest</code>.  This class should not be used
+ * directly; rather, use a <code>RequestBuilder</code> instance from test specs to instantiate mock requests.
+ */
 @ToString(includes = ["resource", "requestPathInfo", "requestParameterMap"])
 class MockSlingHttpServletRequest extends SlingAdaptable implements SlingHttpServletRequest {
 

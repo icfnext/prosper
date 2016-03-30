@@ -4,6 +4,7 @@ import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperPageContext
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
+import com.citytechinc.aem.prosper.context.SlingContextProvider
 import com.citytechinc.aem.prosper.tag.JspTagProxy
 import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.SlingHttpServletRequest
@@ -33,7 +34,7 @@ import static org.apache.sling.scripting.jsp.taglib.DefineObjectsTag.DEFAULT_SLI
  */
 trait JspTagTrait {
 
-    abstract ProsperSlingContext getSlingContext()
+    abstract SlingContextProvider getSlingContext()
 
     abstract ResourceResolver getResourceResolver()
 

@@ -58,7 +58,7 @@ class ProsperSlingContextSpec extends ProsperSpec {
 
     def "test adapter manager respects OSGi service properties"() {
         given: "an OSGi registered adapter factory is added"
-        slingContext.registerService(AdapterFactory, new OSGiRegisteredAdapterFactory())
+        slingContext.registerAdapterFactory(new OSGiRegisteredAdapterFactory())
 
         when: "a request is adapted"
         def requestResult = requestBuilder.build().adaptTo(Long)

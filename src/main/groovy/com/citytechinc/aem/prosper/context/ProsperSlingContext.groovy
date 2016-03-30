@@ -22,7 +22,7 @@ import static org.osgi.framework.Constants.SERVICE_RANKING
 /**
  * Prosper implementation of the Sling/OSGi context for usage in specs.
  */
-class ProsperSlingContext extends SlingContextImpl {
+class ProsperSlingContext extends SlingContextImpl implements SlingContextProvider {
 
     final ResourceResolver resourceResolver
 
@@ -30,14 +30,14 @@ class ProsperSlingContext extends SlingContextImpl {
      * Register default services and the Prosper adapter factory.
      */
     ProsperSlingContext() {
-        MockSling.setAdapterManagerBundleContext(bundleContext())
+        MockSling.setAdapterManagerBundleContext(bundleContext)
 
         // register default services
         registerInjectActivateService(new MockEventAdmin())
         registerDefaultServices()
 
         // initialize resource resolver
-        resourceResolver = MockSling.newResourceResolver(JCR_OAK, bundleContext())
+        resourceResolver = MockSling.newResourceResolver(JCR_OAK, bundleContext)
 
         // additional prosper services
         registerService(Replicator, [replicate: {}] as Replicator)
@@ -48,65 +48,38 @@ class ProsperSlingContext extends SlingContextImpl {
             ProsperAdapterFactory.ADAPTER_CLASSES)
     }
 
-    /**
-     * Get the mock OSGi bundle context.
-     *
-     * @return bundle context
-     */
+    @Override
     BundleContext getBundleContext() {
         bundleContext()
     }
 
-    /**
-     * Convenience method to register an adapter for <code>Resource</code> instances.
-     *
-     * @param adapterType type returned by the closure function
-     * @param closure closure accepting a single <code>Resource</code> instance as an argument
-     */
+    @Override
     void registerResourceAdapter(Class adapterType, Closure closure) {
         registerAdapter(Resource, adapterType, closure)
     }
 
-    /**
-     * Convenience method to register an adapter for <code>ResourceResolver</code> instances.
-     *
-     * @param adapterType type returned by the closure function
-     * @param closure closure accepting a single <code>ResourceResolver</code> instance as an argument
-     */
+    @Override
     void registerResourceResolverAdapter(Class adapterType, Closure closure) {
         registerAdapter(ResourceResolver, adapterType, closure)
     }
 
-    /**
-     * Convenience method to register an adapter for <code>SlingHttpServletRequest</code> instances.
-     *
-     * @param adapterType type returned by the closure function
-     * @param closure closure accepting a single <code>SlingHttpServletRequest</code> instance as an argument
-     */
+    @Override
     void registerRequestAdapter(Class adapterType, Closure closure) {
         registerAdapter(SlingHttpServletRequest, adapterType, closure)
     }
 
-    /**
-     * Register an adapter for the current Prosper context.
-     *
-     * @param adaptableType type to adapt from
-     * @param adapterType type returned by the closure function
-     * @param closure closure accepting an instance of the adaptable type as an argument and returning an instance of
-     * the adapter type
-     */
+    @Override
     void registerAdapter(Class adaptableType, Class adapterType, Closure closure) {
         registerAdapterFactory(new ClosureAdapterFactory(closure), [adaptableType.name] as String[],
             [adapterType.name] as String[])
     }
 
-    /**
-     * Register an adapter factory for the current Prosper context.
-     *
-     * @param adapterFactory adapter factory instance
-     * @param adaptableClasses array of class names that can be adapted from by this factory
-     * @param adapterClasses array of class names that can be adapted to by this factory
-     */
+    @Override
+    void registerAdapterFactory(AdapterFactory adapterFactory) {
+        registerService(AdapterFactory, adapterFactory)
+    }
+
+    @Override
     void registerAdapterFactory(AdapterFactory adapterFactory, String[] adaptableClasses, String[] adapterClasses) {
         registerService(AdapterFactory, adapterFactory, [
             (ADAPTABLE_CLASSES): adaptableClasses,
@@ -114,12 +87,7 @@ class ProsperSlingContext extends SlingContextImpl {
         ])
     }
 
-    /**
-     * Register a Sling Injector for use in a test.
-     *
-     * @param injector injector to register
-     * @param serviceRanking OSGi service ranking
-     */
+    @Override
     void registerInjector(Injector injector, Integer serviceRanking) {
         registerInjectActivateService(injector, [(SERVICE_RANKING): serviceRanking])
     }
