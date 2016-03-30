@@ -10,8 +10,8 @@ Prosper is an integration testing library for AEM (Adobe Experience Manager, for
 
 * Test AEM projects outside of an OSGi container in the standard Maven build lifecycle.
 * Write test specifications in [Groovy](http://www.groovy-lang.org/) using [Spock](http://docs.spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests quickly and efficiently.
-* Supplies mock OSGi bundle and [Sling contexts](https://sling.apache.org/documentation/development/sling-mock.html) for registering services, adapters, and Sling models.
-* Full Sling `ResourceResolver` and `Resource` instances backed by an in-memory Jackrabbit Oak JCR instance. 
+* Sling `ResourceResolver` instance backed by an in-memory Jackrabbit Oak JCR instance supporting the complete set of repository operations. 
+* Supplies mock OSGi bundle and [Sling](https://sling.apache.org/documentation/development/sling-mock.html) contexts for registering services, adapters, and Sling models.
 * Utilizes Groovy builders from the [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for mock Sling requests and responses to simplify setup of test cases.
 * Supports testing of JSP tag classes using a mixable Groovy trait.

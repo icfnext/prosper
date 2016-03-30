@@ -51,15 +51,6 @@ abstract class ProsperSpec extends Specification {
     @AutoCleanup("logout")
     private Session sessionInternal
 
-    @Shared
-    private PageManager pageManagerInternal
-
-    @Shared
-    private NodeBuilder nodeBuilderInternal
-
-    @Shared
-    private PageBuilder pageBuilderInternal
-
     // global fixtures
 
     /**
@@ -71,9 +62,6 @@ abstract class ProsperSpec extends Specification {
 
         resourceResolverInternal = slingContext.resourceResolver
         sessionInternal = resourceResolver.adaptTo(Session)
-        pageManagerInternal = resourceResolver.adaptTo(PageManager)
-        nodeBuilderInternal = new NodeBuilder(session)
-        pageBuilderInternal = new PageBuilder(session)
 
         registerNodeTypes()
 
@@ -122,14 +110,14 @@ abstract class ProsperSpec extends Specification {
      * @return JCR node builder
      */
     NodeBuilder getNodeBuilder() {
-        nodeBuilderInternal
+        new NodeBuilder(session)
     }
 
     /**
      * @return CQ page builder
      */
     PageBuilder getPageBuilder() {
-        pageBuilderInternal
+        new PageBuilder(session)
     }
 
     /**
@@ -143,7 +131,7 @@ abstract class ProsperSpec extends Specification {
      * @return CQ page manager
      */
     PageManager getPageManager() {
-        pageManagerInternal
+        resourceResolver.adaptTo(PageManager)
     }
 
     // convenience getters
