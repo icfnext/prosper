@@ -382,7 +382,7 @@ class TestServlet extends SlingAllMethodsServlet {
 
         def node = session.getNode(path)
 
-        node.setProperty "testProperty", selector
+        node.setProperty("testProperty", selector)
 
         session.save()
 
@@ -480,7 +480,7 @@ class CustomReplicationServlet extends SlingAllMethodsServlet {
         try {
             replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
         } catch (ReplicationException e) {
-            LOG.error "replication error", e
+            LOG.error("replication error", e)
         }
     }
 }
@@ -652,7 +652,7 @@ class ExampleSpec extends ProsperSpec {
 
 ### Traits
 
-Groovy traits are a language feature that is not specific to Prosper, but can nonetheless be utilized to "mix in" new functionality to test specs.  The JSP tag trait is the only one currently provided, but custom traits can be defined to support domain-specific features.
+[Traits](http://groovy-lang.org/objectorientation.html#_traits) are a Groovy language feature that can be utilized to "mix in" new functionality to test specs.  The JSP tag trait is the only one currently provided, but custom traits can be defined to support domain-specific features.
 
 ```groovy
 import com.citytechinc.aem.prosper.builders.RequestBuilder
