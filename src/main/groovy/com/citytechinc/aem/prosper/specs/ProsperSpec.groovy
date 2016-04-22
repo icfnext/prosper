@@ -42,14 +42,12 @@ abstract class ProsperSpec extends Specification {
     private static final def DEFAULT_NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
     @Shared
-    private SlingContextProvider slingContextInternal = new ProsperSlingContext()
+    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
 
     @Shared
-    @AutoCleanup
     private ResourceResolver resourceResolverInternal
 
     @Shared
-    @AutoCleanup("logout")
     private Session sessionInternal
 
     // global fixtures
@@ -60,6 +58,8 @@ abstract class ProsperSpec extends Specification {
      */
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
+
+        slingContextInternal.setup()
 
         resourceResolverInternal = slingContext.resourceResolver
         sessionInternal = resourceResolver.adaptTo(Session)
@@ -76,6 +76,8 @@ abstract class ProsperSpec extends Specification {
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
 
         removeAllNodes()
+
+        slingContextInternal.cleanup()
     }
 
     /**

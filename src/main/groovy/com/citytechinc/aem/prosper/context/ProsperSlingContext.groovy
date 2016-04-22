@@ -28,6 +28,7 @@ class ProsperSlingContext extends SlingContextImpl implements SlingContextProvid
     ProsperSlingContext() {
         // setup of resource resolver and default services
         setResourceResolverType(JCR_OAK)
+        /*
         setUp()
 
         // additional prosper services
@@ -37,6 +38,24 @@ class ProsperSlingContext extends SlingContextImpl implements SlingContextProvid
         // register prosper adapter factory
         registerAdapterFactory(new ProsperAdapterFactory(this), ProsperAdapterFactory.ADAPTABLE_CLASSES,
             ProsperAdapterFactory.ADAPTER_CLASSES)
+        */
+    }
+
+    void setup() {
+        // setup of resource resolver and default services
+        super.setUp()
+
+        // additional prosper services
+        registerService(Replicator, [replicate: {}] as Replicator)
+        registerInjectActivateService(new PageManagerFactoryImpl())
+
+        // register prosper adapter factory
+        registerAdapterFactory(new ProsperAdapterFactory(this), ProsperAdapterFactory.ADAPTABLE_CLASSES,
+            ProsperAdapterFactory.ADAPTER_CLASSES)
+    }
+
+    void cleanup() {
+        super.tearDown()
     }
 
     @Override
