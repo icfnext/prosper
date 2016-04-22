@@ -17,7 +17,6 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
 import org.apache.sling.testing.mock.sling.ResourceResolverType
-import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -41,15 +40,7 @@ abstract class ProsperSpec extends Specification {
     private static final def DEFAULT_NODE_TYPES = ["sling", "replication", "tagging", "core", "dam", "vlt", "widgets"]
 
     @Shared
-    private SlingContextProvider slingContextInternal = new ProsperSlingContext()
-
-    @Shared
-    @AutoCleanup
-    private ResourceResolver resourceResolverInternal
-
-    @Shared
-    @AutoCleanup("logout")
-    private Session sessionInternal
+    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
 
     // global fixtures
 
@@ -60,8 +51,7 @@ abstract class ProsperSpec extends Specification {
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
-        resourceResolverInternal = slingContext.resourceResolver
-        sessionInternal = resourceResolver.adaptTo(Session)
+        slingContextInternal.setup()
 
         registerNodeTypes()
 
@@ -75,13 +65,15 @@ abstract class ProsperSpec extends Specification {
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
 
         removeAllNodes()
+
+        slingContextInternal.cleanup()
     }
 
     /**
      * Refresh the shared resource resolver before each test run.
      */
     def setup() {
-        resourceResolverInternal.refresh()
+        resourceResolver.refresh()
     }
 
     /**
@@ -103,7 +95,7 @@ abstract class ProsperSpec extends Specification {
      * @return admin session
      */
     Session getSession() {
-        sessionInternal
+        resourceResolver.adaptTo(Session)
     }
 
     /**
@@ -124,7 +116,7 @@ abstract class ProsperSpec extends Specification {
      * @return admin resource resolver
      */
     ResourceResolver getResourceResolver() {
-        resourceResolverInternal
+        slingContext.resourceResolver
     }
 
     /**
