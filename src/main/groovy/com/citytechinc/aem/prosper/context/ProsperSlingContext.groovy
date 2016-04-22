@@ -22,25 +22,14 @@ import static org.osgi.framework.Constants.SERVICE_RANKING
  */
 class ProsperSlingContext extends SlingContextImpl implements SlingContextProvider {
 
-    /**
-     * Register default services and the Prosper adapter factory.
-     */
     ProsperSlingContext() {
         // setup of resource resolver and default services
         setResourceResolverType(JCR_OAK)
-        /*
-        setUp()
-
-        // additional prosper services
-        registerService(Replicator, [replicate: {}] as Replicator)
-        registerInjectActivateService(new PageManagerFactoryImpl())
-
-        // register prosper adapter factory
-        registerAdapterFactory(new ProsperAdapterFactory(this), ProsperAdapterFactory.ADAPTABLE_CLASSES,
-            ProsperAdapterFactory.ADAPTER_CLASSES)
-        */
     }
 
+    /**
+     * Register default services and initialize resource resolver.
+     */
     void setup() {
         // setup of resource resolver and default services
         super.setUp()
@@ -54,6 +43,9 @@ class ProsperSlingContext extends SlingContextImpl implements SlingContextProvid
             ProsperAdapterFactory.ADAPTER_CLASSES)
     }
 
+    /**
+     * Close resource resolver and reset the mock bundle context.
+     */
     void cleanup() {
         super.tearDown()
     }

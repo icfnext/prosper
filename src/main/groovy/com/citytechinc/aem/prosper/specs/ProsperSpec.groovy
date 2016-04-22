@@ -15,10 +15,8 @@ import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.api.resource.ResourceResolverFactory
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
 import org.apache.sling.testing.mock.sling.ResourceResolverType
-import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -44,12 +42,6 @@ abstract class ProsperSpec extends Specification {
     @Shared
     private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
 
-    @Shared
-    private ResourceResolver resourceResolverInternal
-
-    @Shared
-    private Session sessionInternal
-
     // global fixtures
 
     /**
@@ -60,9 +52,6 @@ abstract class ProsperSpec extends Specification {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
 
         slingContextInternal.setup()
-
-        resourceResolverInternal = slingContext.resourceResolver
-        sessionInternal = resourceResolver.adaptTo(Session)
 
         registerNodeTypes()
 
@@ -84,7 +73,7 @@ abstract class ProsperSpec extends Specification {
      * Refresh the shared resource resolver before each test run.
      */
     def setup() {
-        resourceResolverInternal.refresh()
+        resourceResolver.refresh()
     }
 
     /**
@@ -106,7 +95,7 @@ abstract class ProsperSpec extends Specification {
      * @return admin session
      */
     Session getSession() {
-        sessionInternal
+        resourceResolver.adaptTo(Session)
     }
 
     /**
@@ -127,7 +116,7 @@ abstract class ProsperSpec extends Specification {
      * @return admin resource resolver
      */
     ResourceResolver getResourceResolver() {
-        resourceResolverInternal
+        slingContext.resourceResolver
     }
 
     /**
