@@ -15,6 +15,7 @@ import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ResourceResolverFactory
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
 import org.apache.sling.testing.mock.sling.ResourceResolverType
 import spock.lang.AutoCleanup

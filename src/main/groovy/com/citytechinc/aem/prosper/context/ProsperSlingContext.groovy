@@ -9,8 +9,6 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.spi.Injector
-import org.apache.sling.testing.mock.osgi.MockEventAdmin
-import org.apache.sling.testing.mock.sling.MockSling
 import org.apache.sling.testing.mock.sling.context.SlingContextImpl
 import org.osgi.framework.BundleContext
 
@@ -24,20 +22,13 @@ import static org.osgi.framework.Constants.SERVICE_RANKING
  */
 class ProsperSlingContext extends SlingContextImpl implements SlingContextProvider {
 
-    final ResourceResolver resourceResolver
-
     /**
      * Register default services and the Prosper adapter factory.
      */
     ProsperSlingContext() {
-        MockSling.setAdapterManagerBundleContext(bundleContext)
-
-        // register default services
-        registerInjectActivateService(new MockEventAdmin())
-        registerDefaultServices()
-
-        // initialize resource resolver
-        resourceResolver = MockSling.newResourceResolver(JCR_OAK, bundleContext)
+        // setup of resource resolver and default services
+        setResourceResolverType(JCR_OAK)
+        setUp()
 
         // additional prosper services
         registerService(Replicator, [replicate: {}] as Replicator)
@@ -46,6 +37,11 @@ class ProsperSlingContext extends SlingContextImpl implements SlingContextProvid
         // register prosper adapter factory
         registerAdapterFactory(new ProsperAdapterFactory(this), ProsperAdapterFactory.ADAPTABLE_CLASSES,
             ProsperAdapterFactory.ADAPTER_CLASSES)
+    }
+
+    @Override
+    ResourceResolver getResourceResolver() {
+        resourceResolver()
     }
 
     @Override
