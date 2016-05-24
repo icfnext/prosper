@@ -314,78 +314,99 @@
     </profiles>
 
     <dependencies>
+        <!-- compile scope is set to override provided scope from parent -->
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jsp-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-tagging</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-commons</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-taglib</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-msm-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.granite</groupId>
             <artifactId>com.adobe.granite.replication.core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.resource</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.adapter</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.models.api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-spi-commons</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit.vault</groupId>
             <artifactId>org.apache.jackrabbit.vault</artifactId>
+            <scope>compile</scope>
         </dependency>
+
+        <!-- additional non-AEM dependencies -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
