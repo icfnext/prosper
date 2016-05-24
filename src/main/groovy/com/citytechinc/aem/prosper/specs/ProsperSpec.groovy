@@ -3,16 +3,25 @@ package com.citytechinc.aem.prosper.specs
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
+import com.citytechinc.aem.prosper.annotations.ContentFilterRuleType
+import com.citytechinc.aem.prosper.annotations.ContentFilters
 import com.citytechinc.aem.prosper.annotations.NodeTypes
+import com.citytechinc.aem.prosper.annotations.SkipContentImport
 import com.citytechinc.aem.prosper.builders.RequestBuilder
 import com.citytechinc.aem.prosper.builders.ResponseBuilder
 import com.citytechinc.aem.prosper.context.ProsperSlingContext
 import com.citytechinc.aem.prosper.context.SlingContextProvider
-import com.citytechinc.aem.prosper.importer.ContentImporter
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
+import org.apache.jackrabbit.vault.fs.api.PathFilterSet
+import org.apache.jackrabbit.vault.fs.api.WorkspaceFilter
+import org.apache.jackrabbit.vault.fs.config.DefaultWorkspaceFilter
+import org.apache.jackrabbit.vault.fs.filter.DefaultPathFilter
+import org.apache.jackrabbit.vault.fs.io.FileArchive
+import org.apache.jackrabbit.vault.fs.io.ImportOptions
+import org.apache.jackrabbit.vault.fs.io.Importer
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
@@ -54,8 +63,7 @@ abstract class ProsperSpec extends Specification {
         slingContextInternal.setup()
 
         registerNodeTypes()
-
-        new ContentImporter(this).importVaultContent()
+        importVaultContent()
     }
 
     /**
@@ -291,5 +299,70 @@ abstract class ProsperSpec extends Specification {
 
     private void registerNodeTypes(List<String> cndResourcePaths) {
         NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, ResourceResolverType.JCR_OAK.nodeTypeMode)
+    }
+
+    private void importVaultContent() {
+        if (!this.class.isAnnotationPresent(SkipContentImport)) {
+            def contentRootUrl = this.class.getResource("/SLING-INF/content")
+
+            if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
+                def contentImporter = buildImporter()
+                def contentArchive = new FileArchive(new File(contentRootUrl.file))
+
+                try {
+                    contentArchive.open(false)
+                    contentImporter.run(contentArchive, session.rootNode)
+                } finally {
+                    contentArchive.close()
+                }
+            }
+        }
+    }
+
+    private Importer buildImporter() {
+        def importer
+
+        this.class.annotations
+
+        if (this.class.isAnnotationPresent(ContentFilters)) {
+            def contentImportOptions = new ImportOptions()
+
+            contentImportOptions.filter = buildWorkspaceFilter()
+            importer = new Importer(contentImportOptions)
+        } else {
+            importer = new Importer()
+        }
+
+        importer
+    }
+
+    private WorkspaceFilter buildWorkspaceFilter() {
+        def contentImportFilter = new DefaultWorkspaceFilter()
+
+        def filterDefinitions = this.class.getAnnotation(ContentFilters)
+
+        if (filterDefinitions.xml()) {
+            contentImportFilter.load(this.class.getResourceAsStream(filterDefinitions.xml()))
+        }
+
+        filterDefinitions.filters().each { filterDefinition ->
+            def pathFilterSet = new PathFilterSet(filterDefinition.root())
+
+            pathFilterSet.importMode = filterDefinition.mode()
+
+            filterDefinition.rules().each { rule ->
+                def pathFilter = new DefaultPathFilter(rule.pattern())
+
+                if (rule.type() == ContentFilterRuleType.INCLUDE) {
+                    pathFilterSet.addInclude(pathFilter)
+                } else if (rule.type() == ContentFilterRuleType.EXCLUDE) {
+                    pathFilterSet.addExclude(pathFilter)
+                }
+            }
+
+            contentImportFilter.add(pathFilterSet)
+        }
+
+        contentImportFilter
     }
 }
