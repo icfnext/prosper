@@ -1,12 +1,12 @@
 package com.icfolson.aem.prosper.specs
 
-import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
-import com.citytechinc.aem.groovy.extension.builders.PageBuilder
-import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
+import com.icfolson.aem.groovy.extension.builders.NodeBuilder
+import com.icfolson.aem.groovy.extension.builders.PageBuilder
+import com.icfolson.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
 import com.icfolson.aem.prosper.annotations.ContentFilterRuleType
 import com.icfolson.aem.prosper.annotations.ContentFilters
 import com.icfolson.aem.prosper.annotations.NodeTypes
