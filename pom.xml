@@ -8,7 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.citytechinc.aem.prosper</groupId>
+    <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
     <version>8.0.0</version>
@@ -16,11 +16,9 @@
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
     <organization>
-        <name>CITYTECH, Inc.</name>
-        <url>http://www.citytechinc.com</url>
+        <name>ICF Olson</name>
+        <url>http://www.icfolson.com</url>
     </organization>
-
-    <url>http://code.citytechinc.com/prosper</url>
 
     <licenses>
         <license>
@@ -40,13 +38,6 @@
         <repository>
             <id>citytech-public</id>
             <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>apache-snapshots</id>
-            <url>http://repository.apache.org/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
         </repository>
     </repositories>
 
@@ -299,7 +290,7 @@
                     <version>1.7.5</version>
                 </dependency>
                 <dependency>
-                    <groupId>com.citytechinc.aem.groovy.extension</groupId>
+                    <groupId>com.icfolson.aem.groovy.extension</groupId>
                     <artifactId>aem-groovy-extension-bundle</artifactId>
                     <version>2.0.0</version>
                     <exclusions>
@@ -422,7 +413,7 @@
             <version>2.4.7</version>
         </dependency>
         <dependency>
-            <groupId>com.citytechinc.aem.groovy.extension</groupId>
+            <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
             <version>2.0.0</version>
         </dependency>
