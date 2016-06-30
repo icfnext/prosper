@@ -2,25 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>com.citytechinc.aem</groupId>
+        <groupId>com.icfolson.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.1.2</version>
+        <version>6.2.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.citytechinc.aem.prosper</groupId>
+    <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>7.0.1</version>
+    <version>8.0.0</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
     <organization>
-        <name>CITYTECH, Inc.</name>
-        <url>http://www.citytechinc.com</url>
+        <name>ICF Olson</name>
+        <url>http://www.icfolson.com</url>
     </organization>
-
-    <url>http://code.citytechinc.com/prosper</url>
 
     <licenses>
         <license>
@@ -40,10 +38,6 @@
         <repository>
             <id>citytech-public</id>
             <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>adobe-public</id>
-            <url>https://repo.adobe.com/nexus/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -106,7 +100,7 @@
                         <configuration>
                             <target>
                                 <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="maven.compile.classpath" />
-                                <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs" sourcepath="${basedir}/src/main/groovy" packagenames="com.citytechinc.aem.prosper.annotations.*,com.citytechinc.aem.prosper.builders.*,com.citytechinc.aem.prosper.context.*,com.citytechinc.aem.prosper.mocks.*,com.citytechinc.aem.prosper.specs.*,com.citytechinc.aem.prosper.tag.*,com.citytechinc.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
+                                <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs" sourcepath="${basedir}/src/main/groovy" packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*,com.icfolson.aem.prosper.tag.*,com.icfolson.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
                                     <link packages="java." href="https://docs.oracle.com/javase/7/docs/api" />
                                     <link packages="javax." href="https://docs.oracle.com/javaee/7/api" />
                                     <link packages="groovy.,org.codehaus.groovy." href="http://docs.groovy-lang.org/latest/html/gapi" />
@@ -117,7 +111,7 @@
                                     <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn" />
                                     <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core" />
                                     <link packages="org.springframework.mock." href="http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api" />
-                                    <link packages="com.citytechinc.aem.groovy.extension." href="http://code.citytechinc.com/aem-groovy-extension/groovydocs" />
+                                    <link packages="com.icfolson.aem.groovy.extension." href="http://code.citytechinc.com/aem-groovy-extension/groovydocs" />
                                 </groovydoc>
                             </target>
                         </configuration>
@@ -296,9 +290,9 @@
                     <version>1.7.5</version>
                 </dependency>
                 <dependency>
-                    <groupId>com.citytechinc.aem.groovy.extension</groupId>
+                    <groupId>com.icfolson.aem.groovy.extension</groupId>
                     <artifactId>aem-groovy-extension-bundle</artifactId>
-                    <version>1.0.1</version>
+                    <version>2.0.0</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.slf4j</groupId>
@@ -311,84 +305,117 @@
     </profiles>
 
     <dependencies>
+        <!-- compile scope is set to override provided scope from parent -->
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jsp-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-tagging</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-commons</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-taglib</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-msm-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.granite</groupId>
             <artifactId>com.adobe.granite.replication.core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.jcr.resource</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.adapter</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.models.api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-spi-commons</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit.vault</groupId>
             <artifactId>org.apache.jackrabbit.vault</artifactId>
-            <version>3.1.18</version>
+            <scope>compile</scope>
         </dependency>
+
+        <!-- not inherited from parent -->
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.jcr.resource</artifactId>
+            <version>2.7.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.resourceresolver</artifactId>
+            <version>1.4.8</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- additional non-AEM dependencies -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.4.6</version>
+            <version>2.4.7</version>
         </dependency>
         <dependency>
-            <groupId>com.citytechinc.aem.groovy.extension</groupId>
+            <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>1.0.1</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
@@ -408,7 +435,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.osgi-mock</artifactId>
-            <version>1.7.2</version>
+            <version>2.0.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -416,10 +443,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- use sling fork until release -->
         <dependency>
-            <groupId>org.apache.sling</groupId>
+            <groupId>com.icfolson.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
-            <version>1.0.0</version>
+            <version>2.0.0</version>
         </dependency>
     </dependencies>
 </project>
