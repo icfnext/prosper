@@ -1,6 +1,6 @@
 # Prosper
 
-[CITYTECH, Inc.](http://www.citytechinc.com)
+[ICF Olson](http://www.icfolson.com)
 
 ## Overview
 
@@ -10,7 +10,7 @@ Prosper is an integration testing library for AEM (Adobe Experience Manager, for
 
 * Test AEM projects outside of an OSGi container in the standard Maven build lifecycle.
 * Write test specifications in [Groovy](http://www.groovy-lang.org/) using [Spock](http://docs.spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests quickly and efficiently.
-* Sling `ResourceResolver` instance backed by an in-memory Jackrabbit Oak JCR instance supporting the complete set of repository operations. 
+* Sling `ResourceResolver` instance backed by an in-memory Jackrabbit Oak JCR instance supporting the complete set of repository operations.
 * Supplies mock OSGi bundle and [Sling](https://sling.apache.org/documentation/development/sling-mock.html) contexts for registering services, adapters, and Sling models.
 * Utilizes Groovy builders from the [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for mock Sling requests and responses to simplify setup of test cases.
@@ -29,7 +29,7 @@ Add Maven dependency to project `pom.xml`.
 
 ```xml
 <dependency>
-    <groupId>com.citytechinc.aem.prosper</groupId>
+    <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <version>7.0.1</version>
     <scope>test</scope>
@@ -39,7 +39,7 @@ Add Maven dependency to project `pom.xml`.
 Create a `src/test/groovy` directory in your project structure and add a Spock specification extending the base `ProsperSpec`.
 
 ```groovy
-import com.citytechinc.aem.prosper.specs.ProsperSpec
+import com.icfolson.aem.prosper.specs.ProsperSpec
 
 class ExampleSpec extends ProsperSpec {
 
@@ -178,11 +178,11 @@ Field Name | Type | Description
 session | [javax.jcr.Session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) | Administrative JCR session
 resourceResolver | [org.apache.sling.api.resource.ResourceResolver](http://sling.apache.org/apidocs/sling7/org/apache/sling/api/resource/ResourceResolver.html) | Administrative Sling Resource Resolver
 pageManager | [com.day.cq.wcm.api.PageManager](https://docs.adobe.com/docs/en/aem/6-1/ref/javadoc/com/day/cq/wcm/api/PageManager.html) | AEM Page Manager
-nodeBuilder | [com.citytechinc.aem.groovy.extension.builders.NodeBuilder](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/builders/NodeBuilder.html) | JCR [Node Builder](https://github.com/Citytechinc/prosper#content-builders)
-pageBuilder | [com.citytechinc.aem.groovy.extension.builders.PageBuilder](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/builders/PageBuilder.html) | AEM [Page Builder](https://github.com/Citytechinc/prosper#content-builders)
-slingContext | [com.citytechinc.aem.prosper.context.SlingContextProvider](https://sling.apache.org/documentation/development/sling-mock.html) | Prosper extension of Sling/OSGi Context
+nodeBuilder | [com.icfolson.aem.groovy.extension.builders.NodeBuilder](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/builders/NodeBuilder.html) | JCR [Node Builder](https://github.com/Citytechinc/prosper#content-builders)
+pageBuilder | [com.icfolson.aem.groovy.extension.builders.PageBuilder](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/builders/PageBuilder.html) | AEM [Page Builder](https://github.com/Citytechinc/prosper#content-builders)
+slingContext | [com.icfolson.aem.prosper.context.SlingContextProvider](https://sling.apache.org/documentation/development/sling-mock.html) | Prosper extension of Sling/OSGi Context
 
-See the `ProsperSpec` [GroovyDoc](http://code.citytechinc.com/prosper/groovydocs/com/citytechinc/aem/prosper/specs/ProsperSpec.html) for details on available methods.
+See the `ProsperSpec` [GroovyDoc](http://code.citytechinc.com/prosper/groovydocs/com/icfolson/aem/prosper/specs/ProsperSpec.html) for details on available methods.
 
 ### Content Builders
 
@@ -240,7 +240,7 @@ Another way to generate supporting content is to import a vault exported/package
 
 #### Specifying a Filter File
 
-You can specify an alternative `filter.xml` file by using the class level `com.citytechinc.aem.prosper.annotations.ContentFilters` annotation.  Simply provide the path to the `filter.xml` file in the XML element and it will be used instead of the `filter.xml` file within the META-INF/vault directory.  The example below shows how you can provide a path to a non-default `filter.xml` file.
+You can specify an alternative `filter.xml` file by using the class level `com.icfolson.aem.prosper.annotations.ContentFilters` annotation.  Simply provide the path to the `filter.xml` file in the XML element and it will be used instead of the `filter.xml` file within the META-INF/vault directory.  The example below shows how you can provide a path to a non-default `filter.xml` file.
 
 ```groovy
 @ContentFilters(
@@ -311,7 +311,7 @@ class MySpec extends ProsperSpec {
 
 ### Metaclasses
 
-The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/citytechinc/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
+The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.citytechinc.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
 
 ### Assertions
 
@@ -351,7 +351,7 @@ expect: "page is created and properties match expected values"
 assertPageExists("/content/prosper", pageProperties)
 ```
 
-All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://code.citytechinc.com/prosper/groovydocs/com/citytechinc/aem/prosper/specs/ProsperSpec.html).
+All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://code.citytechinc.com/prosper/groovydocs/com/icfolson/aem/prosper/specs/ProsperSpec.html).
 
 ### Mocking Requests and Responses
 
@@ -445,7 +445,7 @@ The mock request and response objects delegate to the [MockHttpServletRequest](h
 
 ### Sling Context
 
-See the [Groovydoc](http://code.citytechinc.com/prosper/groovydocs/com/citytechinc/aem/prosper/context/SlingContextProvider.html) for complete details of the available service registration and additional context methods; specific Sling adaptable examples are provided below.
+See the [Groovydoc](http://code.citytechinc.com/prosper/groovydocs/com/icfolson/aem/prosper/context/SlingContextProvider.html) for complete details of the available service registration and additional context methods; specific Sling adaptable examples are provided below.
 
 #### OSGi Services
 
@@ -493,14 +493,14 @@ def "servlet with mock service"() {
     setup:
     def servlet = new CustomReplicationServlet()
     def replicator = Mock(Replicator)
-    
+
     slingContext.registerService(Replicator, replicator)
     slingContext.registerInjectActivateService(servlet)
 
     def request = requestBuilder.build {
         parameters = [path: "/content"]
     }
-    
+
     def response = responseBuilder.build()
 
     when:
@@ -538,29 +538,29 @@ class ExampleSpec extends ProsperSpec {
 
     def setupSpec() {
         // example adapter factory
-        slingContext.registerAdapterFactory(new ExampleAdapterFactory(), 
-            ["org.apache.sling.api.resource.ResourceResolver", "org.apache.sling.api.resource.Resource"] as String[], 
+        slingContext.registerAdapterFactory(new ExampleAdapterFactory(),
+            ["org.apache.sling.api.resource.ResourceResolver", "org.apache.sling.api.resource.Resource"] as String[],
             ["java.lang.String"] as String[])
-        
+
         // resource adapters
-        slingContext.registerResourceAdapter(Integer, { Resource resource -> 
-            resource.name.length() 
+        slingContext.registerResourceAdapter(Integer, { Resource resource ->
+            resource.name.length()
         })
-        slingContext.registerResourceAdapter(Map, { Resource resource -> 
-            resource.metadata 
+        slingContext.registerResourceAdapter(Map, { Resource resource ->
+            resource.metadata
         })
-        
+
         // resource resolver adapters
-        slingContext.registerResourceResolverAdapter(Integer, { ResourceResolver resourceResolver -> 
-            resourceResolver.searchPath.length 
+        slingContext.registerResourceResolverAdapter(Integer, { ResourceResolver resourceResolver ->
+            resourceResolver.searchPath.length
         })
-        slingContext.registerResourceResolverAdapter(Node, { ResourceResolver resourceResolver -> 
-            resourceResolver.getResource("/").adaptTo(Node) 
+        slingContext.registerResourceResolverAdapter(Node, { ResourceResolver resourceResolver ->
+            resourceResolver.getResource("/").adaptTo(Node)
         })
-        
+
         // request adapters
-        slingContext.registerRequestAdapter(Integer, { SlingHttpServletRequest request -> 
-            request.pathInfo.length() 
+        slingContext.registerRequestAdapter(Integer, { SlingHttpServletRequest request ->
+            request.pathInfo.length()
         })
     }
 
@@ -598,7 +598,7 @@ class ExampleSpec extends ProsperSpec {
 Sling Model classes and injectors can also be registered in the Sling context for use in tests.  The `addModelsForPackage` method from the `SlingContextProvider` scans the given package for classes annotated with `@org.apache.sling.models.annotations.Model` and registers them in the mock bundle context, while the `registerInjector` allows for registration of custom Sling injectors.  A model instance can then be acquired by adapting from a Sling resource or request as shown below.
 
 ```groovy
-package com.citytechinc.aem.prosper
+package com.icfolson.aem.prosper
 
 import org.apache.sling.models.annotations.Model
 import org.apache.sling.models.annotations.injectorspecific.Self
@@ -625,7 +625,7 @@ class ProsperModelSpec extends ProsperSpec {
 
     def "adapt resource to model"() {
         setup:
-        slingContext.addModelsForPackage("com.citytechinc.aem.prosper")
+        slingContext.addModelsForPackage("com.icfolson.aem.prosper")
 
         def resource = getResource("/content/prosper")
         def model = resource.adaptTo(ProsperModel)
@@ -642,7 +642,7 @@ class ProsperModelSpec extends ProsperSpec {
 Many of the common AEM, JCR, and Sling namespaces and node types are registered when the Prosper test repository is created.  Additional namespaces and node types may be added at runtime by annotating a test spec with the `@NodeTypes` annotation and supplying an array containing paths to classpath .cnd file resources.  For more information on the CND node type notation, see [Node Type Notation](http://jackrabbit.apache.org/node-type-notation.html) in the Apache Jackrabbit documentation.  An example of the annotation usage is presented below.
 
 ```groovy
-import com.citytechinc.aem.prosper.annotations.NodeTypes
+import com.icfolson.aem.prosper.annotations.NodeTypes
 
 @NodeTypes("SLING-INF/nodetypes/spock.cnd")
 class ExampleSpec extends ProsperSpec {
@@ -655,7 +655,7 @@ class ExampleSpec extends ProsperSpec {
 [Traits](http://groovy-lang.org/objectorientation.html#_traits) are a Groovy language feature that can be utilized to "mix in" new functionality to test specs.  The JSP tag trait is the only one currently provided, but custom traits can be defined to support domain-specific features.
 
 ```groovy
-import com.citytechinc.aem.prosper.builders.RequestBuilder
+import com.icfolson.aem.prosper.builders.RequestBuilder
 import org.apache.sling.api.SlingHttpServletRequest
 
 trait MobileRequestTrait {
@@ -687,7 +687,7 @@ class MobileRequestTraitSpec extends ProsperSpec implements MobileRequestTrait {
 
 #### JSP Tag Trait
 
-The `init` methods in `com.citytechinc.aem.prosper.traits.JspTagTrait` initialize `TagSupport` instances with a mock `PageContext` containing a `Writer` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
+The `init` methods in `com.icfolson.aem.prosper.traits.JspTagTrait` initialize `TagSupport` instances with a mock `PageContext` containing a `Writer` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
 
 If the `init` method's `resourcePath` argument maps to valid JCR path, the mock `PageContext` will be initialized with the appropriate `Resource`, `Page`, `Node`, and `ValueMap` attributes for the addressed resource.  See the `JspTagTrait` implementation for the specific attribute names and values.
 
@@ -717,7 +717,7 @@ class SimpleTag extends TagSupport {
 }
 ```
 ```groovy
-import com.citytechinc.aem.prosper.traits.JspTagTrait
+import com.icfolson.aem.prosper.traits.JspTagTrait
 
 class SimpleTagSpec extends ProsperSpec implements JspTagTrait {
 
