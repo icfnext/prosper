@@ -2,7 +2,6 @@ package com.citytechinc.aem.prosper.context
 
 import com.citytechinc.aem.prosper.adapter.ClosureAdapterFactory
 import com.citytechinc.aem.prosper.adapter.ProsperAdapterFactory
-import com.day.cq.replication.Replicator
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
@@ -35,8 +34,7 @@ class ProsperSlingContext extends SlingContextImpl implements SlingContextProvid
         super.setUp()
 
         // additional prosper services
-        registerService(Replicator, [replicate: {}] as Replicator)
-        registerInjectActivateService(new PageManagerFactoryImpl())
+        registerService(new PageManagerFactoryImpl())
 
         // register prosper adapter factory
         registerAdapterFactory(new ProsperAdapterFactory(this), ProsperAdapterFactory.ADAPTABLE_CLASSES,
