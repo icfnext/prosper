@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
 
     <skin>
-        <groupId>com.citytechinc.maven</groupId>
-        <artifactId>citytech-maven-skin</artifactId>
-        <version>1.0.0</version>
-    </skin>
+		<groupId>com.icfolson.maven</groupId>
+		<artifactId>icfolson-maven-skin</artifactId>
+		<version>1.0.0</version>
+	</skin>
 
     <bannerRight>
         <name>${project.name}</name>
