@@ -205,9 +205,9 @@
 					<noReleaseBuild>true</noReleaseBuild>
 					<noDeploy>true</noDeploy>
 					<flowInitContext>
-						<featureBranchPrefix>feature/</featureBranchPrefix>
-						<releaseBranchPrefix>release/</releaseBranchPrefix>
-						<hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+						<featureBranchPrefix>feature-</featureBranchPrefix>
+						<releaseBranchPrefix>release-</releaseBranchPrefix>
+						<hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
 					</flowInitContext>
 				</configuration>
 			</plugin>
