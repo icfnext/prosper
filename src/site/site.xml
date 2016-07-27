@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
 
     <skin>
-		<groupId>com.icfolson.maven</groupId>
-		<artifactId>icfolson-maven-skin</artifactId>
-		<version>1.0.0</version>
-	</skin>
+        <groupId>com.icfolson.maven</groupId>
+        <artifactId>icfolson-maven-skin</artifactId>
+        <version>1.0.0</version>
+    </skin>
 
     <bannerRight>
         <name>${project.name}</name>
@@ -31,7 +31,7 @@
                 <href>./index.html</href>
             </brand>
             <slogan></slogan>
-            <body />
+            <body/>
             <bottomNav maxSpan="3">
                 <column>reports</column>
             </bottomNav>
@@ -41,10 +41,10 @@
     <body>
         <links>
             <item name="GitHub"
-                  href="https://github.com/Citytechinc/prosper" />
+                  href="https://github.com/Citytechinc/prosper"/>
             <item name="GroovyDocs"
-                  href="groovydocs/index.html" />
+                  href="groovydocs/index.html"/>
         </links>
-        <menu ref="reports" />
+        <menu ref="reports"/>
     </body>
 </project>
