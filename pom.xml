@@ -111,7 +111,7 @@
                                     <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn" />
                                     <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core" />
                                     <link packages="org.springframework.mock." href="http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api" />
-                                    <link packages="com.icfolson.aem.groovy.extension." href="http://code.citytechinc.com/aem-groovy-extension/groovydocs" />
+                                    <link packages="com.icfolson.aem.groovy.extension." href="http://code.digitalatolson.com/aem-groovy-extension/groovydocs" />
                                 </groovydoc>
                             </target>
                         </configuration>
