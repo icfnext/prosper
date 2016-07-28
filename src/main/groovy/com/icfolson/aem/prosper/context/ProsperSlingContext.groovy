@@ -1,6 +1,5 @@
 package com.icfolson.aem.prosper.context
 
-import com.day.cq.replication.Replicator
 import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import com.icfolson.aem.prosper.adapter.ClosureAdapterFactory
 import com.icfolson.aem.prosper.adapter.ProsperAdapterFactory
@@ -35,8 +34,7 @@ class ProsperSlingContext extends SlingContextImpl implements SlingContextProvid
         super.setUp()
 
         // additional prosper services
-        registerService(Replicator, [replicate: {}] as Replicator)
-        registerInjectActivateService(new PageManagerFactoryImpl())
+        registerService(new PageManagerFactoryImpl())
 
         // register prosper adapter factory
         registerAdapterFactory(new ProsperAdapterFactory(this), ProsperAdapterFactory.ADAPTABLE_CLASSES,

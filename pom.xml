@@ -4,14 +4,14 @@
     <parent>
         <groupId>com.icfolson.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.2.0</version>
+        <version>6.2.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>8.0.1</version>
+    <version>8.1.0</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
@@ -111,7 +111,7 @@
                                     <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn" />
                                     <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core" />
                                     <link packages="org.springframework.mock." href="http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api" />
-                                    <link packages="com.icfolson.aem.groovy.extension." href="http://code.citytechinc.com/aem-groovy-extension/groovydocs" />
+                                    <link packages="com.icfolson.aem.groovy.extension." href="http://code.digitalatolson.com/aem-groovy-extension/groovydocs" />
                                 </groovydoc>
                             </target>
                         </configuration>
