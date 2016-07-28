@@ -9,6 +9,7 @@ import com.icfolson.aem.groovy.extension.builders.PageBuilder
 import com.icfolson.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
 import com.icfolson.aem.prosper.annotations.ContentFilterRuleType
 import com.icfolson.aem.prosper.annotations.ContentFilters
+import com.icfolson.aem.prosper.annotations.ModelSpec
 import com.icfolson.aem.prosper.annotations.NodeTypes
 import com.icfolson.aem.prosper.annotations.SkipContentImport
 import com.icfolson.aem.prosper.builders.RequestBuilder
@@ -64,6 +65,7 @@ abstract class ProsperSpec extends Specification {
 
         registerNodeTypes()
         importVaultContent()
+        registerSlingModels()
     }
 
     /**
@@ -364,5 +366,15 @@ abstract class ProsperSpec extends Specification {
         }
 
         contentImportFilter
+    }
+
+    private void registerSlingModels() {
+        if (this.class.isAnnotationPresent(ModelSpec)) {
+            slingContext.addModelsForPackage(this.class.package.name)
+
+            this.class.getAnnotation(ModelSpec).additionalPackages().each { packageName ->
+                slingContext.addModelsForPackage(packageName)
+            }
+        }
     }
 }
