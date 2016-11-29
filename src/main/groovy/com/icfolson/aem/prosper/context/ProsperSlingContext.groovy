@@ -1,8 +1,8 @@
 package com.icfolson.aem.prosper.context
 
-import com.day.cq.wcm.core.impl.PageManagerFactoryImpl
 import com.icfolson.aem.prosper.adapter.ClosureAdapterFactory
 import com.icfolson.aem.prosper.adapter.ProsperAdapterFactory
+import io.wcm.testing.mock.aem.MockAemAdapterFactory
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
@@ -33,12 +33,12 @@ class ProsperSlingContext extends SlingContextImpl implements SlingContextProvid
         // setup of resource resolver and default services
         super.setUp()
 
-        // additional prosper services
-        registerService(new PageManagerFactoryImpl())
-
         // register prosper adapter factory
-        registerAdapterFactory(new ProsperAdapterFactory(this), ProsperAdapterFactory.ADAPTABLE_CLASSES,
+        registerAdapterFactory(new ProsperAdapterFactory(), ProsperAdapterFactory.ADAPTABLE_CLASSES,
             ProsperAdapterFactory.ADAPTER_CLASSES)
+
+        // register mock adapter factory
+        registerAdapterFactory(new MockAemAdapterFactory())
     }
 
     /**
