@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.icfolson.aem</groupId>
         <artifactId>aem-parent-uber-jar</artifactId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>6.2.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -16,8 +16,8 @@
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
     <organization>
-        <name>ICF Olson</name>
-        <url>http://www.icfolson.com</url>
+        <name>Olson Digital</name>
+        <url>http://www.digitalatolson.com</url>
     </organization>
 
     <licenses>
@@ -29,32 +29,10 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/prosper.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/prosper.git</developerConnection>
-        <url>https://github.com/Citytechinc/prosper</url>
+        <connection>scm:git:git@github.com:OlsonDigital/prosper.git</connection>
+        <developerConnection>scm:git:git@github.com:OlsonDigital/prosper.git</developerConnection>
+        <url>https://github.com/OlsonDigital/prosper</url>
     </scm>
-
-    <repositories>
-        <repository>
-            <id>citytech-public</id>
-            <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>adobe-public-releases</id>
-            <url>https://repo.adobe.com/nexus/content/groups/public/</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <sourceDirectory>src/main/groovy</sourceDirectory>
