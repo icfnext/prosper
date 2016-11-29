@@ -3,21 +3,21 @@
 
     <parent>
         <groupId>com.icfolson.aem</groupId>
-        <artifactId>parent</artifactId>
-        <version>6.2.1</version>
+        <artifactId>aem-parent-uber-jar</artifactId>
+        <version>6.2.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>8.1.1</version>
+    <version>9.0.0</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
     <organization>
-        <name>ICF Olson</name>
-        <url>http://www.icfolson.com</url>
+        <name>Olson Digital</name>
+        <url>http://www.digitalatolson.com</url>
     </organization>
 
     <licenses>
@@ -29,28 +29,10 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/prosper.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/prosper.git</developerConnection>
-        <url>https://github.com/Citytechinc/prosper</url>
+        <connection>scm:git:git@github.com:OlsonDigital/prosper.git</connection>
+        <developerConnection>scm:git:git@github.com:OlsonDigital/prosper.git</developerConnection>
+        <url>https://github.com/OlsonDigital/prosper</url>
     </scm>
-
-    <repositories>
-        <repository>
-            <id>citytech-public</id>
-            <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <sourceDirectory>src/main/groovy</sourceDirectory>
@@ -101,13 +83,14 @@
                             <target>
                                 <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="maven.compile.classpath" />
                                 <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs" sourcepath="${basedir}/src/main/groovy" packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*,com.icfolson.aem.prosper.tag.*,com.icfolson.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
+                                    <link packages="javax.jcr." href="https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/" />
                                     <link packages="java." href="https://docs.oracle.com/javase/7/docs/api" />
                                     <link packages="javax." href="https://docs.oracle.com/javaee/7/api" />
                                     <link packages="groovy.,org.codehaus.groovy." href="http://docs.groovy-lang.org/latest/html/gapi" />
                                     <link packages="spock." href="http://spockframework.github.io/spock/javadoc/1.0" />
                                     <link packages="org.apache.jackrabbit.vault." href="http://jackrabbit.apache.org/filevault/apidocs" />
                                     <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling7" />
-                                    <link packages="com.day.cq.wcm.api." href="http://docs.adobe.com/docs/en/aem/6-1/ref/javadoc" />
+                                    <link packages="com.day.cq.wcm.api." href="https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc" />
                                     <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn" />
                                     <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core" />
                                     <link packages="org.springframework.mock." href="http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api" />
@@ -197,7 +180,7 @@
             <plugin>
 				<groupId>com.atlassian.maven.plugins</groupId>
 				<artifactId>maven-jgitflow-plugin</artifactId>
-				<version>1.0-alpha20</version>
+				<version>1.0-alpha27</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<enableFeatureVersions>false</enableFeatureVersions>
@@ -297,7 +280,7 @@
                 <dependency>
                     <groupId>com.icfolson.aem.groovy.extension</groupId>
                     <artifactId>aem-groovy-extension-bundle</artifactId>
-                    <version>2.0.0</version>
+                    <version>3.0.0</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.slf4j</groupId>
@@ -310,10 +293,11 @@
     </profiles>
 
     <dependencies>
-        <!-- compile scope is set to override provided scope from parent -->
+        <!-- inherited -->
         <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>uber-jar</artifactId>
+            <classifier>apis</classifier>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -324,52 +308,13 @@
             <artifactId>jsp-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-commons</artifactId>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-tagging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-wcm-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-wcm-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-wcm-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-wcm-taglib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-msm-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.granite</groupId>
-            <artifactId>com.adobe.granite.replication.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.adapter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.models.api</artifactId>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
@@ -379,21 +324,36 @@
             <groupId>org.apache.jackrabbit.vault</groupId>
             <artifactId>org.apache.jackrabbit.vault</artifactId>
         </dependency>
+
+        <!-- AEM mocks -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>io.wcm</groupId>
+            <artifactId>io.wcm.testing.aem-mock</artifactId>
+            <version>2.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- not inherited from parent -->
+        <!-- sling mock -->
         <dependency>
             <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.jcr.resource</artifactId>
-            <version>2.7.4</version>
+            <artifactId>org.apache.sling.testing.osgi-mock</artifactId>
+            <version>2.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.resourceresolver</artifactId>
-            <version>1.4.8</version>
+            <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
+            <version>2.0.2</version>
         </dependency>
 
         <!-- additional non-AEM dependencies -->
@@ -405,7 +365,7 @@
         <dependency>
             <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>2.0.0</version>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
@@ -421,24 +381,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>4.1.7.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.testing.osgi-mock</artifactId>
-            <version>2.0.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- use sling fork until release -->
-        <dependency>
-            <groupId>com.icfolson.sling</groupId>
-            <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
-            <version>2.0.0</version>
         </dependency>
     </dependencies>
 </project>
