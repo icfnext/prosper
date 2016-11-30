@@ -11,7 +11,7 @@
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>9.0.0</version>
+    <version>9.0.1</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
@@ -334,6 +334,10 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-imaging</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
