@@ -32,7 +32,7 @@ import javax.jcr.Session
     "SLING-INF/nodetypes/spock.cnd",
     "/SLING-INF/nodetypes/prosper.cnd"
 ])
-class ProsperSpecSpec extends ProsperSpec {
+class ProsperRuleSpecSpec extends ProsperRuleSpec {
 
     def setupSpec() {
         nodeBuilder.content {

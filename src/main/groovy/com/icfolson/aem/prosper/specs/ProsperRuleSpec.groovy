@@ -14,7 +14,7 @@ import com.icfolson.aem.prosper.annotations.NodeTypes
 import com.icfolson.aem.prosper.annotations.SkipContentImport
 import com.icfolson.aem.prosper.builders.RequestBuilder
 import com.icfolson.aem.prosper.builders.ResponseBuilder
-import com.icfolson.aem.prosper.context.ProsperSlingContext
+import com.icfolson.aem.prosper.context.ProsperSlingContextRule
 import com.icfolson.aem.prosper.context.SlingContextProvider
 import org.apache.jackrabbit.vault.fs.api.PathFilterSet
 import org.apache.jackrabbit.vault.fs.api.WorkspaceFilter
@@ -26,18 +26,16 @@ import org.apache.jackrabbit.vault.fs.io.Importer
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
-import org.apache.sling.testing.mock.sling.ResourceResolverType
+import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
 
-/**
- * Spock specification for AEM testing that includes a Sling context for mock repository operations and a simulated
- * OSGi environment for registering services and adapters.
- */
-abstract class ProsperSpec extends Specification {
+import static org.apache.sling.testing.mock.sling.ResourceResolverType.JCR_OAK
+
+abstract class ProsperRuleSpec extends Specification {
 
     /**
      * Jackrabbit Oak system node names.  Will be ignored when cleaning up test content.
@@ -61,8 +59,9 @@ abstract class ProsperSpec extends Specification {
         "widgets"
     ]
 
+    @ClassRule
     @Shared
-    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
+    private ProsperSlingContextRule slingContextProvider = new ProsperSlingContextRule()
 
     // global fixtures
 
@@ -72,8 +71,6 @@ abstract class ProsperSpec extends Specification {
      */
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
-
-        slingContextInternal.setup()
 
         registerNodeTypes()
         importVaultContent()
@@ -87,8 +84,6 @@ abstract class ProsperSpec extends Specification {
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
 
         removeAllNodes()
-
-        slingContextInternal.cleanup()
     }
 
     /**
@@ -110,7 +105,7 @@ abstract class ProsperSpec extends Specification {
     // accessors for shared instances
 
     SlingContextProvider getSlingContext() {
-        slingContextInternal
+        slingContextProvider
     }
 
     /**
@@ -138,7 +133,7 @@ abstract class ProsperSpec extends Specification {
      * @return admin resource resolver
      */
     ResourceResolver getResourceResolver() {
-        slingContext.resourceResolver
+        slingContextProvider.resourceResolver
     }
 
     /**
@@ -312,7 +307,7 @@ abstract class ProsperSpec extends Specification {
     }
 
     private void registerNodeTypes(List<String> cndResourcePaths) {
-        NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, ResourceResolverType.JCR_OAK.nodeTypeMode)
+        NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, JCR_OAK.nodeTypeMode)
     }
 
     private void importVaultContent() {
@@ -380,10 +375,10 @@ abstract class ProsperSpec extends Specification {
 
     private void registerSlingModels() {
         if (this.class.isAnnotationPresent(ModelSpec)) {
-            slingContext.addModelsForPackage(this.class.package.name)
+            slingContextProvider.addModelsForPackage(this.class.package.name)
 
             this.class.getAnnotation(ModelSpec).additionalPackages().each { packageName ->
-                slingContext.addModelsForPackage(packageName)
+                slingContextProvider.addModelsForPackage(packageName)
             }
         }
     }
