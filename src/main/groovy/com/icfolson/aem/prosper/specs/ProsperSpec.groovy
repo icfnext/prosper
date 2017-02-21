@@ -27,6 +27,7 @@ import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
 import org.apache.sling.testing.mock.sling.ResourceResolverType
+import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -61,8 +62,9 @@ abstract class ProsperSpec extends Specification {
         "widgets"
     ]
 
+    @ClassRule
     @Shared
-    private ProsperSlingContext slingContextInternal = new ProsperSlingContext()
+    private ProsperSlingContext slingContextProvider
 
     // global fixtures
 
@@ -72,8 +74,6 @@ abstract class ProsperSpec extends Specification {
      */
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()
-
-        slingContextInternal.setup()
 
         registerNodeTypes()
         importVaultContent()
@@ -87,8 +87,6 @@ abstract class ProsperSpec extends Specification {
         GroovyExtensionMetaClassRegistry.removeMetaClasses()
 
         removeAllNodes()
-
-        slingContextInternal.cleanup()
     }
 
     /**
@@ -110,7 +108,7 @@ abstract class ProsperSpec extends Specification {
     // accessors for shared instances
 
     SlingContextProvider getSlingContext() {
-        slingContextInternal
+        slingContextProvider
     }
 
     /**
@@ -138,7 +136,7 @@ abstract class ProsperSpec extends Specification {
      * @return admin resource resolver
      */
     ResourceResolver getResourceResolver() {
-        slingContext.resourceResolver
+        slingContextProvider.resourceResolver
     }
 
     /**
@@ -380,10 +378,10 @@ abstract class ProsperSpec extends Specification {
 
     private void registerSlingModels() {
         if (this.class.isAnnotationPresent(ModelSpec)) {
-            slingContext.addModelsForPackage(this.class.package.name)
+            slingContextProvider.addModelsForPackage(this.class.package.name)
 
             this.class.getAnnotation(ModelSpec).additionalPackages().each { packageName ->
-                slingContext.addModelsForPackage(packageName)
+                slingContextProvider.addModelsForPackage(packageName)
             }
         }
     }

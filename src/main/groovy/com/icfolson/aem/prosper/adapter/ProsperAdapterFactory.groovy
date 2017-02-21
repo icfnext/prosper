@@ -19,7 +19,7 @@ class ProsperAdapterFactory implements AdapterFactory {
     ]
 
     @Override
-    def <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
+    <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
         def result = null
 
         if (adaptable instanceof SlingHttpServletRequest) {
