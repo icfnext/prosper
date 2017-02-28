@@ -7,7 +7,6 @@ import com.icfolson.aem.prosper.annotations.ContentFilter
 import com.icfolson.aem.prosper.annotations.ContentFilterRule
 import com.icfolson.aem.prosper.annotations.ContentFilterRuleType
 import com.icfolson.aem.prosper.annotations.ContentFilters
-import com.icfolson.aem.prosper.annotations.NodeTypes
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -28,20 +27,11 @@ import javax.jcr.Session
         @ContentFilter(root = "/etc")
     ]
 )
-@NodeTypes([
-    "SLING-INF/nodetypes/spock.cnd",
-    "/SLING-INF/nodetypes/prosper.cnd"
-])
 class ProsperSpecSpec extends ProsperSpec {
 
     def setupSpec() {
         nodeBuilder.content {
             test()
-        }
-
-        nodeBuilder.etc {
-            prosper("prosper:TestType")
-            spock("spock:TestType")
         }
 
         slingContext.registerResourceAdapter(String, {
@@ -156,16 +146,6 @@ class ProsperSpecSpec extends ProsperSpec {
 
         expect:
         resource.adaptTo(Node)
-    }
-
-    def "check node type for node with custom type"() {
-        expect:
-        getNode(path).isNodeType(nodeType)
-
-        where:
-        path           | nodeType
-        "/etc/prosper" | "prosper:TestType"
-        "/etc/spock"   | "spock:TestType"
     }
 
     def "verify test content was imported successfully"() {
