@@ -7,11 +7,11 @@ import com.icfolson.aem.prosper.annotations.ContentFilter
 import com.icfolson.aem.prosper.annotations.ContentFilterRule
 import com.icfolson.aem.prosper.annotations.ContentFilterRuleType
 import com.icfolson.aem.prosper.annotations.ContentFilters
-import com.icfolson.aem.prosper.annotations.NodeTypes
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ValueMap
+import org.apache.sling.models.factory.ModelFactory
 import spock.lang.Unroll
 
 import javax.jcr.Node
@@ -27,20 +27,11 @@ import javax.jcr.Session
         @ContentFilter(root = "/etc")
     ]
 )
-@NodeTypes([
-    "SLING-INF/nodetypes/spock.cnd",
-    "/SLING-INF/nodetypes/prosper.cnd"
-])
 class ProsperSpecSpec extends ProsperSpec {
 
     def setupSpec() {
         nodeBuilder.content {
             test()
-        }
-
-        nodeBuilder.etc {
-            prosper("prosper:TestType")
-            spock("spock:TestType")
         }
 
         slingContext.registerResourceAdapter(String, {
@@ -57,7 +48,7 @@ class ProsperSpecSpec extends ProsperSpec {
 
         def adapterFactory = new AdapterFactory() {
             @Override
-            def <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
+            <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
                 def result
 
                 if (adaptable instanceof Resource) {
@@ -157,16 +148,6 @@ class ProsperSpecSpec extends ProsperSpec {
         resource.adaptTo(Node)
     }
 
-    def "check node type for node with custom type"() {
-        expect:
-        getNode(path).isNodeType(nodeType)
-
-        where:
-        path           | nodeType
-        "/etc/prosper" | "prosper:TestType"
-        "/etc/spock"   | "spock:TestType"
-    }
-
     def "verify test content was imported successfully"() {
         expect:
         getResource(path)
@@ -198,5 +179,13 @@ class ProsperSpecSpec extends ProsperSpec {
 
         expect:
         getResource("/content/test").adaptTo(ProsperModel).injectedValue == TestInjector.class.name
+    }
+
+    def "model factory"() {
+        setup:
+        def modelFactory = slingContext.getService(ModelFactory)
+
+        expect:
+        modelFactory.createModel(getResource("/content/test"), ProsperModel).name == "test"
     }
 }

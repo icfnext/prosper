@@ -5,10 +5,14 @@ import com.icfolson.aem.prosper.adapter.ProsperAdapterFactory
 import io.wcm.testing.mock.aem.MockAemAdapterFactory
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
+import org.apache.sling.api.resource.PersistenceException
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.spi.Injector
-import org.apache.sling.testing.mock.sling.context.SlingContextImpl
+import org.apache.sling.testing.mock.sling.junit.SlingContext
+import org.apache.sling.testing.mock.sling.junit.SlingContextBuilder
+import org.apache.sling.testing.mock.sling.junit.SlingContextCallback
+import org.junit.rules.TestRule
 import org.osgi.framework.BundleContext
 
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
@@ -17,45 +21,38 @@ import static org.apache.sling.testing.mock.sling.ResourceResolverType.JCR_OAK
 import static org.osgi.framework.Constants.SERVICE_RANKING
 
 /**
- * Prosper implementation of the Sling/OSGi context for usage in specs.
+ * Prosper implementation of the Sling/OSGi context rule for usage in specs.
  */
-class ProsperSlingContext extends SlingContextImpl implements SlingContextProvider {
+class ProsperSlingContext implements SlingContextProvider, TestRule {
 
-    ProsperSlingContext() {
-        // setup of resource resolver and default services
-        setResourceResolverType(JCR_OAK)
+    static class AdapterFactoryRegistrationCallback implements SlingContextCallback {
+
+        @Override
+        void execute(SlingContext slingContext) throws IOException, PersistenceException {
+            // register prosper adapter factory
+            slingContext.registerService(AdapterFactory, new ProsperAdapterFactory(), [
+                (ADAPTABLE_CLASSES): ProsperAdapterFactory.ADAPTABLE_CLASSES,
+                (ADAPTER_CLASSES): ProsperAdapterFactory.ADAPTER_CLASSES
+            ])
+
+            // register mock adapter factory
+            slingContext.registerService(AdapterFactory, new MockAemAdapterFactory())
+        }
     }
 
-    /**
-     * Register default services and initialize resource resolver.
-     */
-    void setup() {
-        // setup of resource resolver and default services
-        super.setUp()
-
-        // register prosper adapter factory
-        registerAdapterFactory(new ProsperAdapterFactory(), ProsperAdapterFactory.ADAPTABLE_CLASSES,
-            ProsperAdapterFactory.ADAPTER_CLASSES)
-
-        // register mock adapter factory
-        registerAdapterFactory(new MockAemAdapterFactory())
-    }
-
-    /**
-     * Close resource resolver and reset the mock bundle context.
-     */
-    void cleanup() {
-        super.tearDown()
-    }
+    @Delegate
+    private SlingContext slingContext = new SlingContextBuilder(JCR_OAK)
+        .beforeSetUp(new AdapterFactoryRegistrationCallback())
+        .build()
 
     @Override
     ResourceResolver getResourceResolver() {
-        resourceResolver()
+        slingContext.resourceResolver()
     }
 
     @Override
     BundleContext getBundleContext() {
-        bundleContext()
+        slingContext.bundleContext()
     }
 
     @Override
