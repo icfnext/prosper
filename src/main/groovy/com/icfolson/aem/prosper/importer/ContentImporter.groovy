@@ -1,9 +1,9 @@
 package com.icfolson.aem.prosper.importer
 
-import com.icfolson.aem.prosper.specs.ProsperSpec
 import com.icfolson.aem.prosper.annotations.ContentFilterRuleType
 import com.icfolson.aem.prosper.annotations.ContentFilters
 import com.icfolson.aem.prosper.annotations.SkipContentImport
+import com.icfolson.aem.prosper.specs.ProsperSpec
 import groovy.transform.TupleConstructor
 import org.apache.jackrabbit.vault.fs.api.PathFilterSet
 import org.apache.jackrabbit.vault.fs.api.WorkspaceFilter
@@ -26,12 +26,11 @@ class ContentImporter {
             def contentRootUrl = this.class.getResource("/SLING-INF/content")
 
             if (contentRootUrl && "file".equalsIgnoreCase(contentRootUrl.protocol) && !contentRootUrl.host) {
-                def contentImporter = buildImporter()
                 def contentArchive = new FileArchive(new File(contentRootUrl.file))
 
                 try {
                     contentArchive.open(false)
-                    contentImporter.run(contentArchive, spec.session.rootNode)
+                    importer.run(contentArchive, spec.session.rootNode)
                 } finally {
                     contentArchive.close()
                 }
@@ -39,22 +38,19 @@ class ContentImporter {
         }
     }
 
-    private Importer buildImporter() {
-        def importer
-
+    private Importer getImporter() {
         if (spec.class.isAnnotationPresent(ContentFilters)) {
             def contentImportOptions = new ImportOptions()
 
-            contentImportOptions.filter = buildWorkspaceFilter()
-            importer = new Importer(contentImportOptions)
-        } else {
-            importer = new Importer()
-        }
+            contentImportOptions.filter = workspaceFilter
 
-        importer
+            new Importer(contentImportOptions)
+        } else {
+            new Importer()
+        }
     }
 
-    private WorkspaceFilter buildWorkspaceFilter() {
+    private WorkspaceFilter getWorkspaceFilter() {
         def contentImportFilter = new DefaultWorkspaceFilter()
 
         def filterDefinitions = spec.class.getAnnotation(ContentFilters)
