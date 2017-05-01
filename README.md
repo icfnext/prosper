@@ -12,13 +12,14 @@ Prosper is an integration testing library for AEM (Adobe Experience Manager, for
 * Write test specifications in [Groovy](http://www.groovy-lang.org/) using [Spock](http://docs.spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests quickly and efficiently.
 * Sling `ResourceResolver` instance backed by an in-memory Jackrabbit Oak JCR instance supporting the complete set of repository operations.
 * Supplies mock OSGi bundle and [Sling](https://sling.apache.org/documentation/development/sling-mock.html) contexts for registering services, adapters, and Sling models.
-* Utilizes Groovy builders from the [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) to provide a simple DSL for creating test content.
+* Utilizes Groovy builders from the [AEM Groovy Extension](https://github.com/OlsonDigital/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for mock Sling requests and responses to simplify setup of test cases.
 * Supports testing of JSP tag classes using a mixable Groovy trait.
 
 ## Requirements
 
-* AEM 6.2 for versions 8.x.x and above
+* AEM 6.3 for versions 11.x.x and above
+* AEM 6.2 for versions 8.x.x through 10.x.x
 * AEM 6.1 for versions 4.x.x through 7.x.x
 * AEM 6.0 for versions 3.x.x, 2.x.x, and 1.x.x (versions prior to 0.10.0 are compatible with CQ 5.6)
 * Maven 3.x
@@ -32,7 +33,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>10.0.0</version>
+    <version>11.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -116,7 +117,7 @@ Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional co
     <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>2.4.6</version>
+        <version>2.4.11</version>
     </dependency>
 </dependencies>
 ```
@@ -233,7 +234,7 @@ The above example will create an `nt:unstructured` (the default type) node at `/
 
 Both builders automatically save the underlying JCR session after executing the provided closure.
 
-In addition to the content builders, the [session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
+In addition to the content builders, the [session](https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
 ### Content Import
 
@@ -312,7 +313,7 @@ class MySpec extends ProsperSpec {
 
 ### Metaclasses
 
-The [AEM Groovy Extension](https://github.com/Citytechinc/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.digitalatolson.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
+The [AEM Groovy Extension](https://github.com/OlsonDigital/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.digitalatolson.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
 
 ### Assertions
 
