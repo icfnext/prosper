@@ -11,7 +11,7 @@
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>11.0.0-SNAPSHOT</version>
+    <version>11.0.0</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
@@ -84,12 +84,12 @@
                                 <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="maven.compile.classpath"/>
                                 <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs" sourcepath="${basedir}/src/main/groovy" packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*,com.icfolson.aem.prosper.tag.*,com.icfolson.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
                                     <link packages="javax.jcr." href="https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/"/>
-                                    <link packages="java." href="https://docs.oracle.com/javase/7/docs/api"/>
+                                    <link packages="java." href="https://docs.oracle.com/javase/8/docs/api"/>
                                     <link packages="javax." href="https://docs.oracle.com/javaee/7/api"/>
                                     <link packages="groovy.,org.codehaus.groovy." href="http://docs.groovy-lang.org/latest/html/gapi"/>
                                     <link packages="spock." href="http://spockframework.github.io/spock/javadoc/1.0"/>
                                     <link packages="org.apache.jackrabbit.vault." href="http://jackrabbit.apache.org/filevault/apidocs"/>
-                                    <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling7"/>
+                                    <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling8"/>
                                     <link packages="com.day.cq.wcm.api." href="https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc"/>
                                     <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn"/>
                                     <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core"/>
@@ -280,7 +280,7 @@
                 <dependency>
                     <groupId>com.icfolson.aem.groovy.extension</groupId>
                     <artifactId>aem-groovy-extension-bundle</artifactId>
-                    <version>3.0.0</version>
+                    <version>4.0.0</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.slf4j</groupId>
@@ -330,7 +330,7 @@
         <dependency>
             <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>4.0.0-SNAPSHOT</version>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
