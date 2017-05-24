@@ -1,7 +1,7 @@
 package com.icfolson.aem.prosper.context
 
-import com.icfolson.aem.prosper.specs.ProsperSpec
 import com.icfolson.aem.prosper.adapters.OSGiRegisteredAdapterFactory
+import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
@@ -24,7 +24,7 @@ class ProsperSlingContextSpec extends ProsperSpec {
     }
 
     def setupSpec() {
-        slingContext.addModelsForPackage("com.icfolson.aem.prosper.context")
+        slingContext.addModelsForClasses(ResourceModel)
     }
 
     def "set run mode"() {
