@@ -41,7 +41,7 @@ class ResponseBuilder {
      * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletResponse.html">MockHttpServletResponse</a>
      * @return response
      */
-    MockSlingHttpServletResponse build(Closure closure) {
+    MockSlingHttpServletResponse build(@DelegatesTo(ResponseBuilder) Closure closure) {
         if (closure) {
             closure.delegate = this
             closure.resolveStrategy = Closure.DELEGATE_ONLY
