@@ -5,7 +5,6 @@ import com.icfolson.aem.prosper.adapter.ProsperAdapterFactory
 import io.wcm.testing.mock.aem.MockAemAdapterFactory
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
-import org.apache.sling.api.resource.PersistenceException
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.spi.Injector
@@ -28,7 +27,7 @@ class ProsperSlingContext implements SlingContextProvider, TestRule {
     static class AdapterFactoryRegistrationCallback implements SlingContextCallback {
 
         @Override
-        void execute(SlingContext slingContext) throws IOException, PersistenceException {
+        void execute(SlingContext slingContext) throws Exception {
             // register prosper adapter factory
             slingContext.registerService(AdapterFactory, new ProsperAdapterFactory(), [
                 (ADAPTABLE_CLASSES): ProsperAdapterFactory.ADAPTABLE_CLASSES,
