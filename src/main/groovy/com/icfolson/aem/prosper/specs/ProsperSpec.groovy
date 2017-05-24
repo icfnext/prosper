@@ -312,10 +312,8 @@ abstract class ProsperSpec extends Specification {
         if (this.class.isAnnotationPresent(ModelSpec)) {
             slingContextProvider.addModelsForPackage(this.class.package.name)
 
-            def additionalPackages = this.class.getAnnotation(ModelSpec).additionalPackages()
-
-            if (additionalPackages) {
-                slingContextProvider.addModelsForPackage(additionalPackages)
+            this.class.getAnnotation(ModelSpec).additionalPackages().each { packageName ->
+                slingContextProvider.addModelsForPackage(packageName)
             }
         }
     }

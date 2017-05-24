@@ -86,34 +86,12 @@ interface SlingContextProvider {
     def <ServiceType> ServiceType[] getServices(Class<ServiceType> serviceType, String filter)
 
     /**
-     * Scan classpaths for given package name (and sub packages) and register all classes with <code>@Model</code>
-     * annotation.
+     * Scan classpaths for given package name (and sub packages) to scan for and register all classes with
+     * <code>@Model</code> annotation.
      *
-     * @param packageName package name
+     * @param packageName Java package name
      */
     void addModelsForPackage(String packageName)
-
-    /**
-     * Scan classpath for given package names (and sub packages) and register all classes with <code>@Model</code>
-     * annotation.
-     *
-     * @param packageNames package names
-     */
-    void addModelsForPackage(String... packageNames)
-
-    /**
-     * Scan classpath for given class names and register all classes with <code>@Model</code> annotation.
-     *
-     * @param classNames class names
-     */
-    void addModelsForClasses(String... classNames)
-
-    /**
-     * Scan classpath for given classes and register all classes with <code>@Model</code> annotation.
-     *
-     * @param classes classes
-     */
-    void addModelsForClasses(Class... classes)
 
     /**
      * Set current run mode(s).
