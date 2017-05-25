@@ -52,7 +52,8 @@ class RequestBuilder {
      * .Closure)"><code>with</code></a> method.
      *
      * <pre>
-     *  new RequestBuilder(resourceResolver).build {*      serverName = "localhost"
+     *  new RequestBuilder(resourceResolver).build {
+     *      serverName = "localhost"
      *      path = "/content"
      *      method = "GET"
      *      parameters = ["a": ["1", "2"], "b": ["1"]]
@@ -63,7 +64,7 @@ class RequestBuilder {
      * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html">MockHttpServletRequest</a>
      * @return request
      */
-    MockSlingHttpServletRequest build(Closure closure) {
+    MockSlingHttpServletRequest build(@DelegatesTo(RequestBuilder) Closure closure) {
         if (closure) {
             closure.delegate = this
             closure.resolveStrategy = Closure.DELEGATE_ONLY
