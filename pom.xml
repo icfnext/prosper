@@ -15,6 +15,8 @@
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
+    <url>https://github.com/OlsonDigital/prosper</url>
+
     <organization>
         <name>Olson Digital</name>
         <url>http://www.digitalatolson.com</url>
