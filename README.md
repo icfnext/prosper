@@ -18,12 +18,18 @@ Prosper is an integration testing library for AEM (Adobe Experience Manager, for
 
 ## Requirements
 
-* AEM 6.3 for versions 11.x.x and above
-* AEM 6.2 for versions 8.x.x through 10.x.x
-* AEM 6.1 for versions 4.x.x through 7.x.x
-* AEM 6.0 for versions 3.x.x, 2.x.x, and 1.x.x (versions prior to 0.10.0 are compatible with CQ 5.6)
 * Maven 3.x
 * Familiarity with Groovy language and the Spock specification syntax (or see included tests for examples).
+
+## Compatibility
+
+Prosper Version(s) | AEM Version
+------------ | -------------
+11.x.x | 6.3
+10.x.x, 9.x.x, 8.x.x | 6.2
+7.x.x, 6.x.x, 5.x.x, 4.x.x | 6.1
+3.x.x, 2.x.x, 1.x.x | 6.0
+<= 0.10.x | 5.6 (CQ)
 
 ## Getting Started
 
