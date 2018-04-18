@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>com.icfolson.aem</groupId>
         <artifactId>aem-parent-uber-jar</artifactId>
-        <version>6.3.0</version>
+        <version>6.4.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>11.1.1-SNAPSHOT</version>
+    <version>12.0.0-SNAPSHOT</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
 
@@ -35,6 +36,13 @@
         <developerConnection>scm:git:git@github.com:OlsonDigital/prosper.git</developerConnection>
         <url>https://github.com/OlsonDigital/prosper</url>
     </scm>
+
+    <repositories>
+        <repository>
+            <id>citytech-public</id>
+            <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
+        </repository>
+    </repositories>
 
     <build>
         <sourceDirectory>src/main/groovy</sourceDirectory>
@@ -83,20 +91,31 @@
                         </goals>
                         <configuration>
                             <target>
-                                <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc" classpathref="maven.compile.classpath"/>
-                                <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs" sourcepath="${basedir}/src/main/groovy" packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*,com.icfolson.aem.prosper.tag.*,com.icfolson.aem.prosper.traits.*" use="true" windowtitle="${project.name}" doctitle="${project.name}">
-                                    <link packages="javax.jcr." href="https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/"/>
+                                <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc"
+                                         classpathref="maven.compile.classpath"/>
+                                <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs"
+                                           sourcepath="${basedir}/src/main/groovy"
+                                           packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*,com.icfolson.aem.prosper.tag.*,com.icfolson.aem.prosper.traits.*"
+                                           use="true" windowtitle="${project.name}" doctitle="${project.name}">
+                                    <link packages="javax.jcr."
+                                          href="https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/"/>
                                     <link packages="java." href="https://docs.oracle.com/javase/8/docs/api"/>
                                     <link packages="javax." href="https://docs.oracle.com/javaee/7/api"/>
-                                    <link packages="groovy.,org.codehaus.groovy." href="http://docs.groovy-lang.org/latest/html/gapi"/>
-                                    <link packages="spock." href="http://spockframework.github.io/spock/javadoc/1.0"/>
-                                    <link packages="org.apache.jackrabbit.vault." href="http://jackrabbit.apache.org/filevault/apidocs"/>
+                                    <link packages="groovy.,org.codehaus.groovy."
+                                          href="http://docs.groovy-lang.org/latest/html/gapi"/>
+                                    <link packages="spock."
+                                          href="http://spockframework.github.io/spock/javadoc/1.0"/>
+                                    <link packages="org.apache.jackrabbit.vault."
+                                          href="http://jackrabbit.apache.org/filevault/apidocs"/>
                                     <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling8"/>
-                                    <link packages="com.day.cq.wcm.api." href="https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc"/>
+                                    <link packages="com.day.cq.wcm.api."
+                                          href="https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc"/>
                                     <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn"/>
                                     <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core"/>
-                                    <link packages="org.springframework.mock." href="http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api"/>
-                                    <link packages="com.icfolson.aem.groovy.extension." href="http://code.digitalatolson.com/aem-groovy-extension/groovydocs"/>
+                                    <link packages="org.springframework.mock."
+                                          href="http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api"/>
+                                    <link packages="com.icfolson.aem.groovy.extension."
+                                          href="http://code.digitalatolson.com/aem-groovy-extension/groovydocs"/>
                                 </groovydoc>
                             </target>
                         </configuration>
@@ -303,7 +322,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -317,6 +336,16 @@
             <groupId>org.apache.jackrabbit.vault</groupId>
             <artifactId>org.apache.jackrabbit.vault</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>oak-core-spi</artifactId>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.api</artifactId>
+        </dependency>
+        -->
 
         <!-- additional non-AEM dependencies -->
         <dependency>
