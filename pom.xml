@@ -199,20 +199,24 @@
 				</dependencies>
 			</plugin>
 			<plugin>
-				<groupId>com.amashchenko.maven.plugin</groupId>
-				<artifactId>gitflow-maven-plugin</artifactId>
-				<version>1.9.0</version>
+				<groupId>external.atlassian.jgitflow</groupId>
+				<artifactId>jgitflow-maven-plugin</artifactId>
+				<version>1.0-m5.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.jcraft</groupId>
+						<artifactId>jsch</artifactId>
+						<version>0.1.54</version>
+					</dependency>
+				</dependencies>
 				<configuration>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<enableFeatureVersions>false</enableFeatureVersions>
-					<noFeatureBuild>true</noFeatureBuild>
-					<noReleaseBuild>true</noReleaseBuild>
-					<noDeploy>true</noDeploy>
 					<flowInitContext>
 						<featureBranchPrefix>feature-</featureBranchPrefix>
 						<releaseBranchPrefix>release-</releaseBranchPrefix>
 						<hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
 					</flowInitContext>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<noDeploy>true</noDeploy>
 				</configuration>
 			</plugin>
 		</plugins>
