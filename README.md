@@ -4,7 +4,7 @@
 
 ## Overview
 
-Prosper is an integration testing library for AEM (Adobe Experience Manager, formerly CQ5) projects using [Spock](http://docs.spockframework.org/), a [Groovy](http://www.groovy-lang.org/)-based testing framework notable for it's expressive specification language.  The library contains a base Spock specification that provides an in-memory JCR, Sling framework support, and a mock OSGi context for registering and testing services.
+Prosper is an integration testing library for Adobe Experience Manager projects using [Spock](http://docs.spockframework.org/), a [Groovy](http://www.groovy-lang.org/)-based testing framework notable for it's expressive specification language.  The library contains a base Spock specification that provides an in-memory JCR, Sling framework support, and a mock OSGi context for registering and testing services.
 
 ## Features
 

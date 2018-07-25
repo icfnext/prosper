@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
     <version>12.1.1-SNAPSHOT</version>
     <name>Prosper</name>
-    <description>A Spock-based integration testing library for prosperous AEM (Adobe CQ) development.</description>
+    <description>A Spock-based integration testing library for Adobe Experience Manager.</description>
 
     <url>https://github.com/OlsonDigital/prosper</url>
 
