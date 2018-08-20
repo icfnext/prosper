@@ -6,7 +6,7 @@ import org.apache.sling.api.request.RequestParameterMap
 
 import javax.servlet.http.HttpServletRequest
 
-@ToString(includes = "map")
+@ToString(includeFields = true, includes = "map")
 class MockRequestParameterMap implements RequestParameterMap {
 
     static RequestParameterMap create(HttpServletRequest request) {

@@ -5,7 +5,7 @@ import org.apache.sling.api.request.RequestPathInfo
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 
-@ToString(excludes = "resourceResolver")
+@ToString(includeFields = true, excludes = "resourceResolver")
 class MockRequestPathInfo implements RequestPathInfo {
 
     private final ResourceResolver resourceResolver
