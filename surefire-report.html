@@ -103,16 +103,19 @@
 <script type="text/javascript">
 //<![CDATA[
 function toggleDisplay(elementId) {
- var elm = document.getElementById(elementId + 'error');
+ var elm = document.getElementById(elementId + '-error');
+ if (elm == null) {
+  elm = document.getElementById(elementId + '-failure');
+ }
  if (elm && typeof elm.style != "undefined") {
- if (elm.style.display == "none") {
- elm.style.display = "";
- document.getElementById(elementId + 'off').style.display = "none";
- document.getElementById(elementId + 'on').style.display = "inline";
- } else if (elm.style.display == "") { elm.style.display = "none";
- document.getElementById(elementId + 'off').style.display = "inline";
- document.getElementById(elementId + 'on').style.display = "none";
- } 
+  if (elm.style.display == "none") {
+   elm.style.display = "";
+   document.getElementById(elementId + '-off').style.display = "none";
+   document.getElementById(elementId + '-on').style.display = "inline";
+  } else if (elm.style.display == "") {   elm.style.display = "none";
+   document.getElementById(elementId + '-off').style.display = "inline";
+   document.getElementById(elementId + '-on').style.display = "none";
+  } 
  } 
  }
 //]]>
@@ -129,7 +132,7 @@ function toggleDisplay(elementId) {
   <thead> 
    <tr class="a"> 
     <th>Tests</th> 
-    <th>Errors </th> 
+    <th>Errors</th> 
     <th>Failures</th> 
     <th>Skipped</th> 
     <th>Success Rate</th> 
@@ -138,12 +141,12 @@ function toggleDisplay(elementId) {
   </thead> 
   <tbody> 
    <tr class="b"> 
-    <td>70</td> 
+    <td>54</td> 
     <td>0</td> 
     <td>0</td> 
     <td>0</td> 
     <td>100%</td> 
-    <td>6.915</td> 
+    <td>6.626</td> 
    </tr> 
   </tbody> 
  </table> 
@@ -161,7 +164,7 @@ function toggleDisplay(elementId) {
    <tr class="a"> 
     <th>Package</th> 
     <th>Tests</th> 
-    <th>Errors </th> 
+    <th>Errors</th> 
     <th>Failures</th> 
     <th>Skipped</th> 
     <th>Success Rate</th> 
@@ -170,102 +173,45 @@ function toggleDisplay(elementId) {
   </thead> 
   <tbody> 
    <tr class="b"> 
-    <td><a href="#com.icfolson.aem.prosper.traits">com.icfolson.aem.prosper.traits</a></td> 
-    <td>6</td> 
+    <td><a href="#com.icfolson.aem.prosper.builders">com.icfolson.aem.prosper.builders</a></td> 
+    <td>18</td> 
     <td>0</td> 
     <td>0</td> 
     <td>0</td> 
     <td>100%</td> 
-    <td>0.432</td> 
+    <td>1.253</td> 
    </tr> 
    <tr class="a"> 
-    <td><a href="#com.icfolson.aem.prosper.builders">com.icfolson.aem.prosper.builders</a></td> 
-    <td>17</td> 
-    <td>0</td> 
-    <td>0</td> 
-    <td>0</td> 
-    <td>100%</td> 
-    <td>1.204</td> 
-   </tr> 
-   <tr class="b"> 
     <td><a href="#com.icfolson.aem.prosper.specs">com.icfolson.aem.prosper.specs</a></td> 
     <td>29</td> 
     <td>0</td> 
     <td>0</td> 
     <td>0</td> 
     <td>100%</td> 
-    <td>2.096</td> 
+    <td>2.343</td> 
    </tr> 
-   <tr class="a"> 
+   <tr class="b"> 
     <td><a href="#com.icfolson.aem.prosper.annotations">com.icfolson.aem.prosper.annotations</a></td> 
     <td>2</td> 
     <td>0</td> 
     <td>0</td> 
     <td>0</td> 
     <td>100%</td> 
-    <td>2.352</td> 
-   </tr> 
-   <tr class="b"> 
-    <td><a href="#com.icfolson.aem.prosper.mocks">com.icfolson.aem.prosper.mocks</a></td> 
-    <td>8</td> 
-    <td>0</td> 
-    <td>0</td> 
-    <td>0</td> 
-    <td>100%</td> 
-    <td>0.396</td> 
+    <td>2.532</td> 
    </tr> 
    <tr class="a"> 
-    <td><a href="#com.icfolson.aem.prosper.mocks.request">com.icfolson.aem.prosper.mocks.request</a></td> 
-    <td>3</td> 
-    <td>0</td> 
-    <td>0</td> 
-    <td>0</td> 
-    <td>100%</td> 
-    <td>0.004</td> 
-   </tr> 
-   <tr class="b"> 
     <td><a href="#com.icfolson.aem.prosper.context">com.icfolson.aem.prosper.context</a></td> 
     <td>5</td> 
     <td>0</td> 
     <td>0</td> 
     <td>0</td> 
     <td>100%</td> 
-    <td>0.431</td> 
+    <td>0.498</td> 
    </tr> 
   </tbody> 
  </table> 
  <br /> 
  <p>Note: package statistics are not computed recursively, they only sum up all of its testsuites numbers.</p> 
- <div class="section"> 
-  <h3 id="com.icfolson.aem.prosper.traits">com.icfolson.aem.prosper.traits</h3> 
-  <a name="com.icfolson.aem.prosper.traits"></a> 
-  <table border="1" class="bodyTable table table-striped table-hover"> 
-   <thead> 
-    <tr class="a"> 
-     <th></th> 
-     <th>Class</th> 
-     <th>Tests</th> 
-     <th>Errors </th> 
-     <th>Failures</th> 
-     <th>Skipped</th> 
-     <th>Success Rate</th> 
-     <th>Time</th> 
-    </tr> 
-   </thead> 
-   <tbody> 
-    <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.traitsJspTagTraitSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.traitsJspTagTraitSpec">JspTagTraitSpec</a></td> 
-     <td>6</td> 
-     <td>0</td> 
-     <td>0</td> 
-     <td>0</td> 
-     <td>100%</td> 
-     <td>0.432</td> 
-    </tr> 
-   </tbody> 
-  </table> 
- </div> 
  <div class="section"> 
   <h3 id="com.icfolson.aem.prosper.builders">com.icfolson.aem.prosper.builders</h3> 
   <a name="com.icfolson.aem.prosper.builders"></a> 
@@ -275,7 +221,7 @@ function toggleDisplay(elementId) {
      <th></th> 
      <th>Class</th> 
      <th>Tests</th> 
-     <th>Errors </th> 
+     <th>Errors</th> 
      <th>Failures</th> 
      <th>Skipped</th> 
      <th>Success Rate</th> 
@@ -284,24 +230,24 @@ function toggleDisplay(elementId) {
    </thead> 
    <tbody> 
     <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.buildersRequestBuilderSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.buildersRequestBuilderSpec">RequestBuilderSpec</a></td> 
+     <td><a href="#com.icfolson.aem.prosper.builders.RequestBuilderSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.builders.RequestBuilderSpec">RequestBuilderSpec</a></td> 
      <td>15</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>100%</td> 
-     <td>0.665</td> 
+     <td>0.736</td> 
     </tr> 
     <tr class="a"> 
-     <td><a href="#com.icfolson.aem.prosper.buildersResponseBuilderSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.buildersResponseBuilderSpec">ResponseBuilderSpec</a></td> 
-     <td>2</td> 
+     <td><a href="#com.icfolson.aem.prosper.builders.ResponseBuilderSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.builders.ResponseBuilderSpec">ResponseBuilderSpec</a></td> 
+     <td>3</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>100%</td> 
-     <td>0.539</td> 
+     <td>0.517</td> 
     </tr> 
    </tbody> 
   </table> 
@@ -315,7 +261,7 @@ function toggleDisplay(elementId) {
      <th></th> 
      <th>Class</th> 
      <th>Tests</th> 
-     <th>Errors </th> 
+     <th>Errors</th> 
      <th>Failures</th> 
      <th>Skipped</th> 
      <th>Success Rate</th> 
@@ -324,54 +270,54 @@ function toggleDisplay(elementId) {
    </thead> 
    <tbody> 
     <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.specsExtendingNodeTypesSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.specsExtendingNodeTypesSpec">ExtendingNodeTypesSpec</a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.ExtendingNodeTypesSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.ExtendingNodeTypesSpec">ExtendingNodeTypesSpec</a></td> 
      <td>2</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>100%</td> 
-     <td>0.493</td> 
+     <td>0.606</td> 
     </tr> 
     <tr class="a"> 
-     <td><a href="#com.icfolson.aem.prosper.specsNodeTypesSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.specsNodeTypesSpec">NodeTypesSpec</a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.NodeTypesSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.NodeTypesSpec">NodeTypesSpec</a></td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0%</td> 
-     <td>0.397</td> 
+     <td>0.476</td> 
     </tr> 
     <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.specsProsperAssertsSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.specsProsperAssertsSpec">ProsperAssertsSpec</a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.ProsperAssertsSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.ProsperAssertsSpec">ProsperAssertsSpec</a></td> 
      <td>6</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>100%</td> 
-     <td>0.381</td> 
+     <td>0.422</td> 
     </tr> 
     <tr class="a"> 
-     <td><a href="#com.icfolson.aem.prosper.specsProsperSpecSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.specsProsperSpecSpec">ProsperSpecSpec</a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.ProsperSpecSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.ProsperSpecSpec">ProsperSpecSpec</a></td> 
      <td>19</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>100%</td> 
-     <td>0.534</td> 
+     <td>0.465</td> 
     </tr> 
     <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.specsRuleSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.specsRuleSpec">RuleSpec</a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.RuleSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.specs.RuleSpec">RuleSpec</a></td> 
      <td>2</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>100%</td> 
-     <td>0.291</td> 
+     <td>0.374</td> 
     </tr> 
    </tbody> 
   </table> 
@@ -385,7 +331,7 @@ function toggleDisplay(elementId) {
      <th></th> 
      <th>Class</th> 
      <th>Tests</th> 
-     <th>Errors </th> 
+     <th>Errors</th> 
      <th>Failures</th> 
      <th>Skipped</th> 
      <th>Success Rate</th> 
@@ -394,74 +340,14 @@ function toggleDisplay(elementId) {
    </thead> 
    <tbody> 
     <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.annotationsModelSpecAnnotationSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.annotationsModelSpecAnnotationSpec">ModelSpecAnnotationSpec</a></td> 
+     <td><a href="#com.icfolson.aem.prosper.annotations.ModelSpecAnnotationSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.annotations.ModelSpecAnnotationSpec">ModelSpecAnnotationSpec</a></td> 
      <td>2</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>100%</td> 
-     <td>2.352</td> 
-    </tr> 
-   </tbody> 
-  </table> 
- </div> 
- <div class="section"> 
-  <h3 id="com.icfolson.aem.prosper.mocks">com.icfolson.aem.prosper.mocks</h3> 
-  <a name="com.icfolson.aem.prosper.mocks"></a> 
-  <table border="1" class="bodyTable table table-striped table-hover"> 
-   <thead> 
-    <tr class="a"> 
-     <th></th> 
-     <th>Class</th> 
-     <th>Tests</th> 
-     <th>Errors </th> 
-     <th>Failures</th> 
-     <th>Skipped</th> 
-     <th>Success Rate</th> 
-     <th>Time</th> 
-    </tr> 
-   </thead> 
-   <tbody> 
-    <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.mocksMockSlingHttpServletRequestSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.mocksMockSlingHttpServletRequestSpec">MockSlingHttpServletRequestSpec</a></td> 
-     <td>8</td> 
-     <td>0</td> 
-     <td>0</td> 
-     <td>0</td> 
-     <td>100%</td> 
-     <td>0.396</td> 
-    </tr> 
-   </tbody> 
-  </table> 
- </div> 
- <div class="section"> 
-  <h3 id="com.icfolson.aem.prosper.mocks.request">com.icfolson.aem.prosper.mocks.request</h3> 
-  <a name="com.icfolson.aem.prosper.mocks.request"></a> 
-  <table border="1" class="bodyTable table table-striped table-hover"> 
-   <thead> 
-    <tr class="a"> 
-     <th></th> 
-     <th>Class</th> 
-     <th>Tests</th> 
-     <th>Errors </th> 
-     <th>Failures</th> 
-     <th>Skipped</th> 
-     <th>Success Rate</th> 
-     <th>Time</th> 
-    </tr> 
-   </thead> 
-   <tbody> 
-    <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.mocks.requestMockRequestParameterMapSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.mocks.requestMockRequestParameterMapSpec">MockRequestParameterMapSpec</a></td> 
-     <td>3</td> 
-     <td>0</td> 
-     <td>0</td> 
-     <td>0</td> 
-     <td>100%</td> 
-     <td>0.004</td> 
+     <td>2.532</td> 
     </tr> 
    </tbody> 
   </table> 
@@ -475,7 +361,7 @@ function toggleDisplay(elementId) {
      <th></th> 
      <th>Class</th> 
      <th>Tests</th> 
-     <th>Errors </th> 
+     <th>Errors</th> 
      <th>Failures</th> 
      <th>Skipped</th> 
      <th>Success Rate</th> 
@@ -484,14 +370,14 @@ function toggleDisplay(elementId) {
    </thead> 
    <tbody> 
     <tr class="b"> 
-     <td><a href="#com.icfolson.aem.prosper.contextProsperSlingContextSpec"><i class="icon-ok"></i></a></td> 
-     <td><a href="#com.icfolson.aem.prosper.contextProsperSlingContextSpec">ProsperSlingContextSpec</a></td> 
+     <td><a href="#com.icfolson.aem.prosper.context.ProsperSlingContextSpec"><i class="icon-ok"></i></a></td> 
+     <td><a href="#com.icfolson.aem.prosper.context.ProsperSlingContextSpec">ProsperSlingContextSpec</a></td> 
      <td>5</td> 
      <td>0</td> 
      <td>0</td> 
      <td>0</td> 
      <td>100%</td> 
-     <td>0.431</td> 
+     <td>0.498</td> 
     </tr> 
    </tbody> 
   </table> 
@@ -504,13 +390,13 @@ function toggleDisplay(elementId) {
  <p>[<a href="#Summary">Summary</a>] [<a href="#Package_List">Package List</a>] [<a href="#Test_Cases">Test Cases</a>]</p> 
  <div class="section"> 
   <h3 id="ModelSpecAnnotationSpec">ModelSpecAnnotationSpec</h3> 
-  <a name="com.icfolson.aem.prosper.annotationsModelSpecAnnotationSpec"></a> 
+  <a name="com.icfolson.aem.prosper.annotations.ModelSpecAnnotationSpec"></a> 
   <table border="1" class="bodyTable table table-striped table-hover"> 
    <tbody> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.annotations.ModelSpecAnnotationSpec.model_in_current_package_is_registered_when_spec_is_annotated"></a>model in current package is registered when spec is annotated</td> 
-     <td>0.018</td> 
+     <td>0.022</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
@@ -522,18 +408,18 @@ function toggleDisplay(elementId) {
  </div> 
  <div class="section"> 
   <h3 id="RequestBuilderSpec">RequestBuilderSpec</h3> 
-  <a name="com.icfolson.aem.prosper.buildersRequestBuilderSpec"></a> 
+  <a name="com.icfolson.aem.prosper.builders.RequestBuilderSpec"></a> 
   <table border="1" class="bodyTable table table-striped table-hover"> 
    <tbody> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request_with_no_arguments"></a>build request with no arguments</td> 
-     <td>0.059</td> 
+     <td>0.028</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request"></a>build request</td> 
-     <td>0.002</td> 
+     <td>0.004</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
@@ -543,12 +429,12 @@ function toggleDisplay(elementId) {
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_complex_request1"></a>build complex request[1]</td> 
-     <td>0</td> 
+     <td>0.001</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request_with_selectors0"></a>build request with selectors[0]</td> 
-     <td>0.003</td> 
+     <td>0.004</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
@@ -558,17 +444,17 @@ function toggleDisplay(elementId) {
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request_with_selectors2"></a>build request with selectors[2]</td> 
-     <td>0</td> 
+     <td>0.001</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request_with_parameters_argument"></a>build request with parameters argument</td> 
-     <td>0.018</td> 
+     <td>0.005</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request_with_parameters0"></a>build request with parameters[0]</td> 
-     <td>0.002</td> 
+     <td>0.003</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
@@ -578,12 +464,12 @@ function toggleDisplay(elementId) {
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request_with_parameters2"></a>build request with parameters[2]</td> 
-     <td>0.001</td> 
+     <td>0</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request_with_parameters3"></a>build request with parameters[3]</td> 
-     <td>0</td> 
+     <td>0.001</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
@@ -598,32 +484,37 @@ function toggleDisplay(elementId) {
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.RequestBuilderSpec.build_request_with_attributes"></a>build request with attributes</td> 
-     <td>0.006</td> 
+     <td>0.01</td> 
     </tr> 
    </tbody> 
   </table> 
  </div> 
  <div class="section"> 
   <h3 id="ResponseBuilderSpec">ResponseBuilderSpec</h3> 
-  <a name="com.icfolson.aem.prosper.buildersResponseBuilderSpec"></a> 
+  <a name="com.icfolson.aem.prosper.builders.ResponseBuilderSpec"></a> 
   <table border="1" class="bodyTable table table-striped table-hover"> 
    <tbody> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.ResponseBuilderSpec.build_response"></a>build response</td> 
-     <td>0.016</td> 
+     <td>0.007</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.builders.ResponseBuilderSpec.build_response_with_closure"></a>build response with closure</td> 
-     <td>0.003</td> 
+     <td>0.002</td> 
+    </tr> 
+    <tr class="a"> 
+     <td><i class="icon-ok"></i></td> 
+     <td><a name="TC_com.icfolson.aem.prosper.builders.ResponseBuilderSpec.write_JSON_to_response"></a>write JSON to response</td> 
+     <td>0.009</td> 
     </tr> 
    </tbody> 
   </table> 
  </div> 
  <div class="section"> 
   <h3 id="ProsperSlingContextSpec">ProsperSlingContextSpec</h3> 
-  <a name="com.icfolson.aem.prosper.contextProsperSlingContextSpec"></a> 
+  <a name="com.icfolson.aem.prosper.context.ProsperSlingContextSpec"></a> 
   <table border="1" class="bodyTable table table-striped table-hover"> 
    <tbody> 
     <tr class="a"> 
@@ -634,100 +525,29 @@ function toggleDisplay(elementId) {
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.context.ProsperSlingContextSpec.adapt_resource_to_model"></a>adapt resource to model</td> 
-     <td>0.004</td> 
+     <td>0.003</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.context.ProsperSlingContextSpec.adapt_request_to_model"></a>adapt request to model</td> 
-     <td>0.005</td> 
+     <td>0.007</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.context.ProsperSlingContextSpec.test_adapter_manager_respects_OSGi_service_properties"></a>test adapter manager respects OSGi service properties</td> 
-     <td>0.005</td> 
+     <td>0.009</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.context.ProsperSlingContextSpec.test_adapter_factory_without_OSGi_service_properties_is_always_called"></a>test adapter factory without OSGi service properties is always called</td> 
-     <td>0.005</td> 
-    </tr> 
-   </tbody> 
-  </table> 
- </div> 
- <div class="section"> 
-  <h3 id="MockSlingHttpServletRequestSpec">MockSlingHttpServletRequestSpec</h3> 
-  <a name="com.icfolson.aem.prosper.mocksMockSlingHttpServletRequestSpec"></a> 
-  <table border="1" class="bodyTable table table-striped table-hover"> 
-   <tbody> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.MockSlingHttpServletRequestSpec.resolve_resource_for_path"></a>resolve resource for path</td> 
-     <td>0.002</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.MockSlingHttpServletRequestSpec.resolve_resource_for_non-existent_path"></a>resolve resource for non-existent path</td> 
-     <td>0.005</td> 
-    </tr> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.MockSlingHttpServletRequestSpec.get_request_parameter_returns_null"></a>get request parameter returns null</td> 
-     <td>0.002</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.MockSlingHttpServletRequestSpec.get_request_parameter"></a>get request parameter</td> 
-     <td>0.004</td> 
-    </tr> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.MockSlingHttpServletRequestSpec.get_request_parameters"></a>get request parameters</td> 
-     <td>0.002</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.MockSlingHttpServletRequestSpec.get_parameter_returns_null"></a>get parameter returns null</td> 
-     <td>0.001</td> 
-    </tr> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.MockSlingHttpServletRequestSpec.get_parameter"></a>get parameter</td> 
-     <td>0.001</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.MockSlingHttpServletRequestSpec.get_parameters"></a>get parameters</td> 
-     <td>0.002</td> 
-    </tr> 
-   </tbody> 
-  </table> 
- </div> 
- <div class="section"> 
-  <h3 id="MockRequestParameterMapSpec">MockRequestParameterMapSpec</h3> 
-  <a name="com.icfolson.aem.prosper.mocks.requestMockRequestParameterMapSpec"></a> 
-  <table border="1" class="bodyTable table table-striped table-hover"> 
-   <tbody> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.request.MockRequestParameterMapSpec.get_values"></a>get values</td> 
-     <td>0.001</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.request.MockRequestParameterMapSpec.get_value"></a>get value</td> 
-     <td>0.001</td> 
-    </tr> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.mocks.request.MockRequestParameterMapSpec.get_value_when_multiple_values_are_present"></a>get value when multiple values are present</td> 
-     <td>0.001</td> 
+     <td>0.009</td> 
     </tr> 
    </tbody> 
   </table> 
  </div> 
  <div class="section"> 
   <h3 id="ExtendingNodeTypesSpec">ExtendingNodeTypesSpec</h3> 
-  <a name="com.icfolson.aem.prosper.specsExtendingNodeTypesSpec"></a> 
+  <a name="com.icfolson.aem.prosper.specs.ExtendingNodeTypesSpec"></a> 
   <table border="1" class="bodyTable table table-striped table-hover"> 
    <tbody> 
     <tr class="a"> 
@@ -745,7 +565,7 @@ function toggleDisplay(elementId) {
  </div> 
  <div class="section"> 
   <h3 id="ProsperAssertsSpec">ProsperAssertsSpec</h3> 
-  <a name="com.icfolson.aem.prosper.specsProsperAssertsSpec"></a> 
+  <a name="com.icfolson.aem.prosper.specs.ProsperAssertsSpec"></a> 
   <table border="1" class="bodyTable table table-striped table-hover"> 
    <tbody> 
     <tr class="a"> 
@@ -761,12 +581,12 @@ function toggleDisplay(elementId) {
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperAssertsSpec.assert_node_exists_with_properties"></a>assert node exists with properties</td> 
-     <td>0.01</td> 
+     <td>0.014</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperAssertsSpec.assert_node_exists_with_type_and_properties"></a>assert node exists with type and properties</td> 
-     <td>0.001</td> 
+     <td>0.003</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
@@ -783,23 +603,23 @@ function toggleDisplay(elementId) {
  </div> 
  <div class="section"> 
   <h3 id="ProsperSpecSpec">ProsperSpecSpec</h3> 
-  <a name="com.icfolson.aem.prosper.specsProsperSpecSpec"></a> 
+  <a name="com.icfolson.aem.prosper.specs.ProsperSpecSpec"></a> 
   <table border="1" class="bodyTable table table-striped table-hover"> 
    <tbody> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.registered_adapter_factory"></a>registered adapter factory</td> 
-     <td>0</td> 
+     <td>0.001</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.adapt_to_page_manager"></a>adapt to page manager</td> 
-     <td>0.004</td> 
+     <td>0.003</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.adapt_to_tag_manager"></a>adapt to tag manager</td> 
-     <td>0.013</td> 
+     <td>0.012</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
@@ -824,22 +644,22 @@ function toggleDisplay(elementId) {
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.additional_request_adapter"></a>additional request adapter</td> 
-     <td>0.001</td> 
+     <td>0</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.add_resource_resolver_adapter_for_test"></a>add resource resolver adapter for test</td> 
-     <td>0.002</td> 
+     <td>0.003</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.add_request_adapter_for_test"></a>add request adapter for test</td> 
-     <td>0.002</td> 
+     <td>0.003</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.adapt_resource_to_page"></a>adapt resource to page</td> 
-     <td>0.004</td> 
+     <td>0.003</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
@@ -849,7 +669,7 @@ function toggleDisplay(elementId) {
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.adapt_resource_to_node"></a>adapt resource to node</td> 
-     <td>0.001</td> 
+     <td>0</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
@@ -869,12 +689,12 @@ function toggleDisplay(elementId) {
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.add_models_for_package"></a>add models for package</td> 
-     <td>0.014</td> 
+     <td>0.022</td> 
     </tr> 
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.ProsperSpecSpec.register_injector"></a>register injector</td> 
-     <td>0.008</td> 
+     <td>0.009</td> 
     </tr> 
     <tr class="a"> 
      <td><i class="icon-ok"></i></td> 
@@ -886,7 +706,7 @@ function toggleDisplay(elementId) {
  </div> 
  <div class="section"> 
   <h3 id="RuleSpec">RuleSpec</h3> 
-  <a name="com.icfolson.aem.prosper.specsRuleSpec"></a> 
+  <a name="com.icfolson.aem.prosper.specs.RuleSpec"></a> 
   <table border="1" class="bodyTable table table-striped table-hover"> 
    <tbody> 
     <tr class="a"> 
@@ -897,45 +717,7 @@ function toggleDisplay(elementId) {
     <tr class="b"> 
      <td><i class="icon-ok"></i></td> 
      <td><a name="TC_com.icfolson.aem.prosper.specs.RuleSpec.adapt_to_tag_manager"></a>adapt to tag manager</td> 
-     <td>0.003</td> 
-    </tr> 
-   </tbody> 
-  </table> 
- </div> 
- <div class="section"> 
-  <h3 id="JspTagTraitSpec">JspTagTraitSpec</h3> 
-  <a name="com.icfolson.aem.prosper.traitsJspTagTraitSpec"></a> 
-  <table border="1" class="bodyTable table table-striped table-hover"> 
-   <tbody> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.traits.JspTagTraitSpec.init_tag_sets_default_page_context_attributes0"></a>init tag sets default page context attributes[0]</td> 
-     <td>0.025</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.traits.JspTagTraitSpec.init_tag_sets_default_page_context_attributes1"></a>init tag sets default page context attributes[1]</td> 
-     <td>0.001</td> 
-    </tr> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.traits.JspTagTraitSpec.init_tag_for_non-existing_resource_sets_default_page_context_attributes"></a>init tag for non-existing resource sets default page context attributes</td> 
-     <td>0.005</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.traits.JspTagTraitSpec.init_tag_and_get_result"></a>init tag and get result</td> 
-     <td>0.005</td> 
-    </tr> 
-    <tr class="a"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.traits.JspTagTraitSpec.init_tag_with_additional_page_context_attributes_and_get_result"></a>init tag with additional page context attributes and get result</td> 
-     <td>0.002</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><i class="icon-ok"></i></td> 
-     <td><a name="TC_com.icfolson.aem.prosper.traits.JspTagTraitSpec.init_request"></a>init request</td> 
-     <td>0</td> 
+     <td>0.004</td> 
     </tr> 
    </tbody> 
   </table> 
@@ -978,7 +760,7 @@ function toggleDisplay(elementId) {
 		<div class="row">
 			<div class="span12">
 				<p class="pull-right"><a href="#">Back to top</a></p>
-				<p class="copyright">Copyright &copy;2017 <a href="http://www.digitalatolson.com">Olson Digital</a>. All Rights Reserved.</p>
+				<p class="copyright">Copyright &copy;2018 <a href="http://www.digitalatolson.com">Olson Digital</a>. All Rights Reserved.</p>
 			</div>
 		</div>
 	</div>

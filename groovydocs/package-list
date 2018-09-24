@@ -2,7 +2,4 @@ com.icfolson.aem.prosper.annotations
 com.icfolson.aem.prosper.builders
 com.icfolson.aem.prosper.context
 com.icfolson.aem.prosper.mocks
-com.icfolson.aem.prosper.mocks.request
 com.icfolson.aem.prosper.specs
-com.icfolson.aem.prosper.tag
-com.icfolson.aem.prosper.traits
