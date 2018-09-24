@@ -14,7 +14,6 @@ Prosper is an integration testing library for Adobe Experience Manager projects 
 * Supplies mock OSGi bundle and [Sling](https://sling.apache.org/documentation/development/sling-mock.html) contexts for registering services, adapters, and Sling models.
 * Utilizes Groovy builders from the [AEM Groovy Extension](https://github.com/OlsonDigital/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for mock Sling requests and responses to simplify setup of test cases.
-* Supports testing of JSP tag classes using a mixable Groovy trait.
 
 ## Requirements
 
@@ -25,12 +24,22 @@ Prosper is an integration testing library for Adobe Experience Manager projects 
 
 Prosper Version(s) | AEM Version
 ------------ | -------------
-12.x.x | 6.4
+13.x.x, 12.x.x | 6.4
 11.x.x | 6.3
 10.x.x, 9.x.x, 8.x.x | 6.2
 7.x.x, 6.x.x, 5.x.x, 4.x.x | 6.1
 3.x.x, 2.x.x, 1.x.x | 6.0
 <= 0.10.x | 5.6 (CQ)
+
+## Release Notes
+
+### 13.0.0
+
+* Removed custom Sling Mock classes.  Mock classes (e.g. `SlingHttpServletRequest`) are now provided by the [Sling Mock](http://sling.apache.org/documentation/development/sling-mock.html) framework to prevent conflicts with other dependencies.
+* Removed JSP tag support.
+* Upgraded Groovy to version `2.4.15`.
+* Upgraded Spock to version `1.2-groovy-2.4`.
+
 
 ## Getting Started
 
@@ -40,7 +49,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>11.1.0</version>
+    <version>13.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -87,7 +96,7 @@ Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional co
     <plugins>
         <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.5</version>
+            <version>3.8.0</version>
             <configuration>
                 <compilerId>groovy-eclipse-compiler</compilerId>
                 <source>1.8</source>
@@ -124,7 +133,7 @@ Configure Groovy compiler and Surefire plugin in Maven `pom.xml`.  Additional co
     <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>2.4.11</version>
+        <version>2.4.15</version>
     </dependency>
 </dependencies>
 ```
@@ -184,9 +193,9 @@ The base specification exposes a number of fields and methods for use in tests.
 
 Field Name | Type | Description
 :---------|:---------|:-----------
-session | [javax.jcr.Session](http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) | Administrative JCR session
+session | [javax.jcr.Session](https://docs.adobe.com/docs/en/spec/javax.jcr/javadocs/jcr-2.0/javax/jcr/Session.html) | Administrative JCR session
 resourceResolver | [org.apache.sling.api.resource.ResourceResolver](http://sling.apache.org/apidocs/sling7/org/apache/sling/api/resource/ResourceResolver.html) | Administrative Sling Resource Resolver
-pageManager | [com.day.cq.wcm.api.PageManager](https://docs.adobe.com/docs/en/aem/6-1/ref/javadoc/com/day/cq/wcm/api/PageManager.html) | AEM Page Manager
+pageManager | [com.day.cq.wcm.api.PageManager](https://helpx.adobe.com/experience-manager/6-3/sites/developing/using/reference-materials/javadoc/com/day/cq/wcm/api/PageManager.html) | AEM Page Manager
 nodeBuilder | [com.icfolson.aem.groovy.extension.builders.NodeBuilder](http://code.digitalatolson.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/builders/NodeBuilder.html) | JCR [Node Builder](https://github.com/Citytechinc/prosper#content-builders)
 pageBuilder | [com.icfolson.aem.groovy.extension.builders.PageBuilder](http://code.digitalatolson.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/builders/PageBuilder.html) | AEM [Page Builder](https://github.com/Citytechinc/prosper#content-builders)
 slingContext | [com.icfolson.aem.prosper.context.SlingContextProvider](https://sling.apache.org/documentation/development/sling-mock.html) | Prosper extension of Sling/OSGi Context
@@ -241,7 +250,7 @@ The above example will create an `nt:unstructured` (the default type) node at `/
 
 Both builders automatically save the underlying JCR session after executing the provided closure.
 
-In addition to the content builders, the [session](https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
+In addition to the content builders, the [session](https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html) and [pageManager](https://helpx.adobe.com/experience-manager/6-3/sites/developing/using/reference-materials/javadoc/com/day/cq/wcm/api/PageManager.html) instances provided by the base specification can be used directly to create test content in the JCR.
 
 ### Content Import
 
@@ -431,7 +440,7 @@ class ServletSpec extends ProsperSpec {
         def servlet = new TestServlet()
 
         def request = requestBuilder.build {
-            parameters = [path: "/content/prosper"]
+            parameterMap = [path: "/content/prosper"]
             selectors = ["one", "two"]
             contentType = "application/json"
         }
@@ -445,12 +454,12 @@ class ServletSpec extends ProsperSpec {
         assertNodeExists("/content/prosper", [testProperty: "two"])
 
         and:
-        response.contentAsString == '{"path":"/content/prosper","value":"two"}'
+        response.outputAsString == '{"path":"/content/prosper","value":"two"}'
     }
 }
 ```
 
-The mock request and response objects delegate to the [MockHttpServletRequest](http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html) and [MockHttpServletResponse](http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletResponse.html) objects from the Spring Test Framework.  The setter methods exposed by these classes are thus made available in the `build` closures for the request and response builders to assist in setting appropriate mock values for the class under test.
+The mock request and response objects delegate to the [MockSlingHttpServletRequest](http://static.javadoc.io/org.apache.sling/org.apache.sling.testing.sling-mock/2.2.20/org/apache/sling/testing/mock/sling/servlet/MockSlingHttpServletRequest.html) and [MockSlingHttpServletResponse](http://static.javadoc.io/org.apache.sling/org.apache.sling.testing.sling-mock/2.2.20/org/apache/sling/testing/mock/sling/servlet/MockSlingHttpServletResponse.html) objects from the Sling Mocks framework.  The setter methods exposed by these classes are thus made available in the `build` closures for the request and response builders to assist in setting appropriate mock values for the class under test.
 
 ### Sling Context
 
@@ -528,7 +537,7 @@ Specs can register adapters in the Sling context by adding `AdapterFactory` inst
 class ExampleAdapterFactory implements AdapterFactory {
 
     @Override
-    public <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
+    <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
         AdapterType result = null
 
         if (type == String) {
@@ -661,7 +670,7 @@ class ExampleSpec extends ProsperSpec {
 
 ### Traits
 
-[Traits](http://groovy-lang.org/objectorientation.html#_traits) are a Groovy language feature that can be utilized to "mix in" new functionality to test specs.  The JSP tag trait is the only one currently provided, but custom traits can be defined to support domain-specific features.
+[Traits](http://groovy-lang.org/objectorientation.html#_traits) are a Groovy language feature that can be utilized to "mix in" new functionality to test specs.  Custom traits can be defined to support domain-specific features.
 
 ```groovy
 import com.icfolson.aem.prosper.builders.RequestBuilder
@@ -672,7 +681,7 @@ trait MobileRequestTrait {
     abstract RequestBuilder getRequestBuilder()
 
     SlingHttpServletRequest buildMobileRequest(Map<String, Object> parameters) {
-        requestBuilder.setSelectors(["mobile"]).setParameters(parameters).build()
+        requestBuilder.setSelectors(["mobile"]).setParameterMap(parameters).build()
     }
 }
 ```
@@ -692,70 +701,6 @@ class MobileRequestTraitSpec extends ProsperSpec implements MobileRequestTrait {
         request.requestPathInfo.selectors[0] == "mobile"
     }
 }
-```
-
-#### JSP Tag Trait
-
-The `init` methods in `com.icfolson.aem.prosper.traits.JspTagTrait` initialize `TagSupport` instances with a mock `PageContext` containing a `Writer` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
-
-If the `init` method's `resourcePath` argument maps to valid JCR path, the mock `PageContext` will be initialized with the appropriate `Resource`, `Page`, `Node`, and `ValueMap` attributes for the addressed resource.  See the `JspTagTrait` implementation for the specific attribute names and values.
-
-```groovy
-import javax.servlet.jsp.JspException
-import javax.servlet.jsp.tagext.TagSupport
-
-class SimpleTag extends TagSupport {
-
-    String name
-
-    @Override
-    int doStartTag() throws JspException {
-        pageContext.out.write("hello")
-
-        EVAL_PAGE
-    }
-
-    @Override
-    int doEndTag() throws JspException {
-        def prefix = pageContext.getAttribute("prefix") as String
-
-        pageContext.setAttribute("name", prefix + name)
-
-        EVAL_PAGE
-    }
-}
-```
-```groovy
-import com.icfolson.aem.prosper.traits.JspTagTrait
-
-class SimpleTagSpec extends ProsperSpec implements JspTagTrait {
-
-    def "start tag writes 'hello'"() {
-        setup:
-        def proxy = init(SimpleTag, "/")
-
-        when:
-        proxy.tag.doStartTag()
-
-        then:
-        proxy.output == "hello"
-    }
-
-    def "end tag sets page context attribute"() {
-        setup:
-        def proxy = init(SimpleTag, "/", ["prefix": "LiveLongAnd"])
-        def tag = proxy.tag as SimpleTag
-
-        tag.name = "Prosper"
-
-        when:
-        tag.doEndTag()
-
-        then:
-        proxy.pageContext.getAttribute("name") == "LiveLongAndProsper"
-    }
-}
-
 ```
 
 ## References

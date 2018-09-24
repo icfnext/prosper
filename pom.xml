@@ -12,7 +12,7 @@
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>12.2.0-SNAPSHOT</version>
+    <version>13.0.0</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for Adobe Experience Manager.</description>
 
@@ -38,7 +38,6 @@
     </scm>
 
     <build>
-        <sourceDirectory>src/main/groovy</sourceDirectory>
         <testSourceDirectory>src/test/groovy</testSourceDirectory>
         <plugins>
             <plugin>
@@ -88,7 +87,7 @@
                                          classpathref="maven.compile.classpath"/>
                                 <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs"
                                            sourcepath="${basedir}/src/main/groovy"
-                                           packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*,com.icfolson.aem.prosper.tag.*,com.icfolson.aem.prosper.traits.*"
+                                           packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*"
                                            use="true" windowtitle="${project.name}" doctitle="${project.name}">
                                     <link packages="javax.jcr."
                                           href="https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/"/>
@@ -100,13 +99,12 @@
                                           href="http://spockframework.github.io/spock/javadoc/1.0"/>
                                     <link packages="org.apache.jackrabbit.vault."
                                           href="http://jackrabbit.apache.org/filevault/apidocs"/>
+                                    <link packages="org.apache.sling.testing.mock.sling." href="http://static.javadoc.io/org.apache.sling/org.apache.sling.testing.sling-mock/2.2.20/"/>
                                     <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling8"/>
                                     <link packages="com.day.cq.wcm.api."
-                                          href="https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc"/>
-                                    <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn"/>
-                                    <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core"/>
-                                    <link packages="org.springframework.mock."
-                                          href="http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api"/>
+                                          href="https://helpx.adobe.com/experience-manager/6-4/sites/developing/using/reference-materials/javadoc"/>
+                                    <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r6/cmpn"/>
+                                    <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r6/core"/>
                                     <link packages="com.icfolson.aem.groovy.extension."
                                           href="http://code.digitalatolson.com/aem-groovy-extension/groovydocs"/>
                                 </groovydoc>
@@ -277,7 +275,7 @@
                 <dependency>
                     <groupId>com.icfolson.aem.groovy.extension</groupId>
                     <artifactId>aem-groovy-extension-bundle</artifactId>
-                    <version>5.0.0</version>
+                    <version>6.0.0</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.slf4j</groupId>
@@ -301,30 +299,23 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jsp-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.apache.jackrabbit.vault</groupId>
-            <artifactId>org.apache.jackrabbit.vault</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>oak-core-spi</artifactId>
         </dependency>
-
-        <!-- additional non-AEM dependencies -->
         <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>javax.el-api</artifactId>
-            <version>3.0.0</version>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+        </dependency>
+
+        <!-- additional dependencies -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -333,41 +324,23 @@
         <dependency>
             <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>5.0.0</version>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>1.1-groovy-2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>4.1.7.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>4.1.7.RELEASE</version>
+            <version>1.2-groovy-2.4</version>
         </dependency>
 
         <!-- AEM mocks -->
         <dependency>
             <groupId>io.wcm</groupId>
-            <artifactId>io.wcm.testing.aem-mock</artifactId>
-            <version>2.2.2</version>
+            <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
+            <version>2.3.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.sling</groupId>
-                    <artifactId>org.apache.sling.testing.sling-mock</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.sling</groupId>
-                    <artifactId>org.apache.sling.testing.osgi-mock</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
@@ -379,19 +352,13 @@
         <!-- sling mock -->
         <dependency>
             <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.testing.sling-mock</artifactId>
-            <version>2.2.18</version>
+            <artifactId>org.apache.sling.testing.sling-mock.junit4</artifactId>
+            <version>2.3.4</version>
         </dependency>
         <dependency>
             <groupId>com.icfolson.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
             <version>2.1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.sling</groupId>
-                    <artifactId>org.apache.sling.testing.sling-mock</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 </project>
