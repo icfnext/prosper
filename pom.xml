@@ -12,7 +12,7 @@
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>13.0.0</version>
+    <version>13.0.1-SNAPSHOT</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for Adobe Experience Manager.</description>
 
