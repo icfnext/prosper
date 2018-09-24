@@ -67,7 +67,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
         where:
         selectorList | selectorString
-        []           | null
+        []           | ""
         ["a"]        | "a"
         ["a", "b"]   | "a.b"
     }
@@ -76,7 +76,7 @@ class RequestBuilderSpec extends ProsperSpec {
         setup:
         def request = requestBuilder.build {
             path = "/content"
-            parameters = ["a": ["1", "2"], "b": ["1"]]
+            parameterMap = ["a": ["1", "2"], "b": ["1"]]
         }
 
         expect:
@@ -87,7 +87,7 @@ class RequestBuilderSpec extends ProsperSpec {
         setup:
         def request = requestBuilder.build {
             path = "/content"
-            parameters = map
+            parameterMap = map
         }
 
         expect:
@@ -95,7 +95,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
         where:
         map                                     | queryString
-        [:]                                     | ""
+        [:]                                     | null
         ["a": ["1"]]                            | "a=1"
         ["a": "1"]                              | "a=1"
         ["a": ["1", "2"]]                       | "a=1&a=2"

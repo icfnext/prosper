@@ -1,8 +1,6 @@
 package com.icfolson.aem.prosper.context
 
 import com.icfolson.aem.prosper.adapter.ClosureAdapterFactory
-import com.icfolson.aem.prosper.adapter.ProsperAdapterFactory
-import io.wcm.testing.mock.aem.MockAemAdapterFactory
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
@@ -10,7 +8,6 @@ import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.spi.Injector
 import org.apache.sling.testing.mock.sling.junit.SlingContext
 import org.apache.sling.testing.mock.sling.junit.SlingContextBuilder
-import org.apache.sling.testing.mock.sling.junit.SlingContextCallback
 import org.junit.rules.TestRule
 import org.osgi.framework.BundleContext
 
@@ -23,21 +20,6 @@ import static org.osgi.framework.Constants.SERVICE_RANKING
  * Prosper implementation of the Sling/OSGi context rule for usage in specs.
  */
 class ProsperSlingContext implements SlingContextProvider, TestRule {
-
-    static class AdapterFactoryRegistrationCallback implements SlingContextCallback {
-
-        @Override
-        void execute(SlingContext slingContext) throws Exception {
-            // register prosper adapter factory
-            slingContext.registerService(AdapterFactory, new ProsperAdapterFactory(), [
-                (ADAPTABLE_CLASSES): ProsperAdapterFactory.ADAPTABLE_CLASSES,
-                (ADAPTER_CLASSES): ProsperAdapterFactory.ADAPTER_CLASSES
-            ])
-
-            // register mock adapter factory
-            slingContext.registerService(AdapterFactory, new MockAemAdapterFactory())
-        }
-    }
 
     @Delegate
     private SlingContext slingContext = new SlingContextBuilder(JCR_OAK)
