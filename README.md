@@ -445,7 +445,7 @@ class ServletSpec extends ProsperSpec {
         assertNodeExists("/content/prosper", [testProperty: "two"])
 
         and:
-        response.contentAsString == '{"path":"/content/prosper","value":"two"}'
+        response.outputAsString == '{"path":"/content/prosper","value":"two"}'
     }
 }
 ```
@@ -672,7 +672,7 @@ trait MobileRequestTrait {
     abstract RequestBuilder getRequestBuilder()
 
     SlingHttpServletRequest buildMobileRequest(Map<String, Object> parameters) {
-        requestBuilder.setSelectors(["mobile"]).setParameters(parameters).build()
+        requestBuilder.setSelectors(["mobile"]).setParameterMap(parameters).build()
     }
 }
 ```

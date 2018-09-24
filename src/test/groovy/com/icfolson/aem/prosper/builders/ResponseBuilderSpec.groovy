@@ -1,7 +1,7 @@
 package com.icfolson.aem.prosper.builders
 
 import com.icfolson.aem.prosper.specs.ProsperSpec
-import com.google.common.base.Charsets
+import groovy.json.JsonBuilder
 
 class ResponseBuilderSpec extends ProsperSpec {
 
@@ -10,9 +10,8 @@ class ResponseBuilderSpec extends ProsperSpec {
         def response = responseBuilder.build()
 
         expect:
-        response.characterEncoding == Charsets.ISO_8859_1.name()
         !response.contentType
-        !response.contentAsString
+        !response.outputAsString
     }
 
     def "build response with closure"() {
@@ -25,5 +24,16 @@ class ResponseBuilderSpec extends ProsperSpec {
         expect:
         response.status == 500
         response.getHeader("foo") == "bar"
+    }
+
+    def "write JSON to response"() {
+        setup:
+        def response = responseBuilder.build()
+
+        when:
+        new JsonBuilder([path: "/content/prosper"]).writeTo(response.writer)
+
+        then:
+        response.outputAsString == '{"path":"/content/prosper"}'
     }
 }

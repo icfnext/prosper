@@ -178,7 +178,7 @@ abstract class ProsperSpec extends Specification {
      * @return request builder instance for this resource resolver
      */
     RequestBuilder getRequestBuilder() {
-        new RequestBuilder(resourceResolver)
+        new RequestBuilder(resourceResolver, slingContext.bundleContext)
     }
 
     /**

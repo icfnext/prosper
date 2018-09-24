@@ -67,7 +67,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
         where:
         selectorList | selectorString
-        []           | null
+        []           | ""
         ["a"]        | "a"
         ["a", "b"]   | "a.b"
     }
@@ -95,7 +95,7 @@ class RequestBuilderSpec extends ProsperSpec {
 
         where:
         map                                     | queryString
-        [:]                                     | ""
+        [:]                                     | null
         ["a": ["1"]]                            | "a=1"
         ["a": "1"]                              | "a=1"
         ["a": ["1", "2"]]                       | "a=1&a=2"

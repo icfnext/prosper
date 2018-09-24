@@ -12,7 +12,7 @@
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>12.2.0</version>
+    <version>13.0.0-SNAPSHOT</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for Adobe Experience Manager.</description>
 
@@ -87,7 +87,7 @@
                                          classpathref="maven.compile.classpath"/>
                                 <groovydoc destdir="${project.reporting.outputDirectory}/groovydocs"
                                            sourcepath="${basedir}/src/main/groovy"
-                                           packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*,com.icfolson.aem.prosper.tag.*,com.icfolson.aem.prosper.traits.*"
+                                           packagenames="com.icfolson.aem.prosper.annotations.*,com.icfolson.aem.prosper.builders.*,com.icfolson.aem.prosper.context.*,com.icfolson.aem.prosper.mocks.*,com.icfolson.aem.prosper.specs.*"
                                            use="true" windowtitle="${project.name}" doctitle="${project.name}">
                                     <link packages="javax.jcr."
                                           href="https://docs.adobe.com/content/docs/en/spec/jsr170/javadocs/jcr-2.0/"/>
@@ -104,8 +104,6 @@
                                           href="https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc"/>
                                     <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn"/>
                                     <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core"/>
-                                    <link packages="org.springframework.mock."
-                                          href="http://docs.spring.io/spring/docs/4.1.7.RELEASE/javadoc-api"/>
                                     <link packages="com.icfolson.aem.groovy.extension."
                                           href="http://code.digitalatolson.com/aem-groovy-extension/groovydocs"/>
                                 </groovydoc>
@@ -300,10 +298,6 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jsp-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
@@ -320,12 +314,7 @@
             <artifactId>osgi.cmpn</artifactId>
         </dependency>
 
-        <!-- additional non-AEM dependencies -->
-        <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>javax.el-api</artifactId>
-            <version>3.0.0</version>
-        </dependency>
+        <!-- additional dependencies -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -340,16 +329,6 @@
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
             <version>1.2-groovy-2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>4.1.7.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>4.1.7.RELEASE</version>
         </dependency>
 
         <!-- AEM mocks -->
