@@ -537,7 +537,7 @@ Specs can register adapters in the Sling context by adding `AdapterFactory` inst
 class ExampleAdapterFactory implements AdapterFactory {
 
     @Override
-    public <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
+    <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {
         AdapterType result = null
 
         if (type == String) {
@@ -670,7 +670,7 @@ class ExampleSpec extends ProsperSpec {
 
 ### Traits
 
-[Traits](http://groovy-lang.org/objectorientation.html#_traits) are a Groovy language feature that can be utilized to "mix in" new functionality to test specs.  The JSP tag trait is the only one currently provided, but custom traits can be defined to support domain-specific features.
+[Traits](http://groovy-lang.org/objectorientation.html#_traits) are a Groovy language feature that can be utilized to "mix in" new functionality to test specs.  Custom traits can be defined to support domain-specific features.
 
 ```groovy
 import com.icfolson.aem.prosper.builders.RequestBuilder
@@ -701,70 +701,6 @@ class MobileRequestTraitSpec extends ProsperSpec implements MobileRequestTrait {
         request.requestPathInfo.selectors[0] == "mobile"
     }
 }
-```
-
-#### JSP Tag Trait
-
-The `init` methods in `com.icfolson.aem.prosper.traits.JspTagTrait` initialize `TagSupport` instances with a mock `PageContext` containing a `Writer` for capturing tag output.  The returned proxy allows test cases to evaluate page context attributes and verify the written output (i.e. calls to `pageContext.getOut().write()`.  Tags can also be initialized with additional page context attributes.
-
-If the `init` method's `resourcePath` argument maps to valid JCR path, the mock `PageContext` will be initialized with the appropriate `Resource`, `Page`, `Node`, and `ValueMap` attributes for the addressed resource.  See the `JspTagTrait` implementation for the specific attribute names and values.
-
-```groovy
-import javax.servlet.jsp.JspException
-import javax.servlet.jsp.tagext.TagSupport
-
-class SimpleTag extends TagSupport {
-
-    String name
-
-    @Override
-    int doStartTag() throws JspException {
-        pageContext.out.write("hello")
-
-        EVAL_PAGE
-    }
-
-    @Override
-    int doEndTag() throws JspException {
-        def prefix = pageContext.getAttribute("prefix") as String
-
-        pageContext.setAttribute("name", prefix + name)
-
-        EVAL_PAGE
-    }
-}
-```
-```groovy
-import com.icfolson.aem.prosper.traits.JspTagTrait
-
-class SimpleTagSpec extends ProsperSpec implements JspTagTrait {
-
-    def "start tag writes 'hello'"() {
-        setup:
-        def proxy = init(SimpleTag, "/")
-
-        when:
-        proxy.tag.doStartTag()
-
-        then:
-        proxy.output == "hello"
-    }
-
-    def "end tag sets page context attribute"() {
-        setup:
-        def proxy = init(SimpleTag, "/", ["prefix": "LiveLongAnd"])
-        def tag = proxy.tag as SimpleTag
-
-        tag.name = "Prosper"
-
-        when:
-        tag.doEndTag()
-
-        then:
-        proxy.pageContext.getAttribute("name") == "LiveLongAndProsper"
-    }
-}
-
 ```
 
 ## References
