@@ -2,9 +2,10 @@ package com.icfolson.aem.prosper.mocks
 
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo
+import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest
 import org.osgi.framework.BundleContext
 
-class ProsperMockSlingHttpServletRequest extends org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest {
+class ProsperMockSlingHttpServletRequest extends MockSlingHttpServletRequest {
 
     ProsperMockSlingHttpServletRequest(ResourceResolver resourceResolver, BundleContext bundleContext) {
         super(resourceResolver, bundleContext)
@@ -49,9 +50,12 @@ class ProsperMockSlingHttpServletRequest extends org.apache.sling.testing.mock.s
         (requestPathInfo as MockRequestPathInfo).selectorString = selectors.join(".")
     }
 
-    void setParameters(Map<String, Object> parameters) {
-        setParameterMap(parameters.collectEntries { name, value ->
+    @Override
+    void setParameterMap(Map<String, Object> parameters) {
+        def parameterMap = parameters.collectEntries { name, value ->
             [name, value instanceof Collection ? value as String[] : value]
-        })
+        }
+
+        super.setParameterMap(parameterMap)
     }
 }
