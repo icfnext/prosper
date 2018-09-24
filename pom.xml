@@ -12,7 +12,7 @@
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
     <packaging>jar</packaging>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>13.0.0</version>
     <name>Prosper</name>
     <description>A Spock-based integration testing library for Adobe Experience Manager.</description>
 
@@ -99,11 +99,12 @@
                                           href="http://spockframework.github.io/spock/javadoc/1.0"/>
                                     <link packages="org.apache.jackrabbit.vault."
                                           href="http://jackrabbit.apache.org/filevault/apidocs"/>
+                                    <link packages="org.apache.sling.testing.mock.sling." href="http://static.javadoc.io/org.apache.sling/org.apache.sling.testing.sling-mock/2.2.20/"/>
                                     <link packages="org.apache.sling." href="http://sling.apache.org/apidocs/sling8"/>
                                     <link packages="com.day.cq.wcm.api."
-                                          href="https://docs.adobe.com/docs/en/aem/6-2/develop/ref/javadoc"/>
-                                    <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r5/cmpn"/>
-                                    <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r5/core"/>
+                                          href="https://helpx.adobe.com/experience-manager/6-4/sites/developing/using/reference-materials/javadoc"/>
+                                    <link packages="org.osgi.service.component." href="https://osgi.org/javadoc/r6/cmpn"/>
+                                    <link packages="org.osgi.framework." href="https://osgi.org/javadoc/r6/core"/>
                                     <link packages="com.icfolson.aem.groovy.extension."
                                           href="http://code.digitalatolson.com/aem-groovy-extension/groovydocs"/>
                                 </groovydoc>
@@ -274,7 +275,7 @@
                 <dependency>
                     <groupId>com.icfolson.aem.groovy.extension</groupId>
                     <artifactId>aem-groovy-extension-bundle</artifactId>
-                    <version>5.0.0</version>
+                    <version>6.0.0</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.slf4j</groupId>
@@ -323,7 +324,7 @@
         <dependency>
             <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>5.1.0</version>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>

@@ -34,24 +34,21 @@ class RequestBuilder {
     }
 
     /**
-     * Build a Sling request using a closure to set request properties.  The closure delegates to this builder and an
-     * instance of <a href="http://docs.spring.io/spring/docs/3.2.8
-     * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html">MockHttpServletRequest</a>,
-     * so methods for these instances may be called directly in the closure (see example below).  This pattern is
-     * similar to the Groovy <a href="http://groovy.codehaus.org/groovy-jdk/java/lang/Object.html#with(groovy.lang
-     * .Closure)"><code>with</code></a> method.
+     * Build a Sling request using a closure to set request properties.  The closure delegates to an instance of
+     * <a href="http://static.javadoc.io/org.apache.sling/org.apache.sling.testing.sling-mock/2.2.20/org/apache/sling/testing/mock/sling/servlet/MockSlingHttpServletRequest.html">MockSlingHttpServletRequest</a>,
+     * so methods for this instances may be called directly in the closure (see example below).
      *
      * <pre>
-     *  new RequestBuilder(resourceResolver).build {*      serverName = "localhost"
+     *  new RequestBuilder(resourceResolver).build {
+     *      serverName = "localhost"
      *      path = "/content"
      *      method = "GET"
-     *      parameters = ["a": ["1", "2"], "b": ["1"]]
+     *      parameterMap = ["a": ["1", "2"], "b": ["1"]]
      *      extension = "html"
      *}</pre>
      *
-     * @param closure closure that delegates to this builder and <a href="http://docs.spring.io/spring/docs/3.2.8
-     * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletRequest.html">MockHttpServletRequest</a>
-     * @return request
+     * @param closure closure that delegates to <a href="http://static.javadoc.io/org.apache.sling/org.apache.sling.testing.sling-mock/2.2.20/org/apache/sling/testing/mock/sling/servlet/MockSlingHttpServletRequest.html">MockSlingHttpServletRequest</a>
+     * @return mock request
      */
     MockSlingHttpServletRequest build(@DelegatesTo(ProsperMockSlingHttpServletRequest) Closure closure) {
         def request = new ProsperMockSlingHttpServletRequest(resourceResolver, bundleContext)

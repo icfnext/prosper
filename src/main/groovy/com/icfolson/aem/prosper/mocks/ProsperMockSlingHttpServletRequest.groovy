@@ -5,6 +5,9 @@ import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest
 import org.osgi.framework.BundleContext
 
+/**
+ * Extension of Sling mock with additional convenience methods for setting request path info.
+ */
 class ProsperMockSlingHttpServletRequest extends MockSlingHttpServletRequest {
 
     ProsperMockSlingHttpServletRequest(ResourceResolver resourceResolver, BundleContext bundleContext) {
@@ -14,9 +17,9 @@ class ProsperMockSlingHttpServletRequest extends MockSlingHttpServletRequest {
     }
 
     /**
-     * Set the request path.
+     * Set the resource path.
      *
-     * @param path JCR path
+     * @param path JCR resource path
      */
     void setPath(String path) {
         resource = resourceResolver.resolve(path)
@@ -50,6 +53,11 @@ class ProsperMockSlingHttpServletRequest extends MockSlingHttpServletRequest {
         (requestPathInfo as MockRequestPathInfo).selectorString = selectors.join(".")
     }
 
+    /**
+     * Set the request parameter map.  Values can either be single-valued Strings, arrays, or collections.
+     *
+     * @param parameters parameter map
+     */
     @Override
     void setParameterMap(Map<String, Object> parameters) {
         def parameterMap = parameters.collectEntries { name, value ->

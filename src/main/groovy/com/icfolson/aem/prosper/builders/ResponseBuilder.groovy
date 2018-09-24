@@ -17,23 +17,20 @@ class ResponseBuilder {
     }
 
     /**
-     * Build a Sling response using a closure to set response properties.  The closure delegates to this builder and an
-     * instance of <a href="http://docs.spring.io/spring/docs/3.2.8
-     * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletResponse.html">MockHttpServletResponse</a>,
-     * so methods on the response instance may be called directly in the closure (see example below).  This pattern
-     * is similar to the Groovy <a href="http://groovy.codehaus.org/groovy-jdk/java/lang/Object.html#with(groovy.lang
-     * .Closure)"><code>with</code></a> method.
+     * Build a Sling response using a closure to set response properties.  The closure delegates to an instance of
+     * <a href="http://static.javadoc.io/org.apache.sling/org.apache.sling.testing.sling-mock/2.2.20/org/apache/sling/testing/mock/sling/servlet/MockSlingHttpServletResponse.html">MockSlingHttpServletResponse</a>,
+     * so methods on the response instance may be called directly in the closure (see example below).
      *
      * <pre>
-     *  new ResponseBuilder().build {*      status = 200
+     *  new ResponseBuilder().build {
+     *      status = 200
      *      characterEncoding = "UTF-8"
      *      contentType = "application/json"
      *      addHeader "Connection", "close"
      *}</pre>
      *
-     * @param closure closure that delegates to this builder and <a href="http://docs.spring.io/spring/docs/3.2.8
-     * .RELEASE/javadoc-api/org/springframework/mock/web/MockHttpServletResponse.html">MockHttpServletResponse</a>
-     * @return response
+     * @param closure closure that delegates to <a href="http://static.javadoc.io/org.apache.sling/org.apache.sling.testing.sling-mock/2.2.20/org/apache/sling/testing/mock/sling/servlet/MockSlingHttpServletResponse.html">MockSlingHttpServletResponse</a>
+     * @return mock response
      */
     MockSlingHttpServletResponse build(@DelegatesTo(MockSlingHttpServletResponse) Closure closure) {
         def response = new MockSlingHttpServletResponse()

@@ -76,7 +76,7 @@ class RequestBuilderSpec extends ProsperSpec {
         setup:
         def request = requestBuilder.build {
             path = "/content"
-            parameters = ["a": ["1", "2"], "b": ["1"]]
+            parameterMap = ["a": ["1", "2"], "b": ["1"]]
         }
 
         expect:
@@ -87,7 +87,7 @@ class RequestBuilderSpec extends ProsperSpec {
         setup:
         def request = requestBuilder.build {
             path = "/content"
-            parameters = map
+            parameterMap = map
         }
 
         expect:
