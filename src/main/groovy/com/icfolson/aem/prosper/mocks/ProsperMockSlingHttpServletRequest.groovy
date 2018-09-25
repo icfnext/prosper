@@ -13,6 +13,7 @@ class ProsperMockSlingHttpServletRequest extends MockSlingHttpServletRequest {
     ProsperMockSlingHttpServletRequest(ResourceResolver resourceResolver, BundleContext bundleContext) {
         super(resourceResolver, bundleContext)
 
+        // default to root resource
         resource = resourceResolver.resolve("/")
     }
 
@@ -22,7 +23,10 @@ class ProsperMockSlingHttpServletRequest extends MockSlingHttpServletRequest {
      * @param path JCR resource path
      */
     void setPath(String path) {
+        // resolve to ensure that resource is synthetic even if JCR resource does not exist
         resource = resourceResolver.resolve(path)
+
+        // set resource path in request path info
         (requestPathInfo as MockRequestPathInfo).resourcePath = path
     }
 
@@ -64,6 +68,6 @@ class ProsperMockSlingHttpServletRequest extends MockSlingHttpServletRequest {
             [name, value instanceof Collection ? value as String[] : value]
         }
 
-        super.setParameterMap(parameterMap)
+        super.setParameterMap(parameterMap as Map<String, Object>)
     }
 }
