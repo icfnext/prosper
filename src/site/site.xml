@@ -40,10 +40,8 @@
 
     <body>
         <links>
-            <item name="GitHub"
-                  href="https://github.com/OlsonDigital/prosper"/>
-            <item name="GroovyDocs"
-                  href="groovydocs/index.html"/>
+            <item name="GitHub" href="https://github.com/OlsonDigital/prosper"/>
+            <item name="GroovyDocs" href="groovydocs/index.html"/>
         </links>
         <menu ref="reports"/>
     </body>

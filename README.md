@@ -1,6 +1,6 @@
 # Prosper
 
-[Olson Digital](http://www.digitalatolson.com/)
+[Olson Digital](http://www.olsondigital.com/)
 
 ## Overview
 
