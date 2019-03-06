@@ -1,6 +1,6 @@
 # Prosper
 
-[Olson Digital](http://www.olsondigital.com/)
+[ICF Next](http://www.icfnext.com/)
 
 ## Overview
 
@@ -12,7 +12,7 @@ Prosper is an integration testing library for Adobe Experience Manager projects 
 * Write test specifications in [Groovy](http://www.groovy-lang.org/) using [Spock](http://docs.spockframework.org/), a JUnit-based testing framework with an elegant syntax for writing tests quickly and efficiently.
 * Sling `ResourceResolver` instance backed by an in-memory Jackrabbit Oak JCR instance supporting the complete set of repository operations.
 * Supplies mock OSGi bundle and [Sling](https://sling.apache.org/documentation/development/sling-mock.html) contexts for registering services, adapters, and Sling models.
-* Utilizes Groovy builders from the [AEM Groovy Extension](https://github.com/OlsonDigital/aem-groovy-extension) to provide a simple DSL for creating test content.
+* Utilizes Groovy builders from the [AEM Groovy Extension](https://github.com/icfnext/aem-groovy-extension) to provide a simple DSL for creating test content.
 * Provides additional builders for mock Sling requests and responses to simplify setup of test cases.
 
 ## Requirements
@@ -34,13 +34,17 @@ Prosper Version(s) | AEM Version
 
 ## Release Notes
 
+### 14.0.0
+
+* Updated dependencies for compatibility with both `6.3.3` and `6.4` AEM versions.
+* Upgrade AEM mocks dependency to `2.4.0`
+
 ### 13.0.0
 
 * Removed custom Sling Mock classes.  Mock classes (e.g. `SlingHttpServletRequest`) are now provided by the [Sling Mock](http://sling.apache.org/documentation/development/sling-mock.html) framework to prevent conflicts with other dependencies.
 * Removed JSP tag support.
 * Upgraded Groovy to version `2.4.15`.
 * Upgraded Spock to version `1.2-groovy-2.4`.
-
 
 ## Getting Started
 
@@ -50,7 +54,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>13.0.0</version>
+    <version>14.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -197,11 +201,11 @@ Field Name | Type | Description
 session | [javax.jcr.Session](https://docs.adobe.com/docs/en/spec/javax.jcr/javadocs/jcr-2.0/javax/jcr/Session.html) | Administrative JCR session
 resourceResolver | [org.apache.sling.api.resource.ResourceResolver](http://sling.apache.org/apidocs/sling7/org/apache/sling/api/resource/ResourceResolver.html) | Administrative Sling Resource Resolver
 pageManager | [com.day.cq.wcm.api.PageManager](https://helpx.adobe.com/experience-manager/6-3/sites/developing/using/reference-materials/javadoc/com/day/cq/wcm/api/PageManager.html) | AEM Page Manager
-nodeBuilder | [com.icfolson.aem.groovy.extension.builders.NodeBuilder](http://code.digitalatolson.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/builders/NodeBuilder.html) | JCR [Node Builder](https://github.com/Citytechinc/prosper#content-builders)
-pageBuilder | [com.icfolson.aem.groovy.extension.builders.PageBuilder](http://code.digitalatolson.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/builders/PageBuilder.html) | AEM [Page Builder](https://github.com/Citytechinc/prosper#content-builders)
+nodeBuilder | [com.icfolson.aem.groovy.extension.builders.NodeBuilder](http://icfnext.github.io/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/builders/NodeBuilder.html) | JCR [Node Builder](https://github.com/Citytechinc/prosper#content-builders)
+pageBuilder | [com.icfolson.aem.groovy.extension.builders.PageBuilder](http://icfnext.github.io/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/builders/PageBuilder.html) | AEM [Page Builder](https://github.com/Citytechinc/prosper#content-builders)
 slingContext | [com.icfolson.aem.prosper.context.SlingContextProvider](https://sling.apache.org/documentation/development/sling-mock.html) | Prosper extension of Sling/OSGi Context
 
-See the `ProsperSpec` [GroovyDoc](http://code.digitalatolson.com/prosper/groovydocs/com/icfolson/aem/prosper/specs/ProsperSpec.html) for details on available methods.
+See the `ProsperSpec` [GroovyDoc](http://icfnext.github.io/prosper/groovydocs/com/icfolson/aem/prosper/specs/ProsperSpec.html) for details on available methods.
 
 ### Content Builders
 
@@ -330,7 +334,7 @@ class MySpec extends ProsperSpec {
 
 ### Metaclasses
 
-The [AEM Groovy Extension](https://github.com/OlsonDigital/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://code.digitalatolson.com/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
+The [AEM Groovy Extension](https://github.com/icfnext/aem-groovy-extension) decorates the `com.day.cq.wcm.api.Page`, `javax.jcr.Node`, and `javax.jcr.Binary` classes with additional methods to simplify common operations.  See the extension library [Groovydocs](http://icfnext.github.io/aem-groovy-extension/groovydocs/com/icfolson/aem/groovy/extension/metaclass/GroovyExtensionMetaClassRegistry.html) for details of these additions.  The metaclasses are registered automatically and available for use in all test methods.
 
 ### Assertions
 
@@ -370,7 +374,7 @@ expect: "page is created and properties match expected values"
 assertPageExists("/content/prosper", pageProperties)
 ```
 
-All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://code.digitalatolson.com/prosper/groovydocs/com/icfolson/aem/prosper/specs/ProsperSpec.html).
+All available `assert...` methods are detailed in the Prosper [GroovyDocs](http://icfnext.github.io/prosper/groovydocs/com/icfolson/aem/prosper/specs/ProsperSpec.html).
 
 ### Mocking Requests and Responses
 
@@ -464,7 +468,7 @@ The mock request and response objects delegate to the [MockSlingHttpServletReque
 
 ### Sling Context
 
-See the [Groovydoc](http://code.digitalatolson.com/prosper/groovydocs/com/icfolson/aem/prosper/context/SlingContextProvider.html) for complete details of the available service registration and additional context methods; specific Sling adaptable examples are provided below.
+See the [Groovydoc](http://icfnext.github.io/prosper/groovydocs/com/icfolson/aem/prosper/context/SlingContextProvider.html) for complete details of the available service registration and additional context methods; specific Sling adaptable examples are provided below.
 
 #### OSGi Services
 
@@ -706,7 +710,7 @@ class MobileRequestTraitSpec extends ProsperSpec implements MobileRequestTrait {
 
 ## References
 
-* [Prosper GroovyDocs](http://code.digitalatolson.com/prosper/groovydocs/index.html)
+* [Prosper GroovyDocs](http://icfnext.github.io/prosper/groovydocs/index.html)
 * [Spock Documentation](http://spockframework.github.io/spock/docs/1.0/index.html)
 * [Groovy Documentation](http://www.groovy-lang.org/documentation.html)
 
