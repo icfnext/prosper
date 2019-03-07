@@ -4,9 +4,11 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
+import com.icfolson.aem.groovy.extension.api.MetaClassExtensionProvider
 import com.icfolson.aem.groovy.extension.builders.NodeBuilder
 import com.icfolson.aem.groovy.extension.builders.PageBuilder
-import com.icfolson.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
+import com.icfolson.aem.groovy.extension.services.impl.DefaultExtensionService
+import com.icfolson.aem.groovy.extension.services.impl.DefaultMetaClassExtensionProvider
 import com.icfolson.aem.prosper.annotations.ModelSpec
 import com.icfolson.aem.prosper.annotations.NodeTypes
 import com.icfolson.aem.prosper.builders.RequestBuilder
@@ -64,7 +66,8 @@ abstract class ProsperSpec extends Specification {
      * and instantiate a mock resource resolver.
      */
     def setupSpec() {
-        GroovyExtensionMetaClassRegistry.registerMetaClasses()
+        slingContext.registerService(MetaClassExtensionProvider, new DefaultMetaClassExtensionProvider())
+        slingContext.registerInjectActivateService(new DefaultExtensionService())
 
         registerNodeTypes()
         importVaultContent()
@@ -72,11 +75,9 @@ abstract class ProsperSpec extends Specification {
     }
 
     /**
-     * Remove Groovy metaclasses and test content.
+     * Remove test content.
      */
     def cleanupSpec() {
-        GroovyExtensionMetaClassRegistry.removeMetaClasses()
-
         removeAllNodes()
     }
 
