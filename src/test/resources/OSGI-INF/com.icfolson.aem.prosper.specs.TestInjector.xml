@@ -5,6 +5,6 @@
         <provide interface="org.apache.sling.models.spi.Injector"/>
     </service>
     <property name="service.ranking" type="Integer" value="10000"/>
-    <property name="service.vendor" value="ICF Olson"/>
+    <property name="service.vendor" value="ICF Next"/>
     <property name="service.pid" value="com.icfolson.aem.prosper.specs.TestInjector"/>
 </scr:component>

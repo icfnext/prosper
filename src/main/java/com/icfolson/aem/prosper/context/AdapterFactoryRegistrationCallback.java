@@ -20,11 +20,11 @@ public final class AdapterFactoryRegistrationCallback implements SlingContextCal
         .build();
 
     @Override
-    public void execute(SlingContext context) {
+    public void execute(final SlingContext slingContext) {
         // register prosper adapter factory
-        context.registerService(AdapterFactory.class, new ProsperAdapterFactory(), PROPERTIES);
+        slingContext.registerService(AdapterFactory.class, new ProsperAdapterFactory(), PROPERTIES);
 
         // register mock adapter factory
-        context.registerService(AdapterFactory.class, new MockAemAdapterFactory());
+        slingContext.registerService(AdapterFactory.class, new MockAemAdapterFactory());
     }
 }
