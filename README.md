@@ -22,7 +22,7 @@ Prosper is an integration testing library for Adobe Experience Manager projects 
 
 ## Compatibility
 
-Prosper Version(s) | AEM Version
+Prosper Version(s) | AEM Version(s)
 ------------ | -------------
 14.x.x | 6.3, 6.4, 6.5
 13.x.x, 12.x.x | 6.4
