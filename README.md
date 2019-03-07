@@ -24,27 +24,13 @@ Prosper is an integration testing library for Adobe Experience Manager projects 
 
 Prosper Version(s) | AEM Version
 ------------ | -------------
-14.x.x | 6.3.3, 6.4
+14.x.x | 6.3, 6.4, 6.5
 13.x.x, 12.x.x | 6.4
 11.x.x | 6.3
 10.x.x, 9.x.x, 8.x.x | 6.2
 7.x.x, 6.x.x, 5.x.x, 4.x.x | 6.1
 3.x.x, 2.x.x, 1.x.x | 6.0
 <= 0.10.x | 5.6 (CQ)
-
-## Release Notes
-
-### 14.0.0
-
-* Updated dependencies for compatibility with both `6.3.3` and `6.4` AEM versions.
-* Upgrade AEM mocks dependency to `2.4.0`
-
-### 13.0.0
-
-* Removed custom Sling Mock classes.  Mock classes (e.g. `SlingHttpServletRequest`) are now provided by the [Sling Mock](http://sling.apache.org/documentation/development/sling-mock.html) framework to prevent conflicts with other dependencies.
-* Removed JSP tag support.
-* Upgraded Groovy to version `2.4.15`.
-* Upgraded Spock to version `1.2-groovy-2.4`.
 
 ## Getting Started
 
