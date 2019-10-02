@@ -33,12 +33,9 @@ Prosper Version(s) | AEM Version
 
 ## Release Notes
 
-### 13.0.0
+### 13.1.0
 
-* Removed custom Sling Mock classes.  Mock classes (e.g. `SlingHttpServletRequest`) are now provided by the [Sling Mock](http://sling.apache.org/documentation/development/sling-mock.html) framework to prevent conflicts with other dependencies.
-* Removed JSP tag support.
-* Upgraded Groovy to version `2.4.15`.
-* Upgraded Spock to version `1.2-groovy-2.4`.
+* 
 
 
 ## Getting Started
@@ -49,7 +46,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>13.0.0</version>
+    <version>13.1.0</version>
     <scope>test</scope>
 </dependency>
 ```
