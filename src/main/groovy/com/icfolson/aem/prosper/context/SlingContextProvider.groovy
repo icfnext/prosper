@@ -4,7 +4,6 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.spi.Injector
 import org.osgi.framework.BundleContext
-
 /**
  * Selection of methods exposed from the Sling and OSGi contexts.
  */
@@ -181,4 +180,11 @@ interface SlingContextProvider {
      * @param serviceRanking OSGi service ranking
      */
     void registerInjector(Injector injector, Integer serviceRanking)
+
+    /**
+     * Register classes that are annotated as context aware configurations.
+     *
+     * @param classes classes to register
+     */
+    void registerContextAwareConfigs(Class... classes)
 }
