@@ -35,7 +35,7 @@ Prosper Version(s) | AEM Version
 
 ### 13.1.0
 
-* 
+* Added support for Sling [Context Aware Configurations](https://sling.apache.org/documentation/bundles/context-aware-configuration/context-aware-configuration.html).  
 
 
 ## Getting Started
