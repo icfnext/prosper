@@ -16,6 +16,8 @@ import com.icfolson.aem.prosper.builders.ResponseBuilder
 import com.icfolson.aem.prosper.context.ProsperSlingContext
 import com.icfolson.aem.prosper.context.SlingContextProvider
 import com.icfolson.aem.prosper.importer.ContentImporter
+import io.wcm.testing.mock.aem.junit.AemContext
+import io.wcm.testing.mock.aem.junit.AemContextBuilder
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
@@ -26,6 +28,8 @@ import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
+
+import static org.apache.sling.testing.mock.sling.ResourceResolverType.JCR_OAK
 
 /**
  * Spock specification for AEM testing that includes a Sling context for mock repository operations and a simulated
@@ -57,7 +61,7 @@ abstract class ProsperSpec extends Specification {
 
     @ClassRule
     @Shared
-    private ProsperSlingContext slingContextProvider
+    private ProsperSlingContext slingContextProvider = new ProsperSlingContext(buildAemContext())
 
     // global fixtures
 
@@ -72,6 +76,15 @@ abstract class ProsperSpec extends Specification {
         registerNodeTypes()
         importVaultContent()
         registerSlingModels()
+    }
+
+    /**
+     * Build the AEM context.  Override to build a custom AEM context rule.
+     *
+     * @return AEM context to supply the Prosper Sling context
+     */
+    AemContext buildAemContext() {
+        new AemContextBuilder(JCR_OAK).build()
     }
 
     /**

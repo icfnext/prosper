@@ -2,7 +2,6 @@ package com.icfolson.aem.prosper.context
 
 import com.icfolson.aem.prosper.adapter.ClosureAdapterFactory
 import io.wcm.testing.mock.aem.junit.AemContext
-import io.wcm.testing.mock.aem.junit.AemContextBuilder
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
@@ -13,7 +12,6 @@ import org.osgi.framework.BundleContext
 
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES
-import static org.apache.sling.testing.mock.sling.ResourceResolverType.JCR_OAK
 import static org.osgi.framework.Constants.SERVICE_RANKING
 
 /**
@@ -22,9 +20,11 @@ import static org.osgi.framework.Constants.SERVICE_RANKING
 class ProsperSlingContext implements SlingContextProvider, TestRule {
 
     @Delegate
-    private AemContext aemContext = new AemContextBuilder(JCR_OAK)
-        .beforeSetUp(new AdapterFactoryRegistrationCallback())
-        .build()
+    private AemContext aemContext
+
+    ProsperSlingContext(AemContext aemContext) {
+        this.aemContext = aemContext
+    }
 
     @Override
     ResourceResolver getResourceResolver() {

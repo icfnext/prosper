@@ -2,7 +2,6 @@ package com.icfolson.aem.prosper.context
 
 import com.icfolson.aem.prosper.adapters.OSGiRegisteredAdapterFactory
 import com.icfolson.aem.prosper.specs.ProsperSpec
-import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
@@ -12,7 +11,7 @@ import org.apache.sling.settings.SlingSettingsService
 
 class ProsperSlingContextSpec extends ProsperSpec {
 
-    @Model(adaptables = [Resource, SlingHttpServletRequest])
+    @Model(adaptables = Resource)
     static class ResourceModel {
 
         @Self
@@ -39,18 +38,6 @@ class ProsperSlingContextSpec extends ProsperSpec {
         setup:
         def resource = getResource("/content/prosper")
         def model = resource.adaptTo(ResourceModel)
-
-        expect:
-        model.path == "/content/prosper"
-    }
-
-    def "adapt request to model"() {
-        setup:
-        def request = requestBuilder.build {
-            path = "/content/prosper"
-        }
-
-        def model = request.adaptTo(ResourceModel)
 
         expect:
         model.path == "/content/prosper"
