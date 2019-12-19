@@ -28,12 +28,12 @@ class ProsperSlingContext implements SlingContextProvider, TestRule {
 
     @Override
     ResourceResolver getResourceResolver() {
-        aemContext.resourceResolver()
+        resourceResolver()
     }
 
     @Override
     BundleContext getBundleContext() {
-        aemContext.bundleContext()
+        bundleContext()
     }
 
     @Override
