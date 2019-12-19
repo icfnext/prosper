@@ -21,8 +21,9 @@ class ResourceResolverMappingSpec extends ProsperSpec {
     }
 
     @Override
-    AemContext buildAemContext() {
+    AemContext getAemContext() {
         new AemContextBuilder(JCR_OAK)
+            .beforeSetUp(new ProsperSlingContextCallback())
             .resourceResolverFactoryActivatorProps(["resource.resolver.mapping": ["/content/:/", "/-/"] as String[]])
             .build()
     }

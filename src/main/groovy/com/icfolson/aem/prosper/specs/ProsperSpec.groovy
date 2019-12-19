@@ -14,6 +14,7 @@ import com.icfolson.aem.prosper.annotations.NodeTypes
 import com.icfolson.aem.prosper.builders.RequestBuilder
 import com.icfolson.aem.prosper.builders.ResponseBuilder
 import com.icfolson.aem.prosper.context.ProsperSlingContext
+import com.icfolson.aem.prosper.context.ProsperSlingContextCallback
 import com.icfolson.aem.prosper.context.SlingContextProvider
 import com.icfolson.aem.prosper.importer.ContentImporter
 import io.wcm.testing.mock.aem.junit.AemContext
@@ -60,7 +61,7 @@ abstract class ProsperSpec extends Specification {
 
     @ClassRule
     @Shared
-    private ProsperSlingContext slingContextProvider = new ProsperSlingContext(buildAemContext())
+    private ProsperSlingContext slingContextProvider = new ProsperSlingContext(aemContext)
 
     // global fixtures
 
@@ -75,15 +76,6 @@ abstract class ProsperSpec extends Specification {
         registerNodeTypes()
         importVaultContent()
         registerSlingModels()
-    }
-
-    /**
-     * Build the AEM context.  Override to build a custom AEM context rule.
-     *
-     * @return AEM context to supply the Prosper Sling context
-     */
-    AemContext buildAemContext() {
-        new AemContextBuilder(JCR_OAK).build()
     }
 
     /**
@@ -107,6 +99,17 @@ abstract class ProsperSpec extends Specification {
     void removeAllNodes() {
         session.rootNode.nodes.findAll { Node node -> !SYSTEM_NODE_NAMES.contains(node.name) }*.remove()
         session.save()
+    }
+
+    /**
+     * Build the AEM context.  Override to build a custom AEM context rule.
+     *
+     * @return AEM context to supply the Prosper Sling context
+     */
+    AemContext getAemContext() {
+        new AemContextBuilder(JCR_OAK)
+            .beforeSetUp(new ProsperSlingContextCallback())
+            .build()
     }
 
     // accessors for shared instances
