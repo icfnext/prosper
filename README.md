@@ -456,6 +456,32 @@ The mock request and response objects delegate to the [MockSlingHttpServletReque
 
 See the [Groovydoc](http://icfnext.github.io/prosper/groovydocs/com/icfolson/aem/prosper/context/SlingContextProvider.html) for complete details of the available service registration and additional context methods; specific Sling adaptable examples are provided below.
 
+#### AEM Context Builder
+
+Override the `getAemContext()` method in a test specification to supply a custom Resource Resolver configuration or add context callbacks using the wcm.io [AemContextBuilder](https://wcm.io/testing/aem-mock/junit4/apidocs/io/wcm/testing/mock/aem/junit/AemContextBuilder.html).
+
+```groovy
+class CustomContextSpec extends ProsperSpec {
+
+    @Override
+    AemContext getAemContext() {
+        new AemContextBuilder(ResourceResolverType.JCR_OAK)
+            .beforeSetUp(new AemContextCallback() {
+                @Override
+                void execute(AemContext context) throws Exception {
+                    context.registerService(new CustomService())
+                }
+            })
+            .resourceResolverFactoryActivatorProps(["resource.resolver.mapping": ["/content/:/", "/-/"] as String[]])
+            .build()
+    }
+
+    def "test"() {
+        
+    }
+}
+```
+
 #### OSGi Services
 
 OSGi services can be mocked (fully or partially) using Spock's [mocking API](http://docs.spockframework.org/en/latest/interaction_based_testing.html#creating-mock-objects).  Real service objects can also be used if all required dependency services are registered in the Sling context.
