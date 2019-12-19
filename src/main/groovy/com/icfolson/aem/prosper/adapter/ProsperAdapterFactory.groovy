@@ -1,22 +1,15 @@
 package com.icfolson.aem.prosper.adapter
 
-import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 
-@TupleConstructor
 class ProsperAdapterFactory implements AdapterFactory {
 
-    public static final String[] ADAPTER_CLASSES = [
-        "org.apache.sling.api.resource.Resource",
-        "org.apache.sling.api.resource.ResourceResolver"
-    ]
+    public static final String[] ADAPTER_CLASSES = [Resource.name, ResourceResolver.name]
 
-    public static final String[] ADAPTABLE_CLASSES = [
-        "org.apache.sling.api.SlingHttpServletRequest"
-    ]
+    public static final String[] ADAPTABLE_CLASSES = [SlingHttpServletRequest.name]
 
     @Override
     <AdapterType> AdapterType getAdapter(Object adaptable, Class<AdapterType> type) {

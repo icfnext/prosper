@@ -1,19 +1,17 @@
 package com.icfolson.aem.prosper.context
 
 import com.icfolson.aem.prosper.adapter.ClosureAdapterFactory
+import io.wcm.testing.mock.aem.junit.AemContext
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.spi.Injector
-import org.apache.sling.testing.mock.sling.junit.SlingContext
-import org.apache.sling.testing.mock.sling.junit.SlingContextBuilder
 import org.junit.rules.TestRule
 import org.osgi.framework.BundleContext
 
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES
-import static org.apache.sling.testing.mock.sling.ResourceResolverType.JCR_OAK
 import static org.osgi.framework.Constants.SERVICE_RANKING
 
 /**
@@ -22,18 +20,20 @@ import static org.osgi.framework.Constants.SERVICE_RANKING
 class ProsperSlingContext implements SlingContextProvider, TestRule {
 
     @Delegate
-    private SlingContext slingContext = new SlingContextBuilder(JCR_OAK)
-        .beforeSetUp(new AdapterFactoryRegistrationCallback())
-        .build()
+    private AemContext aemContext
+
+    ProsperSlingContext(AemContext aemContext) {
+        this.aemContext = aemContext
+    }
 
     @Override
     ResourceResolver getResourceResolver() {
-        slingContext.resourceResolver()
+        resourceResolver()
     }
 
     @Override
     BundleContext getBundleContext() {
-        slingContext.bundleContext()
+        bundleContext()
     }
 
     @Override
@@ -73,5 +73,10 @@ class ProsperSlingContext implements SlingContextProvider, TestRule {
     @Override
     void registerInjector(Injector injector, Integer serviceRanking) {
         registerInjectActivateService(injector, [(SERVICE_RANKING): serviceRanking])
+    }
+
+    @Override
+    void registerInjector(Injector injector) {
+        registerInjector(injector, 0)
     }
 }

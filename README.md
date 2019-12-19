@@ -22,7 +22,7 @@ Prosper is an integration testing library for Adobe Experience Manager projects 
 
 ## Compatibility
 
-Prosper Version(s) | AEM Version
+Prosper Version(s) | AEM Version(s)
 ------------ | -------------
 14.x.x | 6.3, 6.4, 6.5
 13.x.x, 12.x.x | 6.4
@@ -40,7 +40,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>14.0.0</version>
+    <version>15.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -455,6 +455,32 @@ The mock request and response objects delegate to the [MockSlingHttpServletReque
 ### Sling Context
 
 See the [Groovydoc](http://icfnext.github.io/prosper/groovydocs/com/icfolson/aem/prosper/context/SlingContextProvider.html) for complete details of the available service registration and additional context methods; specific Sling adaptable examples are provided below.
+
+#### AEM Context Builder
+
+Override the `getAemContext()` method in a test specification to supply a custom Resource Resolver configuration or add context callbacks using the wcm.io [AemContextBuilder](https://wcm.io/testing/aem-mock/junit4/apidocs/io/wcm/testing/mock/aem/junit/AemContextBuilder.html).
+
+```groovy
+class CustomContextSpec extends ProsperSpec {
+
+    @Override
+    AemContext getAemContext() {
+        new AemContextBuilder(ResourceResolverType.JCR_OAK)
+            .beforeSetUp(new AemContextCallback() {
+                @Override
+                void execute(AemContext context) throws Exception {
+                    context.registerService(new CustomService())
+                }
+            })
+            .resourceResolverFactoryActivatorProps(["resource.resolver.mapping": ["/content/:/", "/-/"] as String[]])
+            .build()
+    }
+
+    def "test"() {
+        
+    }
+}
+```
 
 #### OSGi Services
 

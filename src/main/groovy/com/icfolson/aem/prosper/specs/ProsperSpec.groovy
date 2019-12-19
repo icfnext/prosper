@@ -14,18 +14,22 @@ import com.icfolson.aem.prosper.annotations.NodeTypes
 import com.icfolson.aem.prosper.builders.RequestBuilder
 import com.icfolson.aem.prosper.builders.ResponseBuilder
 import com.icfolson.aem.prosper.context.ProsperSlingContext
+import com.icfolson.aem.prosper.context.ProsperSlingContextCallback
 import com.icfolson.aem.prosper.context.SlingContextProvider
 import com.icfolson.aem.prosper.importer.ContentImporter
+import io.wcm.testing.mock.aem.junit.AemContext
+import io.wcm.testing.mock.aem.junit.AemContextBuilder
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
-import org.apache.sling.testing.mock.sling.ResourceResolverType
 import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
+
+import static org.apache.sling.testing.mock.sling.ResourceResolverType.JCR_OAK
 
 /**
  * Spock specification for AEM testing that includes a Sling context for mock repository operations and a simulated
@@ -57,7 +61,7 @@ abstract class ProsperSpec extends Specification {
 
     @ClassRule
     @Shared
-    private ProsperSlingContext slingContextProvider
+    private ProsperSlingContext slingContextProvider = new ProsperSlingContext(aemContext)
 
     // global fixtures
 
@@ -95,6 +99,17 @@ abstract class ProsperSpec extends Specification {
     void removeAllNodes() {
         session.rootNode.nodes.findAll { Node node -> !SYSTEM_NODE_NAMES.contains(node.name) }*.remove()
         session.save()
+    }
+
+    /**
+     * Build the AEM context.  Override to build a custom AEM context rule.
+     *
+     * @return AEM context to supply the Prosper Sling context
+     */
+    AemContext getAemContext() {
+        new AemContextBuilder(JCR_OAK)
+            .beforeSetUp(new ProsperSlingContextCallback())
+            .build()
     }
 
     // accessors for shared instances
@@ -302,7 +317,7 @@ abstract class ProsperSpec extends Specification {
     }
 
     private void registerNodeTypes(List<String> cndResourcePaths) {
-        NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, ResourceResolverType.JCR_OAK.nodeTypeMode)
+        NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, JCR_OAK.nodeTypeMode)
     }
 
     private void importVaultContent() {

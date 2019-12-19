@@ -23,6 +23,14 @@ class ProsperSlingContextSpec extends ProsperSpec {
         }
     }
 
+    static class ProsperSlingContextAdapterFactory implements AdapterFactory {
+
+        @Override
+        <AdapterType> AdapterType getAdapter(Object o, Class<AdapterType> aClass) {
+            (AdapterType) 157
+        }
+    }
+
     def setupSpec() {
         slingContext.addModelsForClasses(ResourceModel)
     }
@@ -75,14 +83,8 @@ class ProsperSlingContextSpec extends ProsperSpec {
 
     def "test adapter factory without OSGi service properties is always called"() {
         setup: "an adapter factory without OSGi properties"
-        def adapterFactory = new AdapterFactory() {
-            @Override
-            <AdapterType> AdapterType getAdapter(Object o, Class<AdapterType> aClass) {
-                (AdapterType) 157
-            }
-        }
-
-        slingContext.registerAdapterFactory(adapterFactory, [ResourceResolver.name] as String[],
+        slingContext.registerAdapterFactory(new ProsperSlingContextAdapterFactory(),
+            [ResourceResolver.name] as String[],
             [Integer.name] as String[])
 
         expect: "a valid result is returned"

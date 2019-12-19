@@ -5,7 +5,7 @@ import spock.lang.Unroll
 @Unroll
 class ExtendingNodeTypesSpec extends NodeTypesSpec {
 
-    def "check node type for node with custom type"() {
+    def "nodes have custom node types"() {
         expect:
         getNode(path).isNodeType(nodeType)
 
