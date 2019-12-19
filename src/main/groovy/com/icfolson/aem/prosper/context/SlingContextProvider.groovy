@@ -181,4 +181,11 @@ interface SlingContextProvider {
      * @param serviceRanking OSGi service ranking
      */
     void registerInjector(Injector injector, Integer serviceRanking)
+
+    /**
+     * Register a Sling Injector with the default service ranking for use in a test.
+     *
+     * @param injector injector to register
+     */
+    void registerInjector(Injector injector)
 }

@@ -40,7 +40,7 @@ Add Maven dependency to project `pom.xml`.
 <dependency>
     <groupId>com.icfolson.aem.prosper</groupId>
     <artifactId>prosper</artifactId>
-    <version>14.0.0</version>
+    <version>15.0.0</version>
     <scope>test</scope>
 </dependency>
 ```

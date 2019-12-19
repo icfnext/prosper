@@ -74,4 +74,9 @@ class ProsperSlingContext implements SlingContextProvider, TestRule {
     void registerInjector(Injector injector, Integer serviceRanking) {
         registerInjectActivateService(injector, [(SERVICE_RANKING): serviceRanking])
     }
+
+    @Override
+    void registerInjector(Injector injector) {
+        registerInjector(injector, 0)
+    }
 }
