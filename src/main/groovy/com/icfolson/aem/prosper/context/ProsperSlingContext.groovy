@@ -7,6 +7,7 @@ import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.models.spi.Injector
+import org.apache.sling.testing.mock.caconfig.MockContextAwareConfig
 import org.junit.rules.TestRule
 import org.osgi.framework.BundleContext
 
@@ -78,5 +79,10 @@ class ProsperSlingContext implements SlingContextProvider, TestRule {
     @Override
     void registerInjector(Injector injector) {
         registerInjector(injector, 0)
+    }
+
+    @Override
+    void registerContextAwareConfigs(Class... classes) {
+        MockContextAwareConfig.registerAnnotationClasses(aemContext, classes)
     }
 }
