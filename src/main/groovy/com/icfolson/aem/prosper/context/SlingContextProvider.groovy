@@ -188,4 +188,11 @@ interface SlingContextProvider {
      * @param injector injector to register
      */
     void registerInjector(Injector injector)
+
+    /**
+     * Register classes that are annotated as context aware configurations.
+     *
+     * @param classes classes to register
+     */
+    void registerContextAwareConfigs(Class... classes)
 }

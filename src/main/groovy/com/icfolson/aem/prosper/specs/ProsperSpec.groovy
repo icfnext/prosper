@@ -21,15 +21,15 @@ import io.wcm.testing.mock.aem.junit.AemContext
 import io.wcm.testing.mock.aem.junit.AemContextBuilder
 import org.apache.sling.api.resource.Resource
 import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.testing.mock.caconfig.ContextPlugins
 import org.apache.sling.testing.mock.sling.NodeTypeDefinitionScanner
+import org.apache.sling.testing.mock.sling.ResourceResolverType
 import org.junit.ClassRule
 import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.jcr.Node
 import javax.jcr.Session
-
-import static org.apache.sling.testing.mock.sling.ResourceResolverType.JCR_OAK
 
 /**
  * Spock specification for AEM testing that includes a Sling context for mock repository operations and a simulated
@@ -107,8 +107,9 @@ abstract class ProsperSpec extends Specification {
      * @return AEM context to supply the Prosper Sling context
      */
     AemContext getAemContext() {
-        new AemContextBuilder(JCR_OAK)
+        new AemContextBuilder(ResourceResolverType.JCR_OAK)
             .beforeSetUp(new ProsperSlingContextCallback())
+            .plugin(ContextPlugins.CACONFIG)
             .build()
     }
 
@@ -317,7 +318,7 @@ abstract class ProsperSpec extends Specification {
     }
 
     private void registerNodeTypes(List<String> cndResourcePaths) {
-        NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, JCR_OAK.nodeTypeMode)
+        NodeTypeDefinitionScanner.get().register(session, cndResourcePaths, ResourceResolverType.JCR_OAK.nodeTypeMode)
     }
 
     private void importVaultContent() {
